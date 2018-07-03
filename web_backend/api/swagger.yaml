@@ -1,0 +1,3406 @@
+swagger: "2.0"
+info:
+  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  version: "1.0.0"
+  title: "Swagger DragonLedger"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+#### ------- route config region --------
+host: "39.104.175.115:8080"
+basePath: "/api"
+#### endregion
+
+#### ------- tags region ----------------
+tags:
+
+# contribute by zengyi
+- name: "Test"
+  description: "测试某些功能时用"
+- name: "Bank"
+  description: "银行信息"
+- name: "Corporation"
+  description: "企业，商户信息"
+- name: "ApplicationForm"
+  description: "信用证申请表"
+- name: "Document"
+  description: "文档的上传下载"
+- name: "SignedBank"
+  description: "银行签约信息"
+- name: "CorpPartnership"
+  description: "企业客户信息"
+- name: "LCIssue"
+  description: "信用证流转"
+- name: "LetterofCredit"
+  description: "企业端，信用证操作接口"
+- name: "BlockchainStatus"
+  description: "区块链相关状态"
+  
+# contribute by lixiaohu
+- name: "Bank Service: Network Metrics"
+  description: "银行端，的关键业务指标"
+- name: "Bank Service: Transaction"
+  description: "银行端，业务流程查询接口"
+- name: "Bank Service: LetterofCredit"
+  description: "银行端，业务流程操作接口"
+- name: "Bank Service: Application"
+  description: "银行端，信用证申请查询、操作"
+
+# contribute by lixiaohu
+- name: "SYSTEM: User"
+  description: "系统用户"
+- name: "SYSTEM: Blockchain"
+  description: "区块链网络"
+- name: "SYSTEM: Certificate"
+  description: "证书申请"
+
+schemes:
+- "http"
+paths:
+
+# ---------------------  contribute by lixiaohu  -------------------------------------
+## ---------------------  contribute by lixiaohu  -------------------------------------
+### ---------------------  contribute by lixiaohu  -------------------------------------
+
+  /bank/metrics/network:
+    get:
+      tags: 
+      - "Bank Service: Network Metrics"
+      summary: "获取整个网络的交易量级业务指标"
+      description: ""
+      operationId: "getNetworkMetrics"
+      produces: 
+      - "application/json"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Metrics"
+        400:
+          description: "Invalid Operation"
+        404:
+          description: "Resource not found"
+      x-swagger-router-controller: "Metrics"
+  
+  /bank/metrics/{bankId}:
+    get:
+      tags: 
+      - "Bank Service: Network Metrics"
+      summary: "获取指定银行的关键"
+      description: ""
+      operationId: "getMetrcsByBankId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "bankId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Metrics"
+      x-swagger-router-controller: "Metrics"
+
+  /bank/ApplicationAudit:
+    post:
+      tags:
+      - "Bank Service: Application"
+      summary: "bank confirm the applicationform"
+      description: ""
+      operationId: "applicationAudit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "草稿审核通过"
+        required: true
+        schema:
+            $ref: "#/definitions/DraftAudit"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "BankApplication"
+  /bank/Application/{appId}:
+    get:
+      tags:
+      - "Bank Service: Application"
+      summary: "Find ApplicationForm by ID"
+      description: "Returns a single ApplicationForm"
+      operationId: "getApplicationById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "appId"
+        in: "path"
+        description: "ID of Application to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ApplicationForm"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Application not found"
+      x-swagger-router-controller: "BankApplication"
+
+  /bank/transaction/{bankId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取信用证交易（包含，历史的，正在进行中的）"
+      description: "获取符合条件的信用证交易（包含，历史的，正在进行中的）"
+      operationId: "getTxsByBankId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "bankId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Transaction"
+      x-swagger-router-controller: "BankTransaction"
+
+  /bank/transaction/processing/{bankId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取符合条件的指定银行正在进行中的交易列表"
+      description: "获取符合条件的指定银行正在进行中的交易列表"
+      operationId: "getProcessingTxByBankId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "bankId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      - in: query
+        name: status
+        description: "信用证状态."
+        type: "string"
+      - in: query
+        name: startDate
+        description: "start date"
+        type: string
+        format: date-time
+      - in: query
+        name: endDate
+        description: "end date"
+        type: string
+        format: date-time
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Transaction"
+      x-swagger-router-controller: "BankTransaction"
+  
+  /bank/transaction/processflow/{txId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易，交易进度信息"
+      description: ""
+      operationId: "getProcessFlowByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCTxProcessflow"
+      x-swagger-router-controller: "BankTransaction"
+
+  /bank/transaction/draft/{txId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易（信用证）的草稿信息"
+      description: ""
+      operationId: "getLCDraftByTxId"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCTxLetterofCredit"
+      x-swagger-router-controller: "BankTransaction"
+
+  /bank/transaction/deposit/{txId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的保证金记录"
+      description: ""
+      operationId: "getDepositByTxId"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCTxDeposit"
+      x-swagger-router-controller: "BankTransaction"
+
+  /bank/transaction/depositdocs/{txId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的保证金信息的电子凭证及附件"
+      description: ""
+      operationId: "getDepositDocsByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCTxDepositDoc"
+      x-swagger-router-controller: "BankTransaction"
+
+  /bank/transaction/contracts/{txId}:
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的合同及附件材料"
+      description: ""
+      operationId: "getContractsByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/LCTxContract"
+      x-swagger-router-controller: "BankTransaction"
+
+  # 获取指定交易的信用证，正本附件
+  /bank/Transaction/LetterOfCredit/{txId}:
+      get:
+        tags: 
+        - "Bank Service: Transaction"
+        summary: "获取指定交易的信用证，正本附件"
+        description: ""
+        operationId: "getLCOriginalByTxId"
+        produces: 
+        - "application/json"
+        parameters:
+        - name: "txId"
+          in: "path"
+          description: ""
+          required: true
+          type: "string"
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: "#/definitions/LCTxOriginalAttachment"
+        x-swagger-router-controller: "BankTransaction"
+
+  # 获取指定交易的来单信息
+  /bank/Transaction/DocsReceived/{txId}:
+      get:
+        tags: 
+        - "Bank Service: Transaction"
+        summary: "获取指定交易的来单信息"
+        description: ""
+        operationId: "getLCDocsReceivedByTxId"
+        produces: 
+        - "application/json"
+        parameters:
+        - name: "txId"
+          in: "path"
+          description: ""
+          required: true
+          type: "string"
+        responses:
+          200:
+            description: OK
+            schema:
+                $ref: "#/definitions/LCTransDocsReceived"
+        x-swagger-router-controller: "BankTransaction"
+
+  # 获取指定交易的承兑信息
+  /bank/Transaction/AcceptPayment/{txId}:
+      get:
+        tags: 
+        - "Bank Service: Transaction"
+        summary: "获取指定交易的承兑信息"
+        description: ""
+        operationId: "getLCAcceptPaymentByTxId"
+        produces: 
+        - "application/json"
+        parameters:
+        - name: "txId"
+          in: "path"
+          description: ""
+          required: true
+          type: "string"
+        responses:
+          200:
+            description: OK
+            schema:
+                $ref: "#/definitions/LCTxAcceptPayment"
+        x-swagger-router-controller: "BankTransaction" 
+
+  # 获取指定交易的闭卷信息
+  /bank/Transaction/Closing/{txId}:
+      get:
+        tags: 
+        - "Bank Service: Transaction"
+        summary: "获取指定交易的闭卷信息"
+        description: ""
+        operationId: "getLCClosingByTxId"
+        produces: 
+        - "application/json"
+        parameters:
+        - name: "txId"
+          in: "path"
+          description: ""
+          required: true
+          type: "string"
+        responses:
+          200:
+            description: OK
+            schema:
+                $ref: "#/definitions/LCTxCLosing"
+        x-swagger-router-controller: "BankTransaction"
+
+### --------
+##  -------- 信用证业务流程，操作接口 ------- 银行端 ------
+#   --------
+  /bank/LetterofCredit/bankIssuing:
+    post:
+      tags:
+      - "Bank Service: LetterofCredit"
+      summary: "开证行：正式开立信用证，共识，并发送通知给网络参与方（开证 or 拒绝）"
+      description: ""
+      operationId: "bankIssuing"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "开证行：正式开立信用证，共识，并发送通知给网络参与方（开证 or 拒绝）"
+        required: true
+        schema:
+            $ref: "#/definitions/issueData"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "BankLetterofCredit"
+
+  /bank/LetterofCredit/AdvisingBankAudit:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "通知行：审核并签名共识（同意通知 or 拒绝通知）"
+        description: ""
+        operationId: "advisingBankAduit"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCAdvising"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit"
+
+  /bank/LetterofCredit/AmendCountersign:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "开证行、通知行、受益人同意通知或者拒绝信用证正本修改"
+        description: ""
+        operationId: "amendCountersign"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCAmending"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit"
+
+  /bank/LetterofCredit/advisingBankDocsReceivedAudit:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "通知行：确认交单"
+        description: ""
+        operationId: "advisingBankDocsReceivedAudit"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCDocsReceived"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit"
+  
+  /bank/LetterofCredit/issuingBankReviseRetire:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "通知行：确认交单"
+        description: ""
+        operationId: "issuingBankReviseRetire"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCRevise"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit"
+
+  /bank/LetterofCredit/IssuingBankDocsReceivedAudit:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "开证行：办理交单（拒绝之后，不符点修改）"
+        description: ""
+        operationId: "issuingBankDocsReceivedAudit"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCDocsReceived"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit"
+
+  /bank/LetterofCredit/AcceptancePayment:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "开证行，兑或者拒付"
+        description: ""
+        operationId: "acceptancePayment"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCAcceptPayment"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit"          
+
+  /bank/LetterofCredit/Closing:
+      post:
+        tags: 
+        - "Bank Service: LetterofCredit"
+        summary: "开证行，闭卷"
+        description: ""
+        operationId: "LCClosing"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+            $ref: "#/definitions/LCClosing"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "BankLetterofCredit" 
+
+### --------
+##  -------- 信用证业务流程，操作接口 ------- 企业端 ------
+#   --------
+  /LetterofCredit/Deposit:
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "信用证保证金支付"
+      description: ""
+      operationId: "lcDeposit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "信用证保证金支付"
+        required: true
+        schema:
+            $ref: "#/definitions/LCTxDeposit"
+      responses:
+        200:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"
+  
+  /LetterofCredit/retire:
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "申请人赎单"
+      description: ""
+      operationId: "retireShippingBills"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "信用证保证金支付"
+        required: true
+        schema:
+            $ref: "#/definitions/LCRetireBill"
+      responses:
+        200:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"
+
+  /LetterofCredit:
+      put:
+        tags: 
+        - "LetterofCredit"
+        summary: "编辑信用证正本信息"
+        description: ""
+        operationId: "updateLetterofCredit"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/LCTxLetterofCredit"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LetterofCredit"
+  
+  /LetterofCredit/Amending:
+      post:
+        tags: 
+        - "LetterofCredit"
+        summary: "申请人修改信用证"
+        description: "申请人修改信用证"
+        operationId: "lcAmendation"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCAmendationForm"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LetterofCredit"    
+  /LetterofCredit/beneficiaryHandle:
+      post:
+        tags: 
+        - "LetterofCredit"
+        summary: "申请人修改信用证"
+        description: "申请人修改信用证"
+        operationId: "beneficiaryHandleLCNotice"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/LCBeneficiary"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LetterofCredit"      
+  /LetterofCredit/beneficiaryHandoverBills:
+      post:
+        tags: 
+        - "LetterofCredit"
+        summary: "申请人修改信用证"
+        description: "申请人修改信用证"
+        operationId: "beneficiaryHandoverBills"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: ""
+          required: true
+          schema:
+              $ref: "#/definitions/HandoverBills"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LetterofCredit"                               
+# ------------------------------------------------------------------------------------
+## ------------------------------------------------------------------------------------
+### ------------------------------------------------------------------------------------           
+
+# contribute by zengyi
+  /Document/Upload:
+    post:
+      tags:
+      - "Document"
+      summary: "上传一个文档，返回文档的Hash值、长度等内容"
+      description: ""
+      operationId: "uploadFile"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "additionalMetadata"
+        in: "formData"
+        description: "Additional data to pass to server"
+        required: false
+        type: "string"
+      - name: "file"
+        in: "formData"
+        description: "file to upload"
+        required: false
+        type: "file"
+      responses:
+        200:
+          description: "成功上传"
+          schema:
+            $ref: "#/definitions/DocResponse"
+      x-swagger-router-controller: "Document"
+  /Document/{fileHash}:
+    get:
+      tags:
+      - "Document"
+      summary: "根据文件Hash获得文件内容"
+      description: ""
+      operationId: "downloadFile"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "fileHash"
+        in: "path"
+        description: "文件的Hash值"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+        404:
+          description: "找不到文件"
+      x-swagger-router-controller: "Document"
+  /Test/{account}:
+    get:
+      tags:
+      - "Test"
+      summary: "获取某个账户的余额"
+      description: ""
+      operationId: "getAccountBalance"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "account"
+        in: "path"
+        description: "Account(a or b)"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+      x-swagger-router-controller: "Test"
+  /Test/{accountA}/{accountB}/{amount}:
+    get:
+      tags:
+      - "Test"
+      summary: "将某账户的金额转给另外一个账户"
+      description: ""
+      operationId: "transfer"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "accountA"
+        in: "path"
+        description: "Account(a or b)"
+        required: true
+        type: "string"
+      - name: "accountB"
+        in: "path"
+        description: "Account(a or b)"
+        required: true
+        type: "string"
+      - name: "amount"
+        in: "path"
+        description: "Amount"
+        required: true
+        type: "string"        
+      responses:
+        200:
+          description: "successful operation"
+      x-swagger-router-controller: "Test"    
+  /Bank:
+    get:
+      tags:
+      - "Bank"
+      summary: "Get all Banks"
+      description: "Returns Bank list"
+      operationId: "getBanks"
+      produces:
+      
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Bank"
+      x-swagger-router-controller: "Bank"
+    post:
+      tags:
+      - "Bank"
+      summary: "Add a new bank to the store"
+      description: ""
+      operationId: "addBank"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Bank object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/Bank"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "Bank"
+    put:
+      tags:
+      - "Bank"
+      summary: "Update an existing Bank"
+      description: ""
+      operationId: "updateBank"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Bank object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/Bank"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bank not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "Bank"
+  /Bank/Query/{bankName}:
+    get:
+      tags:
+      - "Bank"
+      summary: "Finds Banks by name"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "findBanksByName"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "bankName"
+        in: "path"
+        description: "name of Bank to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Bank"
+        400:
+          description: "Invalid name value"
+      security:
+      - Bankstore_auth:
+        - "write:Banks"
+        - "read:Banks"
+      x-swagger-router-controller: "Bank"
+  /Bank/{BankId}:
+    get:
+      tags:
+      - "Bank"
+      summary: "Find Bank by ID"
+      description: "Returns a single Bank"
+      operationId: "getBankById"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "BankId"
+        in: "path"
+        description: "ID of Bank to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Bank"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bank not found"
+      x-swagger-router-controller: "Bank"
+    delete:
+      tags:
+      - "Bank"
+      summary: "Deletes a Bank"
+      description: ""
+      operationId: "deleteBank"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "BankId"
+        in: "path"
+        description: "Bank id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bank not found"
+      x-swagger-router-controller: "Bank"
+  /SignedBank:
+    post:
+      tags:
+      - "SignedBank"
+      summary: "Add a new SignedBank to the store"
+      description: ""
+      operationId: "addSignedBank"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "SignedBank object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/SignedBank"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "SignedBank"
+    put:
+      tags:
+      - "SignedBank"
+      summary: "Update an existing SignedBank"
+      description: ""
+      operationId: "updateSignedBank"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "SignedBank object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/SignedBank"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "SignedBank not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "SignedBank"
+  /SignedBank/{corpId}:
+    get:
+      tags:
+      - "SignedBank"
+      summary: "Find SignedBank by ID"
+      description: "Returns a single SignedBank"
+      operationId: "getSignedBankById"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "corpId"
+        in: "path"
+        description: "ID of SignedBank to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SignedBank"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "SignedBank not found"
+      x-swagger-router-controller: "SignedBank"
+    delete:
+      tags:
+      - "SignedBank"
+      summary: "Deletes a SignedBank"
+      description: ""
+      operationId: "deleteSignedBank"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "corpId"
+        in: "path"
+        description: "SignedBank id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "SignedBank not found"
+      x-swagger-router-controller: "SignedBank"
+  /SignedBank/getCorps/{bankId}:
+    get:
+      tags:
+      - "SignedBank"
+      summary: "Find corps by bank ID"
+      description: "Returns corporations"
+      operationId: "getCorpsByBankId"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "bankId"
+        in: "path"
+        description: "ID of bank"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SignedBank"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "SignedBank not found"
+      x-swagger-router-controller: "SignedBank"
+  /Corporation:
+    get:
+      tags:
+      - "Corporation"
+      summary: "Get all Corporations"
+      description: "Returns Corporation list"
+      operationId: "getCorporations"
+      produces:
+      
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Corporation"
+      x-swagger-router-controller: "Corporation"
+    post:
+      tags:
+      - "Corporation"
+      summary: "Add a new bank to the store"
+      description: ""
+      operationId: "addCorporation"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Corporation object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/Corporation"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "Corporation"
+    put:
+      tags:
+      - "Corporation"
+      summary: "Update an existing Corporation"
+      description: ""
+      operationId: "updateCorporation"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Corporation object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/Corporation"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Corporation not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "Corporation"
+
+  /Corporation/Query/{bankName}:
+    get:
+      tags:
+      - "Corporation"
+      summary: "Finds Corporations by name"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "findCorporationsByName"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "bankName"
+        in: "path"
+        description: "name of Corporation to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Corporation"
+        400:
+          description: "Invalid name value"
+      x-swagger-router-controller: "Corporation"
+
+  /Corporation/{CorporationId}:
+    get:
+      tags:
+      - "Corporation"
+      summary: "Find Corporation by ID"
+      description: "Returns a single Corporation"
+      operationId: "getCorporationById"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "CorporationId"
+        in: "path"
+        description: "ID of Corporation to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Corporation"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Corporation not found"
+      x-swagger-router-controller: "Corporation"
+    delete:
+      tags:
+      - "Corporation"
+      summary: "Deletes a Corporation"
+      description: ""
+      operationId: "deleteCorporation"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "CorporationId"
+        in: "path"
+        description: "Corporation id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Corporation not found"
+      x-swagger-router-controller: "Corporation"
+  /CorpPartnership:
+    post:
+      tags:
+      - "CorpPartnership"
+      summary: "Add a new bank to the store"
+      description: ""
+      operationId: "addCorpPartnership"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "CorpPartnership object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/CorpPartnership"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "CorpPartnership"
+    put:
+      tags:
+      - "CorpPartnership"
+      summary: "Update an existing CorpPartnership"
+      description: ""
+      operationId: "updateCorpPartnership"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "CorpPartnership object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/CorpPartnership"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "CorpPartnership not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "CorpPartnership"
+  /CorpPartnership/{corpId}:
+    get:
+      tags:
+      - "CorpPartnership"
+      summary: "Find CorpPartnership by ID"
+      description: "Returns CorpPartnerships"
+      operationId: "getCorpPartnershipById"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "corpId"
+        in: "path"
+        description: "ID of Corporation to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/CorpPartnership"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "CorpPartnership not found"
+      x-swagger-router-controller: "CorpPartnership"
+    #后续需要修改————lihuichi
+    delete:
+      tags:
+      - "CorpPartnership"
+      summary: "Deletes a CorpPartnership"
+      description: ""
+      operationId: "deleteCorpPartnership"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "corpId"
+        in: "path"
+        description: "CorpPartnership id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Corporation not found"
+      x-swagger-router-controller: "CorpPartnership"
+  /ApplicationForm:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "Get all ApplicationForms"
+      description: "Returns ApplicationForm list"
+      operationId: "getApplicationForms"
+      produces:
+      
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ApplicationForm"
+      x-swagger-router-controller: "ApplicationForm"
+    post:
+      tags:
+      - "ApplicationForm"
+      summary: "新建申请表"
+      description: ""
+      operationId: "addApplicationForm"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "ApplicationForm object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/ApplicationForm"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "ApplicationForm"
+    put:
+      tags:
+      - "ApplicationForm"
+      summary: "Update an existing ApplicationForm"
+      description: ""
+      operationId: "updateApplicationForm"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "ApplicationForm object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/ApplicationForm"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "ApplicationForm not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/submit:
+    post:
+      tags:
+      - "ApplicationForm"
+      summary: "submit the applicationform to the bank"
+      description: ""
+      operationId: "submitApplicationForm"
+      produces:
+
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "formData"
+        description: "the key of the applicationform"
+        required: true
+        type: "string"
+      - name: "corpId"
+        in: "formData"
+        description: "the id of the corporation"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Transaction"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/confirm:
+    post:
+      tags:
+      - "ApplicationForm"
+      summary: "bank confirm the applicationform"
+      description: ""
+      operationId: "confirmApplicationForm"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "草稿审核通过"
+        required: true
+        schema:
+            $ref: "#/definitions/DraftAudit"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/FindByCorp/{corpNo}:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "根据企业号获得企业的申请单"
+      operationId: "findApplicationFormsByCorp"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "corpNo"
+        in: "path"
+        description: "企业号"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ApplicationForm"
+        400:
+          description: "Invalid name value"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/FindByBank/{bankNo}:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "根据开证行的编号获得信用证申请单"
+      operationId: "findApplicationFormsByBank"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "bankNo"
+        in: "path"
+        description: "开证行"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ApplicationForm"
+        400:
+          description: "Invalid name value"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/FindByMyCorp:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "企业端根据当前用户的企业号获得企业的申请单"
+      operationId: "findApplicationFormsByMyCorp"
+      produces:
+      
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ApplicationForm"
+        400:
+          description: "Invalid name value"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/FindByMyBank:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "银行端根据当前用户的银行编号获得信用证申请单"
+      operationId: "findApplicationFormsByMyBank"
+      produces:
+      
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ApplicationForm"
+        400:
+          description: "Invalid name value"
+      x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/{ApplicationFormId}:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "Find ApplicationForm by ID"
+      description: "Returns a single ApplicationForm"
+      operationId: "getApplicationFormById"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "ApplicationFormId"
+        in: "path"
+        description: "ID of ApplicationForm to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ApplicationForm"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "ApplicationForm not found"
+      x-swagger-router-controller: "ApplicationForm"
+    delete:
+      tags:
+      - "ApplicationForm"
+      summary: "Deletes a ApplicationForm"
+      description: ""
+      operationId: "deleteApplicationForm"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "ApplicationFormId"
+        in: "path"
+        description: "ApplicationForm id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "ApplicationForm not found"
+      x-swagger-router-controller: "ApplicationForm"
+
+  /transaction/corp/processing/{corpId}:
+    get:
+      tags: 
+      - "Transaction"
+      summary: "获取指定企业正在进行中的交易列表"
+      description: ""
+      operationId: "getProcessingTransByCorpId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "corpId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Transaction"
+      x-swagger-router-controller: "CorpTransaction"
+  /transaction/progressflow/{transId}:
+    get:
+      tags: 
+      - "Transaction"
+      summary: "获取指定交易的交易进度信息"
+      description: ""
+      operationId: "getProgressFlowByTransId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "transId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCTxProcessflow"
+      x-swagger-router-controller: "CorpTransaction"
+  /transaction/corp/{corpId}:
+    get:
+      tags: 
+      - "Transaction"
+      summary: "获取指定企业的所有交易列表"
+      description: ""
+      operationId: "getTransByCorpId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "corpId"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Transaction"
+      x-swagger-router-controller: "CorpTransaction"
+  
+  #create by hanbairan
+  /certificate/apply:
+    post:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "apply for enroll certificate and verify user info"
+      description: "fill in the user info and wait for acknowledgement"
+      operationId: "certificateApply"
+      produces:
+
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Apply Form"
+        required: true
+        schema:
+          $ref: "#/definitions/CertificateApply"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"
+  /certificate/applyState/{applySerialNumber}:
+    get:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "query the state of a certificate apply procedure"
+      description: "query certificate apply state"
+      operationId: "queryCertificateApplyState"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "applySerialNumber"
+        in: "path"
+        description: "apply serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid serial number supplied"
+        404:
+          description: "serial number not found"
+      x-swagger-router-controller: "Certificate"
+  /certificate/applyState/{applySerialNumber}/cancel:
+    put:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "cancel a certificate apply procedure"
+      description: "cancel certificate apply"
+      operationId: "cancelCertificateApply"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "applySerialNumber"
+        in: "path"
+        description: "apply serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"        
+  /certificate/applyState/{applySerialNumber}/pass:
+    put:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "confirm a certificate apply"
+      description: "confirm certificate apply"
+      operationId: "confirmCertificateApply"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "applySerialNumber"
+        in: "path"
+        description: "apply serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"        
+  /certificate/enroll/{applySerialNumber}:
+    get:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "enroll a certificate and get enrollSerialNumber"
+      description: "enroll a certificate"
+      operationId: "enrollCertificate"
+      produces:
+
+      - "application/json"
+      parameters:
+      - name: "applySerialNumber"
+        in: "path"
+        description: "apply serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"        
+  /certificate/enrollState/{enrollSerialNumber}:
+    get:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "query enroll state"
+      description: "query enroll state"
+      operationId: "queryCertificateEnrollState"
+      produces:
+
+      - "application/json"
+      parameters:
+      - name: "enrollSerialNumber"
+        in: "path"
+        description: "enroll serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"        
+  /certificate/enrollState/{enrollSerialNumber}/cancel:
+    put:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "cancel a certificate enroll procedure"
+      description: "cancel certificate enroll"
+      operationId: "cancelCertificateEnroll"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "enrollSerialNumber"
+        in: "path"
+        description: "enroll serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate" 
+  /certificate/enrollState/{enrollSerialNumber}/pass:
+    put:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "confirm a certificate enroll"
+      description: "confirm certificate enroll"
+      operationId: "confirmCertificateEnroll"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "enrollSerialNumber"
+        in: "path"
+        description: "enroll serial number"
+        required: true
+        type: "string"
+      - name: "certificate"
+        in: "query"
+        description: "enroll certificate"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"        
+  /certificate/publish/{enrollSerialNumber}:
+    get:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "publish certificate"
+      description: "publish certificate"
+      operationId: "certificatePublish"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "enrollSerialNumber"
+        in: "path"
+        description: "enroll serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"
+  /certificate/revoke/{enrollSerialNumber}:
+    put:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "revoke certificate"
+      description: "revoke certificate"
+      operationId: "certificateRevoke"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "enrollSerialNumber"
+        in: "path"
+        description: "enroll serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"
+  /certificate/state/{applySerialNumber}:
+    get:
+      tags:
+      - "SYSTEM: Certificate"
+      summary: "get certificate state"
+      description: "get certificate state"
+      operationId: "getCertificateState"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "applySerialNumber"
+        in: "path"
+        description: "apply serial number"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Certificate"
+
+  #create by hanbairan
+  /user:
+    post:
+      tags:
+      - "User"
+      summary: "Create user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "User"
+    get:
+      tags:
+      - "User"
+      summary: "Get all user list"
+      description: "获得所有用户列表"
+      operationId: "getAllUsers"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"        
+      x-swagger-router-controller: "User"
+  /user/current:
+    get:
+      tags:
+      - "User"
+      summary: "Get current user info"
+      description: ""
+      operationId: "getCurrentUser"
+      produces:      
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User" 
+      x-swagger-router-controller: "User" 
+  /user/login:
+    post:
+      tags:
+      - "User"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      produces:      
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "The user name and password for login"
+        required: true
+        schema:
+          $ref: "#/definitions/userLoginInput"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+        400:
+          description: "Invalid username/password supplied"
+      x-swagger-router-controller: "User"
+  /user/logout:
+    post:
+      tags:
+      - "User"
+      summary: "Logs user out the system"
+      description: ""
+      operationId: "logoutUser"
+      produces:      
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "User"
+  /app/login:
+    post:
+      tags:
+      - "User"
+      summary: "手机APP上传加密后的私钥以登录"
+      description: ""
+      operationId: "appLoginUser"
+      produces:      
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "The encrpt private key for login user"
+        required: true
+        schema:
+          $ref: "#/definitions/appLoginInput"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid username/password supplied"
+      x-swagger-router-controller: "User"
+  /user/{username}:
+    get:
+      tags:
+      - "User"
+      summary: "Get user by user name"
+      description: ""
+      operationId: "getUserByName"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "The name that needs to be fetched. Use user1 for testing. "
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+    put:
+      tags:
+      - "User"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "Invalid user supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+    delete:
+      tags:
+      - "User"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "The name that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"    
+
+# --------------------- contribute by zhulianglinag -----------------
+  #上传文件
+  /ApplicationForm/File/:
+    post:
+      tags:
+      - "ApplicationForm"
+      summary: "add file to application"
+      description: ""
+      operationId: "addFile"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/LCFile"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "ApplicationForm"
+      
+  /LCIssue/{lcno}:
+    #获取信用证文本信息，包括草稿、文本
+    get:
+      tags: 
+      - "LCIssue"
+      summary: "根据信用证编号获取信用证文本信息"
+      description: ""
+      operationId: "getLCIssueByLcNo"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "lcno"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCIssue"
+      x-swagger-router-controller: "LCIssue"
+  #企业确认信用证草稿并签名
+  /LCIssue/confirm/corp/draft:
+    put:
+      tags:
+      - "LCIssue"
+      summary: "confirm LCIssue"
+      description: "Corporation confirms Draft"
+      operationId: "CorporationConfirmDraft"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "LCIssue"
+        required: true
+        schema:
+          $ref: "#/definitions/LCIssue"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "LCIssue"
+  #信用证修改
+  /LCIssue/edit:
+      post:
+        tags: 
+        - "LCIssue"
+        summary: "信用证修改"
+        description: "edit LCIssue"
+        operationId: "LCIssueEdit"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: "lc edit info"
+          required: true
+          schema:
+            $ref: "#/definitions/LCEdit"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LCIssue" 
+  #信用证交单
+  /LCIssue/surrender:
+      post:
+        tags: 
+        - "LCIssue"
+        summary: "信用证交单"
+        description: "surrender documents"
+        operationId: "surrenderDocuments"
+        produces: 
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: "LCDocumentsSurrender"
+          required: true
+          schema:
+            $ref: "#/definitions/LCDocumentsSurrender"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LCIssue" 
+  #根据信用证编号获取项下交单信息
+  /LCIssue/surrender/lc/{lcno}:
+    #获取信用证文本信息，包括草稿、文本
+    get:
+      tags: 
+      - "LCIssue"
+      summary: "根据信用证编号获取信用证文本信息"
+      description: ""
+      operationId: "getLCSurrendersByLcNo"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "lcno"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/LCDocumentsSurrender"
+      x-swagger-router-controller: "LCIssue"
+
+  #根据ID交单信息
+  /LCIssue/surrender/{id}:
+    #获取信用证文本信息，包括草稿、文本
+    get:
+      tags: 
+      - "LCIssue"
+      summary: "根据信用证编号获取信用证文本信息"
+      description: ""
+      operationId: "getLCSurrenderById"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/LCDocumentsSurrender"
+      x-swagger-router-controller: "LCIssue"
+  #企业接受不符点
+  /LCIssue/discrepancy/corp/accept/{id}:
+      get:
+        tags: 
+        - "LCIssue"
+        summary: "不符点接受"
+        description: "edit LCIssue"
+        operationId: "DiscrepancyAccept"
+        produces: 
+        - "application/json"
+        parameters:
+        - name: "id"
+          in: "path"
+          description: ""
+          required: true
+          type: "string"
+        responses:
+          default:
+            description: "OK"
+        x-swagger-router-controller: "LCIssue" 
+  /BlockchainStatus/channel:
+    get:
+      tags:
+      - "BlockchainStatus"
+      summary: "获得Fabric的Channel列表"
+      description: "Returns blockchain info"
+      operationId: "getAllChannels"
+      produces:      
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              type: string
+      x-swagger-router-controller: "BlockchainStatus"
+  /BlockchainStatus/{channel}/LatestBlock:
+    get:
+      tags:
+      - "BlockchainStatus"
+      summary: "Get the status of blockchain"
+      description: "Returns blockchain info"
+      operationId: "getLatestBlock"
+      produces:      
+      - "application/json"
+      parameters:
+      - name: "channel"
+        in: "path"
+        description: "通道名，默认：all"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:           
+            $ref: "#/definitions/blockchainStatus"
+      x-swagger-router-controller: "BlockchainStatus"
+  /BlockchainStatus/{channel}/block/{blockId}:
+    get:
+      tags:
+      - "BlockchainStatus"
+      summary: "Get the blocks of blockchain"
+      description: "Returns block info"
+      operationId: "getBlocks"
+      produces:      
+      - "application/json"
+      parameters:
+      - name: "channel"
+        in: "path"
+        description: "通道名，默认：all"
+        required: true
+        type: "string"
+      - name: "blockId"
+        in: "path"
+        description: "区块的高度值"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/blockInfo"
+      x-swagger-router-controller: "BlockchainStatus"
+  /BlockchainStatus/{channel}/transaction:
+    get:
+      tags:
+      - "BlockchainStatus"
+      summary: "Get the transactions of blockchain"
+      description: "Returns transaction info"
+      operationId: "getTransactions"
+      produces:      
+      - "application/json"
+      parameters:
+      - name: "channel"
+        in: "path"
+        description: "通道名，默认：all"
+        required: true
+        type: "string"     
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/txInfo"
+      x-swagger-router-controller: "BlockchainStatus"
+#### endregion
+
+#### ---------- securityDefine ----------
+securityDefinitions:
+  Bankstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://Bankstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:Banks: "modify Banks in your account"
+      read:Banks: "read your Banks"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+#### endregion
+
+
+
+#### ---------- view model definitions ---------
+
+definitions:
+  blockchainStatus:
+    type: "object"
+    properties:
+      peerCount:
+        type: "integer"
+        format: "int64"
+      blockCount:
+        type: "integer"
+        format: "int64"
+      txCount:
+        type: "integer"
+        format: "int64"
+      channelCount:
+        type: "integer"
+        format: "int64"
+  blockInfo:
+    type: "object"
+    properties:
+      blockNum:
+        type: "integer"
+        format: "int64"
+      datahash:
+        type: "string"
+      prehash:
+        type: "string"
+      channelname:
+        type: "string"
+      txcount:
+        type: "integer"
+        format: "int64"
+  txInfo:
+    type: "object"
+    properties:
+      channelname:
+        type: "string"
+      blockid:
+        type: "integer"
+        format: "int64"
+      txhash:
+        type: "string"
+      createAt:
+        type: "string"
+        format: "date-time"
+      chaincodename:
+        type: "string"
+# contribute by zengyi
+  Corporation:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      domain:
+        type: "string"
+      nation:
+        type: "string"
+      contact:
+        type: "string"
+      email:
+        type: "string"
+      account:
+        type: "string"
+      depositBank:
+        type: "string"
+      address:
+        type: "string"
+      creationTime:
+        type: "string"
+        format: "date-time"
+  Bank:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      name:
+        type: "string"
+      domain:
+        type: "string"
+      address:
+        type: string
+      remark:  
+        type: string
+  appLoginInput:
+    type: "object"
+    properties:
+      userName:
+        type: "string"
+      privateKey:
+        type: "string"
+  userLoginInput:
+    type: "object"
+    properties:
+      userName:
+        type: "string"
+      password:
+        type: "string"
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
+        type: "string"
+      password:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      domain:
+        type: "string"
+      phone:
+        type: "string"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
+      bank:
+        $ref: "#/definitions/Bank"
+      corp:
+        $ref: "#/definitions/Corporation"
+    xml:
+      name: "User"
+  Tag:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+    xml:
+      name: "Tag"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
+  DocResponse:
+    type: "object"
+    properties:
+      fileName:
+        type: "string"
+      fileHash:
+        type: "string"
+      length:
+        type: "integer"
+      mime:
+        type: "string"
+
+  SignedBank:
+    type: "object"
+    properties:
+      corporationId:
+        type: "integer"
+      bankId:
+        type: "integer"
+      address:
+        type: string
+      accountNo:
+        type: string
+      accountName:
+        type: string
+      remark:  
+        type: string
+
+  CorpPartnership:
+    type: "object"
+    properties:
+      hostCorpId:
+        type: "integer"
+      corporationId:
+        type: "integer"
+      contact:
+        type: string
+      email:
+        type: string
+      creationTime:
+        type: "string"
+        format: "date-time"
+
+# ---------------------  contribute by lixiaohu  -------------------------------------
+
+  Metrics:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      bankId:
+        type: "string"
+      StartDate:
+        type: "string"
+      EndDate:
+        type: "string"
+      Customers:
+        type: "integer"
+        format: "int64"
+      LCNumbers:
+        type: "integer"
+        format: "int64"
+      LCAmount:
+        type: "string"
+      AverageAmount:
+        type: "string"
+      Currency:
+        type: "string"
+
+  Transaction:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+      no:
+        type: "string"
+      LCNumbers:
+        type: "string"
+      applicant:
+        type: "string"
+      beneficiary:
+        type: "string"
+      issuingBank:
+        type: "string"
+      advisingBank:
+        type: "string"
+      amount:
+        type: "string"
+      currency:
+        type: "string"
+      status:
+        type: "string"
+      issuseDate:
+        type: "string"
+
+  TransProgress:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      status:
+        type: "string"
+      time:
+        type: "string"
+      abstract:
+        type: "string"
+      description:
+        type: "string"
+
+  LCTxProcessflow:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      LCNumber:
+        type: "string"
+      draftAudit:
+        $ref: "#/definitions/TransProgress"
+      LCIssuing:
+        $ref: "#/definitions/TransProgress"
+      LCAdvising:
+        $ref: "#/definitions/TransProgress"
+      LCModify:
+        $ref: "#/definitions/TransProgress"
+      handOverBill:
+        $ref: "#/definitions/TransProgress"
+      LCAcceptance:
+        $ref: "#/definitions/TransProgress"
+      LCCLose:
+        $ref: "#/definitions/TransProgress"
+
+  LCTxDeposit:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      commitAmount:
+        type: "string"
+      depositDoc:
+        $ref: "#/definitions/Document"
+  
+  LCRetireBill:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      commitAmount:
+        type: "string"
+
+  issueData:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed: 
+        type: "string"
+      depositDoc:
+        $ref: "#/definitions/Document"   
+
+  HandoverBills:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      
+
+  LCTransDocsReceived:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      applicant:
+        $ref: "#/definitions/Corporation"
+      beneficiary:
+        $ref: "#/definitions/Corporation"
+      LCAmount:
+        type: "string"
+      LCBalance:
+        type: "string"
+      receivedAmount:
+        type: "string"
+      receivedDate:
+        type: "string"
+      attachments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Document"
+
+  LCTxAcceptPayment:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      applicant:
+        $ref: "#/definitions/Corporation"
+      beneficiary:
+        $ref: "#/definitions/Corporation"
+      LCAmount:
+        type: "string"
+      LCBalance:
+        type: "string"
+      acceptAmount:
+        type: "string"
+      acceptDate:
+        type: "string"
+      acceptExpireDate:
+        type: "string"
+
+  LCTxCLosing:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      applicant:
+        $ref: "#/definitions/Corporation"
+      beneficiary:
+        $ref: "#/definitions/Corporation"
+      LCAmount:
+        type: "string"
+      LCBalance:
+        type: "string"
+      isClosed:
+        type: "string"
+      comments:
+        type: "string"
+        
+  Document:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      name:
+        type: "string"
+      uri:
+        type: "string"
+      hash:
+        type: "string"
+      signature:
+        type: "string"
+      uploader:
+        type: "string"
+
+  LCTxDepositDoc:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      depositId:
+        type: "string"
+      document:
+        $ref: "#/definitions/Document"
+
+#信用证正本附件
+  LCTxOriginalAttachment:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      LCNumber:
+        type: "string"
+      document:
+        $ref: "#/definitions/Document"
+
+#提货单信息
+  BillOfLanding:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      bolNO:
+        type: "string"
+      kind:
+        type: "string"
+      isRequired:
+        type: "boolean"
+      transactionId:
+        type: "string"
+      transDocsReceivedId:
+        type: "string"
+      document:
+        $ref: "#/definitions/Document"
+
+#合同及附件材料
+  LCTxContract:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      attachments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Document"
+
+### LetterofCredit Settle Process Related Model
+  DraftAudit:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      depositAmount:
+        type: "string"
+      lcNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+
+  DepositConfirmed:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      depositId:
+        type: "string"
+
+  GoodsInfo:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      goodsNo: # 货物编号
+        type: "string"
+      allowPartialShipment:  #允许部分装运
+        type: "string"
+      allowTransShipment:  #允许转船装运
+        type: "string"
+      latestShipmentDate:  #允许装运日期
+        type: "string"
+      shippingWay:  #装运方式
+        type: "string"
+      shippingPlace:  #装运地点
+        type: "string"
+      shippingDestination:  #装运目的地
+        type: "string"
+      tradeNature:  #贸易性质
+        type: "string"
+      goodDescription:  #货物描述
+        type: "string"
+        
+  LCTxLetterofCredit:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      LCNumber:
+        type: "string"
+      applicant:
+        $ref: "#/definitions/Corporation"
+      beneficiary:
+        $ref: "#/definitions/Corporation"
+      issuingBank:
+        $ref: "#/definitions/Bank"
+      advisingBank:
+        $ref: "#/definitions/Bank"
+      # 币种
+      currency:
+        type: "string"
+      # 信用证金额
+      amount:
+        type: "number"
+      # 申请时间
+      applyTime:
+        type: "string"
+        format: "date-time"
+      # 开立日期
+      issuingDate:
+        type: "string"
+        format: "date-time"
+      # 到期日期
+      expiryDate:
+        type: "string"
+        format: "date-time"
+      # 到期地点
+      expiryPlace:
+        type: "string"
+      # 是否即期
+      isAtSight:
+        type: "boolean"
+        default: false
+      # 远期付款期限
+      afterSight:
+        type: "integer"
+        format: "int32"
+      # 货物描述
+      goodsInfo:
+        $ref: "#/definitions/GoodsInfo"
+      # 单据需求
+      documentRequire:
+        type: "string"
+      # 在开证行产生的费用由谁承担：1买方、2卖方
+      chargeInIssueBank:
+        type: "integer"
+        format: "int32"
+      # 开证行外产生的费用由谁承担： 1买方， 2卖方
+      chargeOutIssueBank:
+        type: "integer"
+        format: "int32"
+      # 单据最晚在签发多少日后提交
+      docDelay:
+        type: "integer"
+        format: "int32"
+      # 其他需求  
+      otherRequire:
+        type: "string"
+      # 信用证正本附件
+      LCOriginalAttachment:
+        $ref: "#/definitions/Document"
+      # 附件及材料
+      Attachments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Document"
+      # 合同附件
+      Contract:
+        $ref: "#/definitions/Document"
+      
+  # 信用证开立，开证行    
+  LCIssuing:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      description:
+        type: "string"
+
+  # 信用证通知，通知行    
+  LCAdvising:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+  
+  # 信用证通知，通知行    
+  LCBeneficiary:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+  
+   # 信用证修改，开证行
+  LCAmendationForm:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendTimes:
+        type: "string"
+      amendedCurrency:
+        type: "string"
+      amendedAmt:
+        type: "string"
+      addedDays:
+        type: "string"
+      amendExpiryDate:
+        type: "string"
+        format: "date-time"
+      transPortName:
+        type: "string"
+      addedDepositAmt:
+        type: "string"
+  # 信用证修改，开证行
+  LCAmending:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      description:
+        type: "string"
+
+  # 信用证来单审核，开证行
+  LCDocsReceived:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+
+  LCRevise:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+        
+  # 承兑付款，确认付款
+  LCAcceptPayment:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amount:
+        type: "string"
+      dismatchPoints:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+
+  # 开证行，确认申请人付款赎单
+  LCClosing:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      description:
+        type: "string"
+
+
+  # 区块链共识状态
+  Consensus:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      transactionId:
+        type: "string"
+      applicantId:
+        type: "string"
+      applStatus:
+        type: "string"
+      beneficiaryId:
+        type: "string"
+      benefStatus:
+        type: "string"
+      issuingBankId:
+        type: "string"
+      IBStatus:
+        type: "string"
+      advisingBankId:
+        type: "string"
+      ABStatus:
+        type: "string"
+
+
+  # ---------------contribute by zhulianglinag--------------------------
+  ApplicationForm:
+    type: "object"
+    properties:
+      # id:
+      #   type: "integer"
+      #   format: "int64"
+      # LcNo:
+      #   type: "string"
+      ApplyCorpId:
+        type: "integer"
+        format: "int64"
+      BeneficiaryId:
+        type: "integer"
+        format: "int64"
+      #开证行
+      IssueBankId:
+        type: "integer"
+        format: "int64"
+      #通知行
+      AdvisingBankId:
+        type: "integer"
+        format: "int64"
+      #到期日
+      ExpiryDate:
+        type: "string"
+        format: "date-time"
+      #到期地点
+      ExpiryPlace:
+        type: "string"
+      #是否即期
+      IsAtSight:
+        type: "boolean"
+        default: false
+      #如果是远期，远期付款期限为多少天
+      AfterSight:
+        type: "integer"
+        format: "int32"
+      #贸易性质
+      TradeType:
+        type: "integer"
+        format: "int32"
+      AllowPartialShippment:
+        type: "string"
+      AllowTransShippment:
+        type: "string"
+      LastestShipDate:
+        type: "string"
+        format: "date-time"
+      ShippingWay:
+        type: "string"
+      ShippingPlace:
+        type: "string"
+      ShippingDestination:
+        type: "string"
+      GoodsDescription:
+        type: "string"
+      DocumentRequire:
+        type: "integer"
+        format: "int32"
+      Currency:
+        type: "string"
+      Amount:
+        type: "number"
+      # ApplyTime:
+      #   type: "string"
+      #   format: "date-time"
+      #在开证行产生的费用由谁承担：1买方、2卖方
+      ChargeInIssueBank:
+        type: "integer"
+        format: "int32"
+      #在开证行外产生的费用由谁承担：1买方、2卖方
+      ChargeOutIssueBank:
+        type: "integer"
+        format: "int32"
+      #单据最晚在签发多少日后提交
+      DocDelay:
+        type: "integer"
+        format: "int32"
+      # OtherRequire:
+      #   type: "string"
+      # ContractId:
+      #   type: "string"
+
+  #信用证列表项
+  LCListItem:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      LcNo:
+        type: "string"
+      ApplyName:
+        type: "string"
+      IssueBankName:
+        type: "string"
+      AdvisingBankName:
+        type: "string"
+      BeneficiaryName:
+        type: "string"
+      Amount:
+        type: "string"
+      Status:
+        type: "string"
+
+  LCFile:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      LcNo: 
+        type: "string"
+      FileName: 
+        type: "string"
+      FilePath: 
+        type: "string"
+
+  #信用证信息：草稿、正本
+  LCIssue:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      LcNo:
+        type: "string"
+      ApplyCorp:
+        $ref: "#/definitions/Corporation"
+      Beneficiary:
+        $ref: "#/definitions/Corporation"
+      #开证行
+      IssueBank:
+        $ref: "#/definitions/Bank"
+      #通知行
+      AdvisingBank:
+        $ref: "#/definitions/Bank"
+      #到期日
+      ExpiryDate:
+        type: "string"
+        format: "date-time"
+      #到期地点
+      ExpiryPlace:
+        type: "string"
+      #是否即期
+      IsAtSight:
+        type: "boolean"
+        default: false
+      AfterSight:
+        type: "integer"
+        format: "int32"
+      AllowPartialShippment:
+        type: "boolean"
+        default: false
+      AllowTransShippment:
+        type: "boolean"
+        default: false
+      LastestShipDate:
+        type: "string"
+        format: "date-time"
+      ShippingWay:
+        type: "string"
+      ShippingPlace:
+        type: "string"
+      ShippingDestination:
+        type: "string"
+      GoodsDescription:
+        type: "string"
+      DocumentRequire:
+        type: "string"
+      Currency:
+        type: "string"
+      Amount:
+        type: "number"
+      ApplyTime:
+        type: "string"
+        format: "date-time"
+      #在开证行产生的费用由谁承担：1买方、2卖方
+      ChargeInIssueBank:
+        type: "integer"
+        format: "int32"
+      #在开证行外产生的费用由谁承担：1买方、2卖方
+      ChargeOutIssueBank:
+        type: "integer"
+        format: "int32"
+      #单据最晚在签发多少日后提交
+      DocDelay:
+        type: "integer"
+        format: "int32"
+      OtherRequire:
+        type: "string"
+      ContractId:
+        type: "string"
+      #当前环节，0草稿，1正本
+      Status:
+        type: "integer"
+        format: "int32"
+
+  LCEdit:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"    
+      LcNo:
+        type: "string"
+      EditInfo:
+        type: "string"
+
+  #单据
+  LCDocument:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      LcNo:
+        type: "string"
+      FileHash:
+        type: "string"
+      DocNumber:
+        type: "string"
+      DocName:
+        type: "string"
+  #交单
+  LCDocumentsSurrender:
+    type: "object"
+    properties:
+      Amount:
+        type: "string"
+      Date:
+        type: "string"
+        format: "date-time"
+      AccountName:
+        type: "string"
+      Account:
+        type: "string"
+      AccountBank:
+        $ref: "#/definitions/Bank"
+      LCDocuments:
+        type: "array"
+        items:
+          $ref: "#/definitions/LCDocument"
+  
+  ##contribute by hanbairan
+  CertificateApply:
+    type: "object"
+    properties:
+      businessLicense:
+        type: "string"
+      companyName:
+        type: "string"
+      businessEntity:
+        type: "string"
+      contactNumber:
+        type: "string"
+      csr:
+        type: "string"
+      userId:
+        type: "string"
+#### endregion
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
+

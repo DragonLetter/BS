@@ -1,0 +1,92 @@
+{
+"B1Admin":
+{
+    "user_id": "Admin@B1.example.com",
+    "msp_id":"B1MSP",
+    "channel_id": "all",
+    "chaincode_id": "mylc",
+    "peer_url": "grpcs://39.104.64.103:8051",
+    "event_url": "grpcs://39.104.64.103:8053",
+    "orderer_url": "grpcs://39.104.175.115:7050",
+    "peer_tls_cacerts":"peerOrganizations/B1.example.com/peers/peer0.B1.example.com/tls/ca.crt",
+    "orderer_tls_cacerts":"ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt", 
+    "server_hostname": "peer0.B1.example.com",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgfMFCvZHd5FZomo6w\r\n1I2oR9o6rmYUSuMG68RAt3nub0ihRANCAAR4WkR7juBjAKYm07XJkNzRnhmTz9As\r\n7rS8SrcAxExOr1AYu4204z3iEqOlkgJAqJxGJWbShyFOWfiryJnBHBpj\r\n-----END PRIVATE KEY-----\r\n",
+    "cert":"-----BEGIN CERTIFICATE-----\r\nMIICFDCCAbqgAwIBAgIRAOa8NeHBQvO/x2kc8HPHHkMwCgYIKoZIzj0EAwIwbzEL\r\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\r\ncmFuY2lzY28xFzAVBgNVBAoTDkIxLmV4YW1wbGUuY29tMRowGAYDVQQDExFjYS5C\r\nMS5leGFtcGxlLmNvbTAeFw0xODA2MjkwNzEzNDdaFw0yODA2MjYwNzEzNDdaMFkx\r\nCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4g\r\nRnJhbmNpc2NvMR0wGwYDVQQDDBRBZG1pbkBCMS5leGFtcGxlLmNvbTBZMBMGByqG\r\nSM49AgEGCCqGSM49AwEHA0IABHhaRHuO4GMApibTtcmQ3NGeGZPP0CzutLxKtwDE\r\nTE6vUBi7jbTjPeISo6WSAkConEYlZtKHIU5Z+KvImcEcGmOjTTBLMA4GA1UdDwEB\r\n/wQEAwIHgDAMBgNVHRMBAf8EAjAAMCsGA1UdIwQkMCKAIM/0jc/xCYXYsrmdX3QM\r\nxMj88sPSpyd30a8Hho11IfGtMAoGCCqGSM49BAMCA0gAMEUCIQCMaOv0UdRZ0z7m\r\nnrQeIGSsSW1a07ZijkARTih5th/+OQIgRaWVFFBvJ0EZnz7xZxQiLruyXfUe4t9e\r\nIZzE/m4xUyI=\r\n-----END CERTIFICATE-----\r\n"
+},
+"B2Admin":
+{
+    "user_id": "Admin@B2.example.com",
+    "msp_id":"B2MSP",
+    "channel_id": "all",
+    "chaincode_id": "mylc",
+    "peer_url": "grpcs://39.104.64.103:9051",
+    "event_url": "grpcs://39.104.64.103:9053",
+    "orderer_url": "grpcs://39.104.175.115:7050",
+    "peer_tls_cacerts":"peerOrganizations/B2.example.com/peers/peer0.B2.example.com/tls/ca.crt",
+    "orderer_tls_cacerts":"ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt", 
+    "server_hostname": "peer0.B2.example.com",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgkPHBrNHq6Ta9aJZi\r\na3SJhoO0EvkhfT07MSL64N7OeOChRANCAAS1+vRU5jYfMQNgH3GtUSV+/xKs9I4P\r\npoH/enm5EBBrwJ9mBX63liv4FqRfauJxGv2lL4S4hJQ6Jw/SQeEmgtHJ\r\n-----END PRIVATE KEY-----\r\n",
+    "cert":"-----BEGIN CERTIFICATE-----\r\nMIICFDCCAbqgAwIBAgIRAMwOBDTNgjHCp5yclkh7y7cwCgYIKoZIzj0EAwIwbzEL\r\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\r\ncmFuY2lzY28xFzAVBgNVBAoTDkIyLmV4YW1wbGUuY29tMRowGAYDVQQDExFjYS5C\r\nMi5leGFtcGxlLmNvbTAeFw0xODA2MjkwNzEzNDdaFw0yODA2MjYwNzEzNDdaMFkx\r\nCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4g\r\nRnJhbmNpc2NvMR0wGwYDVQQDDBRBZG1pbkBCMi5leGFtcGxlLmNvbTBZMBMGByqG\r\nSM49AgEGCCqGSM49AwEHA0IABHShCjFqgFxvOkfpTtmJwoMCXRHzsh1LKDYVKKqh\r\nhz1dQ13G0s8VRGRGcMLuVN53nxiiZqZGmE3CEKnN+e56hYOjTTBLMA4GA1UdDwEB\r\n/wQEAwIHgDAMBgNVHRMBAf8EAjAAMCsGA1UdIwQkMCKAIDKDpeu7t3X+sA62xAWI\r\ndU7MLSkCp1sGKBsuWFEoKTN9MAoGCCqGSM49BAMCA0gAMEUCIQDZZ5Rt4VZfvs4H\r\nzuDdVT6zWnTtf03vhepjvIl4FtgHlQIgA0AfMa2I/z+Ug0n5lw4DKz1zLsh5WabH\r\n+9BaDHHSId8=\r\n-----END CERTIFICATE-----\r\n"
+},
+"B3Admin":
+{
+    "user_id": "Admin@B3.example.com",
+    "msp_id":"B3MSP",
+    "channel_id": "all",
+    "chaincode_id": "mylc",
+    "peer_url": "grpcs://39.104.64.103:10051",
+    "event_url": "grpcs://39.104.64.103:10053",
+    "orderer_url": "grpcs://39.104.175.115:7050",
+    "peer_tls_cacerts":"peerOrganizations/B3.example.com/peers/peer0.B3.example.com/tls/ca.crt",
+    "orderer_tls_cacerts":"ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt", 
+    "server_hostname": "peer0.B3.example.com",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgxwrUvstUe6k1VmMh\r\nUDSkSOxKyOQ2c54tzIGnOb9NGiuhRANCAASW/HiX/DP8XKi2ACxCIqaeB86vJTi9\r\nH6eA0EnHoSzYiFODvvve9EsWkKr9Ra21E/2NAvaP+VkgjuZz2tkRVp2J\r\n-----END PRIVATE KEY-----\r\n",
+    "cert":"-----BEGIN CERTIFICATE-----\r\nMIICEjCCAbmgAwIBAgIQBJEXyOX7mivLOqS5qOGFHzAKBggqhkjOPQQDAjBvMQsw\r\nCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy\r\nYW5jaXNjbzEXMBUGA1UEChMOQjMuZXhhbXBsZS5jb20xGjAYBgNVBAMTEWNhLkIz\r\nLmV4YW1wbGUuY29tMB4XDTE4MDYyOTA3MTM0N1oXDTI4MDYyNjA3MTM0N1owWTEL\r\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\r\ncmFuY2lzY28xHTAbBgNVBAMMFEFkbWluQEIzLmV4YW1wbGUuY29tMFkwEwYHKoZI\r\nzj0CAQYIKoZIzj0DAQcDQgAElvx4l/wz/FyotgAsQiKmngfOryU4vR+ngNBJx6Es\r\n2IhTg7773vRLFpCq/UWttRP9jQL2j/lZII7mc9rZEVadiaNNMEswDgYDVR0PAQH/\r\nBAQDAgeAMAwGA1UdEwEB/wQCMAAwKwYDVR0jBCQwIoAguvyFUEXZoCmMMa6Ccvwa\r\na+A9FvAZt8wafIH6umRPpVkwCgYIKoZIzj0EAwIDRwAwRAIgNCCSl6v2fvZDjUaB\r\nvro9KzTsgmhxkQ7chjiq+SaKv+MCIAelrOAT8efF/TSIBh1fzSK18lI6UIMMzb5T\r\nQLMUiAh8\r\n-----END CERTIFICATE-----\r\n"
+},
+"C1Admin":
+{
+    "user_id": "Admin@C1.example.com",
+    "msp_id":"C1MSP",
+    "channel_id": "all",
+    "chaincode_id": "mylc",
+    "peer_url": "grpcs://39.104.64.103:7051",
+    "event_url": "grpcs://39.104.64.103:7053",
+    "orderer_url": "grpcs://39.104.175.115:7050",
+    "peer_tls_cacerts":"peerOrganizations/C1.example.com/peers/peer0.C1.example.com/tls/ca.crt",
+    "orderer_tls_cacerts":"ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt", 
+    "server_hostname": "peer0.C1.example.com",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgsc3QdPrBIei+Rhcv\r\nvOzRwRm1VDnxgwttDff18BNpchShRANCAASMR1oo8vAm7v8QpZ9aY8Ww27KDBgdT\r\nYnz40RyoDf9H/U2ZsvXjJ298Hc4axpIG5WhGD4oxobvpWegnq2W094FG\r\n-----END PRIVATE KEY-----\r\n",
+    "cert":"-----BEGIN CERTIFICATE-----\r\nMIICEzCCAbqgAwIBAgIRAK/CzlJfAfQ9WHbYl0423dwwCgYIKoZIzj0EAwIwbzEL\r\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\r\ncmFuY2lzY28xFzAVBgNVBAoTDkMxLmV4YW1wbGUuY29tMRowGAYDVQQDExFjYS5D\r\nMS5leGFtcGxlLmNvbTAeFw0xODA2MjkwNzEzNDdaFw0yODA2MjYwNzEzNDdaMFkx\r\nCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4g\r\nRnJhbmNpc2NvMR0wGwYDVQQDDBRBZG1pbkBDMS5leGFtcGxlLmNvbTBZMBMGByqG\r\nSM49AgEGCCqGSM49AwEHA0IABDtp9jwjtCJ4uqsqpMawdg2BTeTRNlp9qEM2Dvt6\r\nrMXA/Q+nA1uBV6LSprri2JD2UC/68DqEkqzSEI6YgkdgorijTTBLMA4GA1UdDwEB\r\n/wQEAwIHgDAMBgNVHRMBAf8EAjAAMCsGA1UdIwQkMCKAIHwXMTVRSR/qrFFvT3gi\r\nxjSdX3ftq4HjwZx7LVUkoUr/MAoGCCqGSM49BAMCA0cAMEQCIHHmCk1GRbRv5/bi\r\nszaEC2ReYMibS0WW1T18DUT0EbnrAiA6Y+gQ68HNFB5v4dpUksL6LK+8850bN8Iy\r\nGVRxZPFGKA==\r\n-----END CERTIFICATE-----\r\n"
+},
+"Apachebet":
+{
+    "user_id": "Apachebet@C1.example.com",
+    "msp_id":"C1MSP",
+    "channel_id": "all",
+    "chaincode_id": "mylc",
+    "peer_url": "grpcs://39.104.64.103:7051",
+    "event_url": "grpcs://39.104.64.103:7053",
+    "orderer_url": "grpcs://39.104.175.115:7050",
+    "peer_tls_cacerts":"peerOrganizations/C1.example.com/peers/peer0.C1.example.com/tls/ca.crt",
+    "orderer_tls_cacerts":"ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt", 
+    "server_hostname": "peer0.C1.example.com",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgsyY3zF17rcf2iZyG\r\nnth0i64Shzf/4LEZKS2vyvaAnF2hRANCAARigI5NABQhU1yam+GzpPtE0UdLinK7\r\n4ADlTzv6+WnuZ2Qrp1u/ir2EnSg8450/+APhrHmrUci72C8RG4TvEVYs\r\n-----END PRIVATE KEY-----\r\n",
+    "cert":"-----BEGIN CERTIFICATE-----\r\nMIICXjCCAgSgAwIBAgIUd6k/7sLrjpYq4VMgMGcBkdN2u4EwCgYIKoZIzj0EAwIw\r\nbzELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNh\r\nbiBGcmFuY2lzY28xFzAVBgNVBAoTDkMxLmV4YW1wbGUuY29tMRowGAYDVQQDExFj\r\nYS5DMS5leGFtcGxlLmNvbTAeFw0xODA3MDEwNzQ4MDBaFw0xOTA3MDEwNzUzMDBa\r\nMFsxCzAJBgNVBAYTAkNOMRcwFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTESMBAGA1UE\r\nChMJQXBhY2hlYmV0MQ8wDQYDVQQLEwZjbGllbnQxDjAMBgNVBAMTBWFkbWluMFkw\r\nEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYoCOTQAUIVNcmpvhs6T7RNFHS4pyu+AA\r\n5U87+vlp7mdkK6dbv4q9hJ0oPOOdP/gD4ax5q1HIu9gvERuE7xFWLKOBkTCBjjAO\r\nBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU+wUSPvw8cuXq\r\nNNLFCvch8CKXpXcwKwYDVR0jBCQwIoAgfBcxNVFJH+qsUW9PeCLGNJ1fd+2rgePB\r\nnHstVSShSv8wIgYDVR0RBBswGYIXaVpocDNmN3k0aWpid2RvMXA3cGwyeFowCgYI\r\nKoZIzj0EAwIDSAAwRQIhAJasMYNFXmliuWqoLJVC3G7qD6/eNeCEk9UaV4bi7KjY\r\nAiAwBysXE9jlGDfeGW759evxM/gXKfRba78zUalZ54Jubw==\r\n-----END CERTIFICATE-----\r\n"
+},
+"DragonLedger":
+{
+    "user_id": "DragonLedger@C1.example.com",
+    "msp_id":"C1MSP",
+    "channel_id": "all",
+    "chaincode_id": "mylc",
+    "peer_url": "grpcs://39.104.64.103:7051",
+    "event_url": "grpcs://39.104.64.103:7053",
+    "orderer_url": "grpcs://39.104.175.115:7050",
+    "peer_tls_cacerts":"peerOrganizations/C1.example.com/peers/peer0.C1.example.com/tls/ca.crt",
+    "orderer_tls_cacerts":"ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt", 
+    "server_hostname": "peer0.C1.example.com",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgqjan9hfkrWbh+tqo\r\noRz3AUfGPjkWz6BlSuLodghP3FChRANCAATYIgVzVHP+lhcyS61gNtzzdTrch1LT\r\ncFfMhnFx6+IRgLLJxB3bT9/o1iei6jU79cTXJtjyaiLmtKcWrEouB16F\r\n-----END PRIVATE KEY-----\r\n",
+    "cert":"-----BEGIN CERTIFICATE-----\r\nMIICYTCCAgegAwIBAgIUM1J9lj3pXWASjtS5bscTjmjeDIwwCgYIKoZIzj0EAwIw\r\nbzELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNh\r\nbiBGcmFuY2lzY28xFzAVBgNVBAoTDkMxLmV4YW1wbGUuY29tMRowGAYDVQQDExFj\r\nYS5DMS5leGFtcGxlLmNvbTAeFw0xODA2MjkwNzMxMDBaFw0xOTA2MjkwNzM2MDBa\r\nMF4xCzAJBgNVBAYTAkNOMRcwFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTEVMBMGA1UE\r\nChMMRHJhZ29uTGVkZ2VyMQ8wDQYDVQQLEwZjbGllbnQxDjAMBgNVBAMTBWFkbWlu\r\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE2CIFc1Rz/pYXMkutYDbc83U63IdS\r\n03BXzIZxceviEYCyycQd20/f6NYnouo1O/XE1ybY8moi5rSnFqxKLgdehaOBkTCB\r\njjAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUZmTF6TmW\r\nJcxU1KVma42XhB25dJ8wKwYDVR0jBCQwIoAgfBcxNVFJH+qsUW9PeCLGNJ1fd+2r\r\ngePBnHstVSShSv8wIgYDVR0RBBswGYIXaVpocDNmN3k0aWpid2RvMXA3cGwyeFow\r\nCgYIKoZIzj0EAwIDSAAwRQIhAOO3Pihn8gpnzBvXdgrJQ2qJQM41SClbKZRmRzEU\r\nuAqpAiACRAIfR6OW/objjLoLHISr0LB+x46+nbzCa+K3Yxk9OQ==\r\n-----END CERTIFICATE-----\r\n"
+}
+}

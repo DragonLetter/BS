@@ -37,18 +37,21 @@ exports.createUser = function (req, res, next) { var args=req.swagger.params;
   var argbank = args.body.value.bank;
   if(argbank)
   {
-    models.Bank.create({
-      'name':  argbank.name,
-      'domain': argbank.domain,
-      'no': argbank.no,
-      'address': argbank.address,
-      'remark': argbank.remark
+    models.Bank.findOne({
+      'where': {
+          'domain': argbank.domain,
+      }
     }).then(function(data){
-      res.end(JSON.stringify("true"));
-    }).catch(function(e){
-      logger.info(e);
-      if(e.name.indexOf("SequelizeUniqueConstraintError") != -1){
-        res.end(JSON.stringify("registed bank"));
+      if(data == null){
+        models.Bank.create({
+          'name':  argbank.name,
+          'domain': argbank.domain,
+          'no': argbank.no,
+          'address': argbank.address,
+          'remark': argbank.remark
+        }).then(function(data){
+        }).catch(function(e){
+        });
       }
     });
   }

@@ -12,6 +12,7 @@ import TobeProcessed from "./components/tobeprocessed"
 import Letters from './components/letters.js'
 import Clients from './components/clients'
 import Settings from './components/settings'
+import Users from './components/users'
 
 import LetterDraft from './components/letter/draft'
 import LetterOriginal from './components/letter/original'
@@ -34,6 +35,7 @@ ReactDom.render(
                     <Route path="letters" component={Letters} />
                     <Route path="clients" component={Clients} />
                     <Route path="settings" component={Settings} />
+                    <Route path="users" component={Users} />
                     <Route path="draft(/:id)" component={LetterDraft} />
                     <Route path="original(/:id)" component={LetterOriginal} />
                     <Route path="advising(/:id)" component={LetterAdvising} />

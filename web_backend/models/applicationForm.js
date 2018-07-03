@@ -9,6 +9,19 @@ module.exports = function(sequelize, DataTypes) {
     benefCorp:DataTypes.STRING,
     amount:DataTypes.STRING,
     state:DataTypes.STRING,
+    GoodsInfo:DataTypes.STRING,
+    ExpiryDate:DataTypes.DATE,
+    ExpiryPlace:DataTypes.STRING,
+    IsAtSight:DataTypes.INTEGER,
+    AfterSight:DataTypes.FLOAT,
+    DocumentRequire:DataTypes.INTEGER,
+    Currency:DataTypes.STRING,
+    OtherRequire:DataTypes.INTEGER,
+    ChargeInIssueBank:DataTypes.INTEGER,
+    ChargeOutIssueBank:DataTypes.INTEGER,
+    DocDelay:DataTypes.FLOAT,
+    Contract:DataTypes.STRING,
+    Attachments:DataTypes.STRING,
   });
 
  

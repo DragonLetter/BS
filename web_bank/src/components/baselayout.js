@@ -117,7 +117,12 @@ class BaseLayout extends React.Component {
                             </Menu.Item>
                             <Menu.Item key="4">
                                 <Link to="/lcpayment/settings">
-                                    <Icon type="user" />业务设置
+                                    <Icon type="home" />业务设置
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="5">
+                                <Link to="/lcpayment/users">
+                                    <Icon type="user" />用户管理
                                 </Link>
                             </Menu.Item>
                     </Menu>

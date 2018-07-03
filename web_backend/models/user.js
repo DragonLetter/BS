@@ -10,6 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     password:DataTypes.STRING,
     phone:DataTypes.STRING,
     userStatus:DataTypes.INTEGER,
+    userType:DataTypes.INTEGER,
   });
 
  

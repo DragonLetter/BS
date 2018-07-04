@@ -2546,6 +2546,10 @@ definitions:
         type: "integer"
         format: "int32"
         description: "User Status"
+      userType:
+        type: "integer"
+        format: "int32"
+        description: "User type"
       bank:
         $ref: "#/definitions/Bank"
       corp:

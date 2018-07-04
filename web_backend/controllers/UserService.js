@@ -25,7 +25,8 @@ exports.createUser = function (req, res, next) { var args=req.swagger.params;
     'password': hashPwd,
     'phone': args.body.value.phone,
     'domain': args.body.value.domain,
-    'userStatus': args.body.value.userStatus
+    'userStatus': args.body.value.userStatus,
+    'userType': args.body.value.userType
   }).then(function(data){
     res.end(JSON.stringify("true"));
   }).catch(function(e){
@@ -120,6 +121,7 @@ exports.getUserByName = function (req, res, next) { var args=req.swagger.params;
   "lastName" : "unknown",
   "password" : "unknown",
   "userStatus" : -1,
+  "userType" : 0,
   "phone" : "unknown",
   "id" : -1,
   "email" : "unknown",
@@ -260,7 +262,8 @@ function dbUser2ViewUser(dbUser){
   "email": dbUser.email,
   "phone": dbUser.phone,
   "domain":dbUser.domain,
-  "userStatus": dbUser.userStatus}
+  "userStatus": dbUser.userStatus,
+  "userType": dbUser.userType}
 }
 
 

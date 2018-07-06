@@ -1,39 +1,13 @@
 import React from 'react'
-import { Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd'
+import { Layout, Breadcrumb, Popconfirm, Table, Icon, Form, Input, Select, Checkbox, DatePicker, Button, Modal, message } from 'antd'
 const { Header, Content, Sider } = Layout;
 import {fetch_get, fetch_post} from '../common'
 import * as CONSTANTS from '../constants'
 import '../main.css'
 import '../bank.css'
 
-const Step = Steps.Step;
-const Panel = Collapse.Panel;
-
 const FormItem = Form.Item
 const Option = Select.Option
-const RadioGroup = Radio.Group
-const CheckboxGroup = Checkbox.Group
-const { TextArea } = Input;
-
-var renderAUserType = function(params) {
-    switch(params.userType){
-        case "10":            return  <p>{ '银行超管' }</p>;
-        case "11":            return  <p>{ '银行经办' }</p>;
-        case "12":            return  <p>{ '银行复核' }</p>;
-        case "13":            return  <p>{ '银行授权' }</p>;
-        case "20":            return  <p>{ '企业超管' }</p>;
-        case "21":            return  <p>{ '企业用户' }</p>;
-        default:            return  <p>{ '普通用户' }</p>;
-    }
-}
-const optionsUT = [{
-    key: '10',   name: '银行超管'  }, {
-    key: '11',   name: '银行经办',  }, {
-    key: '12',   name: '银行复核'  }, {
-    key: '13',   name: '银行授权'  }, {
-    key: '20',   name: '企业超管'  }, {
-    key: '21',   name: '企业用户'  }, {
-    key: '0',   name: '普通用户'  }];
 
 const AddClientForm = Form.create()(
     (props) => {
@@ -46,64 +20,71 @@ const AddClientForm = Form.create()(
             labelCol: { span: 7 },
             wrapperCol: { span: 15 },
         };
+        const dateFormat = 'YYYY/MM/DD';
         return (
             <Modal
                 visible={visible}
-                title="用户信息"
-                okText="保存"
+                title="添加客户"
+                okText="确定"
                 cancelText="取消"
                 onCancel={onCancel}
                 onOk={onCreate}
             >
-                <Form>
-                    <FormItem {...formItemLayout} label="用户名称">
-                        {getFieldDecorator('username', {
-                            rules: [{ required: true, message: '请输入用户名称!' }],
-                        })(
-                            <Input placeholder="用户名称" maxLength="40" />
-                            )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="联系电话">
-                        {getFieldDecorator('phone', {
-                            rules: [{ required: true, message: '请输入联系电话!' }],
-                        })(
-                            <Input placeholder="联系电话" maxLength="40" />
-                            )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="邮箱地址">
-                        {getFieldDecorator('email', {
-                            rules: [{ required: true, message: '请输入邮箱地址!' }],
-                        })(
-                            <Input placeholder="邮箱地址" maxLength="40" />
-                            )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="所属域">
-                        {getFieldDecorator('domain', {
-                            rules: [{ required: true, message: '请输入用户所属域!' }],
-                        })(
-                            <Input placeholder="用户所属域" maxLength="40" />
-                            )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="用户类型">
-                        {getFieldDecorator('userType', {
-                            rules: [{ required: true, message: '选择用户类型!' }],
-                        })(
-                            <Select placeholder="用户类型" maxLength="40">{selectOptions}</Select>
-                            )}
-                    </FormItem>
-                </Form>
+                    <Form>
+                        <FormItem {...formItemLayout} label="用户名称">
+                            {getFieldDecorator('username', {
+                                rules: [{ required: true, message: '请输入用户名称!' }],
+                            })(
+                                <Input placeholder="用户名称" maxLength="40" />
+                                )}
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="用户密码">
+                            {getFieldDecorator('password', {
+                                rules: [{ required: true, message: '请输入用户密码!' }],
+                            })(
+                                <Input placeholder="用户登录密码" maxLength="40" />
+                                )}
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="姓">
+                            {getFieldDecorator('firstName', {
+                                rules: [{ required: true, message: '请输入用户姓!' }],
+                            })(
+                                <Input placeholder="姓" maxLength="40" />
+                                )}
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="名">
+                            {getFieldDecorator('lastName', {
+                                rules: [{ required: true, message: '请输入用户名!' }],
+                            })(
+                                <Input placeholder="名" maxLength="40" />
+                                )}
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="联系电话">
+                            {getFieldDecorator('phone', {
+                                rules: [{ required: true, message: '请输入联系电话!' }],
+                            })(
+                                <Input placeholder="联系电话" maxLength="40" />
+                                )}
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="邮箱地址">
+                            {getFieldDecorator('email', {
+                                rules: [{ required: true, message: '请输入邮箱地址!' }],
+                            })(
+                                <Input placeholder="邮箱地址" maxLength="40" />
+                                )}
+                        </FormItem>
+                        <FormItem {...formItemLayout} label="所属域">
+                            {getFieldDecorator('domain', {
+                                rules: [{ required: true, message: '请输入用户所属域!' }],
+                            })(
+                                <Input placeholder="用户所属域" maxLength="40" />
+                                )}
+                        </FormItem>
+                    </Form>
             </Modal>
         );
     }
 );
-const columns = [
-    {title: '用户名称',dataIndex: 'username',key: 'username',}, 
-    {title: '联系电话',dataIndex: 'phone',key: 'phone',}, 
-    {title: '电子邮箱',key: 'email',dataIndex: 'email',}, 
-    {title: '所属域',dataIndex: 'domain',key: 'domain',}, 
-    {title: '用户类型',key: 'userType',render:(text, record, index) => renderAUserType(record)},
-    {title: '操作', key: 'operation', render: (text, record, index) => <Button>修改</Button>
-}];
 
 class Users extends React.Component {
     constructor(props) {
@@ -116,25 +97,34 @@ class Users extends React.Component {
             display: false,
             creaeCorpVisible: false,
             users: [],
+            corps: [],
             loading: true,
         }
     }
-
-    showCreateDraftFormWData = function(params){
-        this.setState({
-            creaeCorpVisible: true,
-        });
+    renderAUserType = (type) => {
+        switch(type){
+            case 10:            return  '银行超管';
+            case 11:            return  '银行经办';
+            case 12:            return  '银行复核';
+            case 13:            return  '银行授权';
+            case 20:            return  '企业超管';
+            case 21:            return  '企业用户';
+            default:            return  '普通用户';
+        }
     }
-    
     handleCorpsInfo = (data) => {
         const users = [];
         for (let i = 0; i < data.length; i++) {
             users.push({
                 key: i,
                 username: data[i].username,
+                firstName: data[i].firstName,
+                lastName: data[i].lastName,
                 phone: data[i].phone,
                 domain: data[i].domain,
                 email: data[i].email,
+                userStatus: data[i].userStatus,
+                userType: this.renderAUserType(data[i].userType),
             })
         }
 
@@ -167,26 +157,9 @@ class Users extends React.Component {
             if (err) {
                 return;
             }
-            values.password = "123456";
-            fetch_get("/api/user/selectOptions",{
-                method: "POST",
-                body: values,
-            })
-            .then((res) => {
-                if(res.status >= 200 && res.status < 300){
-                    res.json().then((data) => {
-                        form.resetFields();
-                        this.setState({
-                            loading: false,
-                        });
+                    this.setState({
+                        creaeCorpVisible: false,
                     });
-                }
-            });
-        });
-
-
-        this.setState({
-            creaeCorpVisible: false,
         });
     }
 
@@ -196,16 +169,28 @@ class Users extends React.Component {
         });
     }
 
-    showCreateDraftForm = (record) => {
-        this.setState({
-            creaeCorpVisible: true,
-        });
+    showCreateDraftForm = () => {
+                this.setState({
+                    creaeCorpVisible: true,
+                });
     }
 
     render() {
-        const options = optionsUT.map(opt => <Option key={opt.key}>{opt.name}</Option>);
+        const options = this.state.corps.map(corp => <Option key={corp.id}>{corp.name}</Option>);
+        const columns = [
+            {title: '用户名称',dataIndex: 'username',key: 'username',}, 
+            {title: '姓名',key: 'name',render:(text,record,index)=> <p>{record.firstName+record.lastName}</p>}, 
+            {title: '联系电话',dataIndex: 'phone',key: 'phone',}, 
+            {title: '电子邮箱',key: 'email',dataIndex: 'email',}, 
+            {title: '所属域',dataIndex: 'domain',key: 'domain',}, 
+            {title: '用户类型',dataIndex: 'userType',key: 'userType',},
+            {title: '操作', key: 'operation', render:(text, record, index) => <span><a>删除</a> <a>|</a> <a >修改</a></span>,}
+            ];
         return (
-            <Layout title="用户列表">
+            <Layout style={{ padding: '0 1px 1px' }}>
+                <Breadcrumb style={{ padding: '12px 16px', height:'42px', background:'#F3F1EF' }}>
+                    <Breadcrumb.Item>用户管理</Breadcrumb.Item>
+                </Breadcrumb>
                 <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
                     <div>
                         <div style={{ marginBottom: 14, height: 30 }}>
@@ -219,7 +204,7 @@ class Users extends React.Component {
                     visible={this.state.creaeCorpVisible}
                     onCancel={this.closeForm}
                     onCreate={this.handleCreate}
-                    selectOptions ={options}
+                    selectOptions={options}
                 />
             </Layout>
         )

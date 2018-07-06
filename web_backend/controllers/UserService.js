@@ -57,6 +57,76 @@ exports.createUser = function (req, res, next) { var args=req.swagger.params;
     });
   }
 }
+exports.umCreate = function (req, res, next) { var args=req.swagger.params;
+  /**
+   * Create user
+   * This can only be done by the logged in user.
+   *
+   * body User Created user object by manager
+   * no response value expected for this operation
+   **/
+
+   var hashPwd=keyHelper.hashPassword(args.body.value.username,args.body.value.password);
+  models.User.create({
+    'username': args.body.value.username,
+    'firstName': args.body.value.firstName,
+    'lastName': args.body.value.lastName,
+    'email': args.body.value.email,
+    'password': hashPwd,
+    'phone': args.body.value.phone,
+    'domain': args.body.value.domain,
+    'userStatus': args.body.value.userStatus,
+    'userType': args.body.value.userType
+  }).then(function(data){
+    res.end(JSON.stringify("true"));
+  }).catch(function(e){
+    logger.info(e);
+    if(e.name.indexOf("SequelizeUniqueConstraintError") != -1){
+      res.end(JSON.stringify("registed username"));
+    }
+  });
+}
+exports.umUpdate = function (req, res, next) { var args=req.swagger.params;
+  /**
+   * Updated user
+   * This can only be done by the logged in user.
+   *
+   * username String name that need to be updated
+   * body User Updated user object
+   * no response value expected for this operation
+   **/
+  models.User.update(args.body.value,
+    {
+      'where': {'username': args.username.value}
+    }
+  ).then(function(data){
+    console.log(data);
+    if(data[0] == 0){
+      console.log('unknown user');
+      res.end(JSON.stringify("unknown user"));
+    }else if(data[0] == 1){
+      console.log('true');
+      res.end(JSON.stringify("true"));
+    }else{
+      console.log('false');
+      res.end(JSON.stringify("false"));
+    }
+  }).catch(function(e){
+    console.log(e);
+  });
+}
+exports.getUMUsers = function (req, res, next) { var args=req.swagger.params;
+  models.User.findAll().then(function(data){
+    var result=[];
+    for(var i=0;i<data.length;i++){
+      var user=dbUser2ViewUser(data[i]);
+      result.push(user);
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
+  });
+}
 
 exports.createUsersWithArrayInput = function (req, res, next) { var args=req.swagger.params;
   /**

@@ -12,6 +12,7 @@ info:
 
 #### ------- route config region --------
 host: "39.104.175.115:8080"
+#host: "106.75.11.72:8080"
 basePath: "/api"
 #### endregion
 
@@ -1983,6 +1984,74 @@ paths:
           schema:
             $ref: "#/definitions/User" 
       x-swagger-router-controller: "User" 
+  /user/umcreate:
+    post:
+      tags:
+      - "User"
+      summary: "create user by manager"
+      description: ""
+      operationId: "umCreate"
+      produces:      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user by manager"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "User"
+  /user/umupdate/{username}:
+    put:
+      tags:
+      - "User"
+      summary: "update user by manager"
+      description: ""
+      operationId: "umUpdate"
+      produces:      
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "User"
+  /user/umusers/{domain}:
+    get:
+      tags:
+      - "User"
+      summary: "Get all user list"
+      description: "获得所有用户列表"
+      operationId: "getUMUsers"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "domain"
+        in: "path"
+        description: "query the users by domain"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"        
+      x-swagger-router-controller: "User"
   /user/login:
     post:
       tags:

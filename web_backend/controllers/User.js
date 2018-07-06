@@ -7,6 +7,15 @@ var User = require('./UserService');
 module.exports.createUser = function createUser (req, res, next) {
   User.createUser(req, res, next);
 };
+module.exports.umCreate = function umCreate (req, res, next) {
+  User.umCreate(req, res, next);
+};
+module.exports.umUpdate = function umUpdate (req, res, next) {
+  User.umUpdate(req, res, next);
+};
+module.exports.getUMUsers = function getUMUsers (req, res, next) {
+  User.getUMUsers(req, res, next);
+};
 
 module.exports.createUsersWithArrayInput = function createUsersWithArrayInput (req, res, next) {
   User.createUsersWithArrayInput(req, res, next);

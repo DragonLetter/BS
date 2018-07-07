@@ -13,6 +13,10 @@ module.exports.umCreate = function umCreate (req, res, next) {
 module.exports.umUpdate = function umUpdate (req, res, next) {
   User.umUpdate(req, res, next);
 };
+module.exports.umDelete = function umDelete (req, res, next) {
+  User.umDelete(req, res, next);
+};
+
 module.exports.getUMUsers = function getUMUsers (req, res, next) {
   User.getUMUsers(req, res, next);
 };

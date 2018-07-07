@@ -97,7 +97,7 @@ exports.umUpdate = function (req, res, next) { var args=req.swagger.params;
    **/
   models.User.update(args.body.value,
     {
-      'where': {'username': args.username.value}
+      where: {username: args.key.value}
     }
   ).then(function(data){
     console.log(data);
@@ -115,8 +115,35 @@ exports.umUpdate = function (req, res, next) { var args=req.swagger.params;
     console.log(e);
   });
 }
+exports.umDelete = function (req, res, next) { var args=req.swagger.params;
+  /**
+   * delete user
+   * This can only be done by the logged in user.
+   *
+   * username String name that need to be updated
+   * body User Updated user object
+   * no response value expected for this operation
+   **/
+  models.User.destroy({
+    where: {username: args.key.value}
+  }).then(function(data){
+    if(data == 0){
+      console.log('unknown user');
+      res.end(JSON.stringify("unknown user"));
+    }else if(data >= 1){
+      console.log('delete user ok');
+      res.end(JSON.stringify("true"));
+    }else{
+      console.log('false');
+      res.end(JSON.stringify("false"));
+    }
+  });
+}
+
 exports.getUMUsers = function (req, res, next) { var args=req.swagger.params;
-  models.User.findAll().then(function(data){
+  models.User.findAll({
+    where:{domain: args.key.value}
+  }).then(function(data){
     var result=[];
     for(var i=0;i<data.length;i++){
       var user=dbUser2ViewUser(data[i]);

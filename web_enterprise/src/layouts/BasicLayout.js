@@ -80,6 +80,7 @@ class BasicLayout extends React.PureComponent {
                 });
                 sessionStorage.setItem("userId", data.corp.id);
                 sessionStorage.setItem("user", data.username);
+                sessionStorage.setItem("domain", data.domain);
                 sessionStorage.setItem("corp", data.corp.name);
             });
         }

@@ -14,6 +14,7 @@ class BaseLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            itemum:false,
             current: '',
             username: '',
             notice:'',
@@ -33,10 +34,16 @@ class BaseLayout extends React.Component {
             if (res.status >= 200 && res.status < 300) {
                 res.json().then((data) => {
                     sessionStorage.setItem("username", data.username);
+                    sessionStorage.setItem("domain", data.domain);
+                    sessionStorage.setItem("userType", data.userType);
                     sessionStorage.setItem("bankname", data.bank.name);
                     sessionStorage.setItem("bankno", data.bank.no);
                     sessionStorage.setItem("bankaddr", data.bank.address);
                     sessionStorage.setItem("bankemail", data.bank.email);
+                    if( data.userType == 10 ) {
+                        this.setstate({itemum:true});
+                    }else
+                        this.setstate({itemum:false});
             });
         }
         if(res.status === 401){
@@ -120,7 +127,7 @@ class BaseLayout extends React.Component {
                                     <Icon type="home" />业务设置
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="5">
+                            <Menu.Item key="5" display={this.state.itemum}>
                                 <Link to="/lcpayment/users">
                                     <Icon type="user" />用户管理
                                 </Link>

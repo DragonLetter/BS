@@ -1984,7 +1984,7 @@ paths:
           schema:
             $ref: "#/definitions/User" 
       x-swagger-router-controller: "User" 
-  /user/umcreate:
+  /user/um/:
     post:
       tags:
       - "User"
@@ -2004,32 +2004,7 @@ paths:
         default:
           description: "successful operation"
       x-swagger-router-controller: "User"
-  /user/umupdate/{username}:
-    put:
-      tags:
-      - "User"
-      summary: "update user by manager"
-      description: ""
-      operationId: "umUpdate"
-      produces:      
-      - "application/json"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-      x-swagger-router-controller: "User"
-  /user/umusers/{domain}:
+  /user/um/{key}:
     get:
       tags:
       - "User"
@@ -2039,9 +2014,9 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "domain"
+      - name: "key"
         in: "path"
-        description: "query the users by domain"
+        description: "(key => domain)query the users by domain"
         required: true
         type: "string"
       responses:
@@ -2052,6 +2027,54 @@ paths:
             items:
               $ref: "#/definitions/User"        
       x-swagger-router-controller: "User"
+  /user/nm/update/{key}:
+    post:
+      tags:
+      - "User"
+      summary: "Updated user"
+      description: "This can be done by the manager."
+      operationId: "umUpdate"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "key"
+        in: "path"
+        description: "(key => username)name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "Invalid user supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+  /user/nm/delete/{key}:
+    post:
+      tags:
+      - "User"
+      summary: "Delete user"
+      description: "This can be done by the manager."
+      operationId: "umDelete"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "key"
+        in: "path"
+        description: "(key => username)The name that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"    
   /user/login:
     post:
       tags:

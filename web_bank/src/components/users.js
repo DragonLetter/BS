@@ -9,44 +9,56 @@ import '../bank.css'
 const FormItem = Form.Item
 const Option = Select.Option
 
+const optionUT = [
+    {key:0, value:'普通用户'},
+    {key:11, value:'银行经办'},
+    {key:12, value:'银行复核'},
+    {key:13, value:'银行授权'},
+    {key:10, value:'银行超管'},
+    {key:21, value:'企业用户'},
+    {key:20, value:'企业超管'},
+];
+
 const AddClientForm = Form.create()(
     (props) => {
         const options = [
             { label: '', value: '' },
         ];
-        const { visible, onCancel, onCreate, data, form, selectOptions } = props;
+        const { visible, onCancel, onCreate, form, selectOptions, curUser } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = {
             labelCol: { span: 7 },
             wrapperCol: { span: 15 },
         };
-        const dateFormat = 'YYYY/MM/DD';
         return (
             <Modal
                 visible={visible}
-                title="添加客户"
-                okText="确定"
+                title="用户信息"
+                okText="保存"
                 cancelText="取消"
                 onCancel={onCancel}
                 onOk={onCreate}
+                curUser={curUser}
             >
                     <Form>
                         <FormItem {...formItemLayout} label="用户名称">
                             {getFieldDecorator('username', {
+                                initialValue: curUser? curUser.username:"",
                                 rules: [{ required: true, message: '请输入用户名称!' }],
                             })(
-                                <Input placeholder="用户名称" maxLength="40" />
+                                <Input placeholder="用户名称" maxLength="40" disabled={curUser?true:false}/>
                                 )}
                         </FormItem>
                         <FormItem {...formItemLayout} label="用户密码">
                             {getFieldDecorator('password', {
                                 rules: [{ required: true, message: '请输入用户密码!' }],
                             })(
-                                <Input placeholder="用户登录密码" maxLength="40" />
+                                <Input placeholder="用户登录密码" maxLength="40"  disabled={curUser?true:false}/>
                                 )}
                         </FormItem>
                         <FormItem {...formItemLayout} label="姓">
                             {getFieldDecorator('firstName', {
+                                initialValue: curUser? curUser.firstName:"",
                                 rules: [{ required: true, message: '请输入用户姓!' }],
                             })(
                                 <Input placeholder="姓" maxLength="40" />
@@ -54,13 +66,23 @@ const AddClientForm = Form.create()(
                         </FormItem>
                         <FormItem {...formItemLayout} label="名">
                             {getFieldDecorator('lastName', {
+                                initialValue: curUser? curUser.lastName:"",
                                 rules: [{ required: true, message: '请输入用户名!' }],
                             })(
                                 <Input placeholder="名" maxLength="40" />
                                 )}
                         </FormItem>
+                        <FormItem {...formItemLayout} label="用户角色">
+                            {getFieldDecorator('userType', {
+                                initialValue: curUser? curUser.userType:"",
+                                rules: [{ required: true, message: '请选择用户角色!' }],
+                            })(
+                                <Select placeholder="用户角色" maxLength="40">{selectOptions}</Select>
+                                )}
+                        </FormItem>
                         <FormItem {...formItemLayout} label="联系电话">
                             {getFieldDecorator('phone', {
+                                initialValue: curUser? curUser.phone:"",
                                 rules: [{ required: true, message: '请输入联系电话!' }],
                             })(
                                 <Input placeholder="联系电话" maxLength="40" />
@@ -68,6 +90,7 @@ const AddClientForm = Form.create()(
                         </FormItem>
                         <FormItem {...formItemLayout} label="邮箱地址">
                             {getFieldDecorator('email', {
+                                initialValue: curUser? curUser.email:"",
                                 rules: [{ required: true, message: '请输入邮箱地址!' }],
                             })(
                                 <Input placeholder="邮箱地址" maxLength="40" />
@@ -75,6 +98,7 @@ const AddClientForm = Form.create()(
                         </FormItem>
                         <FormItem {...formItemLayout} label="所属域">
                             {getFieldDecorator('domain', {
+                                initialValue: curUser? curUser.domain:"",
                                 rules: [{ required: true, message: '请输入用户所属域!' }],
                             })(
                                 <Input placeholder="用户所属域" maxLength="40" />
@@ -85,7 +109,6 @@ const AddClientForm = Form.create()(
         );
     }
 );
-
 class Users extends React.Component {
     constructor(props) {
         super(props);
@@ -97,7 +120,7 @@ class Users extends React.Component {
             display: false,
             creaeCorpVisible: false,
             users: [],
-            corps: [],
+            user: Object,
             loading: true,
         }
     }
@@ -112,7 +135,7 @@ class Users extends React.Component {
             default:            return  '普通用户';
         }
     }
-    handleCorpsInfo = (data) => {
+    handleUsersInfo = (data) => {
         const users = [];
         for (let i = 0; i < data.length; i++) {
             users.push({
@@ -134,11 +157,12 @@ class Users extends React.Component {
     }
 
     componentDidMount = () => {
-        fetch_get("/api/user/")
+        message.error(sessionStorage.getItem("domain"));
+        fetch_get("/api/user/um/"+sessionStorage.getItem("domain"))
         .then((res) => {
             if(res.status >= 200 && res.status < 300){
                 res.json().then((data) => {
-                    this.handleCorpsInfo(data);
+                    this.handleUsersInfo(data);
                     this.setState({
                         loading: false,
                     });
@@ -157,9 +181,17 @@ class Users extends React.Component {
             if (err) {
                 return;
             }
-                    this.setState({
-                        creaeCorpVisible: false,
+            values.userType = parseInt(values.userType);
+            fetch_post("/api/user/um/",values)
+            .then((res) => {
+                if(res.status >= 200 && res.status < 300){
+                    res.json().then((data) => {
+                        this.setState({
+                            creaeCorpVisible: false,
+                        });
                     });
+                }
+            });
         });
     }
 
@@ -170,21 +202,39 @@ class Users extends React.Component {
     }
 
     showCreateDraftForm = () => {
-                this.setState({
-                    creaeCorpVisible: true,
+        this.setState({
+            creaeCorpVisible: true,
+        });
+    }
+    editUser = (key) => {
+        const users = this.state.users;
+        const curUser = users.find(item=>item.username==key);
+        this.setState({
+            user: curUser,
+            creaeCorpVisible: true,
+        })
+        message.error("editUser.editUser");
+    }
+    deleteUser = (key) => {
+        fetch_post("/api/user/nm/delete/"+key)
+        .then((res) => {
+            if(res.status >= 200 && res.status < 300){
+                res.json().then((data) => {
                 });
+            }
+        });
     }
 
     render() {
-        const options = this.state.corps.map(corp => <Option key={corp.id}>{corp.name}</Option>);
+        const optionut = optionUT.map(opt => <Option key={opt.key}>{opt.value}</Option>);
         const columns = [
             {title: '用户名称',dataIndex: 'username',key: 'username',}, 
-            {title: '姓名',key: 'name',render:(text,record,index)=> <p>{record.firstName+record.lastName}</p>}, 
+            {title: '姓名',key: 'firstName',render:(text,record,index)=> <p>{record.firstName+record.lastName}</p>}, 
             {title: '联系电话',dataIndex: 'phone',key: 'phone',}, 
             {title: '电子邮箱',key: 'email',dataIndex: 'email',}, 
             {title: '所属域',dataIndex: 'domain',key: 'domain',}, 
             {title: '用户类型',dataIndex: 'userType',key: 'userType',},
-            {title: '操作', key: 'operation', render:(text, record, index) => <span><a>删除</a> <a>|</a> <a >修改</a></span>,}
+            {title: '操作', key: 'operation', render:(text, record, index) => <span><Popconfirm title="Sure to delete?" onConfirm={() => this.deleteUser(record.username)}><a>删除</a></Popconfirm> <a>|</a> <a onClick={() => this.editUser(record.username)}>修改</a></span>,}
             ];
         return (
             <Layout style={{ padding: '0 1px 1px' }}>
@@ -204,7 +254,8 @@ class Users extends React.Component {
                     visible={this.state.creaeCorpVisible}
                     onCancel={this.closeForm}
                     onCreate={this.handleCreate}
-                    selectOptions={options}
+                    selectOptions={optionut}
+                    curUser={this.state.user}
                 />
             </Layout>
         )

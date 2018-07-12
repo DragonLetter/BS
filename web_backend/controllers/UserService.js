@@ -19,14 +19,14 @@ exports.createUser = function (req, res, next) { var args=req.swagger.params;
    var hashPwd=keyHelper.hashPassword(args.body.value.username,args.body.value.password);
   models.User.create({
     'username': args.body.value.username,
-    'firstName': args.body.value.firstName,
-    'lastName': args.body.value.lastName,
+    'contact': args.body.value.contact,
     'email': args.body.value.email,
     'password': hashPwd,
     'phone': args.body.value.phone,
     'domain': args.body.value.domain,
     'userStatus': args.body.value.userStatus,
-    'userType': args.body.value.userType
+    'userType': args.body.value.userType,
+    'causername': args.body.value.username
   }).then(function(data){
     res.end(JSON.stringify("true"));
   }).catch(function(e){
@@ -69,14 +69,14 @@ exports.umCreate = function (req, res, next) { var args=req.swagger.params;
    var hashPwd=keyHelper.hashPassword(args.body.value.username,args.body.value.password);
   models.User.create({
     'username': args.body.value.username,
-    'firstName': args.body.value.firstName,
-    'lastName': args.body.value.lastName,
+    'contact': args.body.value.contact,
     'email': args.body.value.email,
     'password': hashPwd,
     'phone': args.body.value.phone,
     'domain': args.body.value.domain,
     'userStatus': args.body.value.userStatus,
-    'userType': args.body.value.userType
+    'userType': args.body.value.userType,
+    'causername': args.body.value.causername
   }).then(function(data){
     res.end(JSON.stringify("true"));
   }).catch(function(e){
@@ -95,9 +95,11 @@ exports.umUpdate = function (req, res, next) { var args=req.swagger.params;
    * body User Updated user object
    * no response value expected for this operation
    **/
+  if(args.key.value.length>2)
+    args.body.value.password=keyHelper.hashPassword(args.body.value.username,args.key.value);
   models.User.update(args.body.value,
     {
-      where: {username: args.key.value}
+      where: {username: args.body.value.username}
     }
   ).then(function(data){
     console.log(data);
@@ -214,8 +216,7 @@ exports.getUserByName = function (req, res, next) { var args=req.swagger.params;
    **/
   var examples = {};
   examples['application/json'] = {
-  "firstName" : "unknown",
-  "lastName" : "unknown",
+  "contact" : "unknown",
   "password" : "unknown",
   "userStatus" : -1,
   "userType" : 0,
@@ -281,7 +282,7 @@ exports.loginUser = function(req, res, next) {
           req.session.user =data.dataValues;//将当前用户基本信息放入Session中。
           req.session.username=data.dataValues.username;
 
-          var option=options[data.dataValues.username];  
+          var option=options[data.dataValues.causername];  
           req.session.key = option.privateKey;// "privateKey": "-----BEGIN PRIVATE KEY-----\r\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgfMFCvZHd5FZomo6w\r\n1I2oR9o6rmYUSuMG68RAt3nub0ihRANCAAR4WkR7juBjAKYm07XJkNzRnhmTz9As\r\n7rS8SrcAxExOr1AYu4204z3iEqOlkgJAqJxGJWbShyFOWfiryJnBHBpj\r\n-----END PRIVATE KEY-----\r\n";
           req.session.cert= option.cert;// "cert":"-----BEGIN CERTIFICATE-----\r\nMIICFDCCAbqgAwIBAgIRAOa8NeHBQvO/x2kc8HPHHkMwCgYIKoZIzj0EAwIwbzEL\r\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\r\ncmFuY2lzY28xFzAVBgNVBAoTDkIxLmV4YW1wbGUuY29tMRowGAYDVQQDExFjYS5C\r\nMS5leGFtcGxlLmNvbTAeFw0xODA2MjkwNzEzNDdaFw0yODA2MjYwNzEzNDdaMFkx\r\nCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4g\r\nRnJhbmNpc2NvMR0wGwYDVQQDDBRBZG1pbkBCMS5leGFtcGxlLmNvbTBZMBMGByqG\r\nSM49AgEGCCqGSM49AwEHA0IABHhaRHuO4GMApibTtcmQ3NGeGZPP0CzutLxKtwDE\r\nTE6vUBi7jbTjPeISo6WSAkConEYlZtKHIU5Z+KvImcEcGmOjTTBLMA4GA1UdDwEB\r\n/wQEAwIHgDAMBgNVHRMBAf8EAjAAMCsGA1UdIwQkMCKAIM/0jc/xCYXYsrmdX3QM\r\nxMj88sPSpyd30a8Hho11IfGtMAoGCCqGSM49BAMCA0gAMEUCIQCMaOv0UdRZ0z7m\r\nnrQeIGSsSW1a07ZijkARTih5th/+OQIgRaWVFFBvJ0EZnz7xZxQiLruyXfUe4t9e\r\nIZzE/m4xUyI=\r\n-----END CERTIFICATE-----\r\n";
         
@@ -354,13 +355,13 @@ function dbUser2ViewUser(dbUser){
   return {
     "id": dbUser.id,
   "username": dbUser.username,
-  "firstName": dbUser.firstName,
-  "lastName": dbUser.lastName,
+  "contact": dbUser.contact,
   "email": dbUser.email,
   "phone": dbUser.phone,
   "domain":dbUser.domain,
   "userStatus": dbUser.userStatus,
-  "userType": dbUser.userType}
+  "userType": dbUser.userType,
+  "causername": dbUser.causername}
 }
 
 

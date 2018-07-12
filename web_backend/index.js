@@ -18,7 +18,8 @@ app.use(compression());
 app.use(cookieParser());
 app.use(session({ secret: 'Plume@Fabric', resave: true, saveUninitialized: true }));
 app.all('*', function(req, res, next) {  
-    if( req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp ){
+//    if( req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp )
+    {
         res.header("Access-Control-Allow-Origin", req.headers.origin);  
         res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");  
         res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  

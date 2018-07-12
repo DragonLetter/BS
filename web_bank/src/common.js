@@ -22,16 +22,9 @@ export function fetch_post(url, values){
         body: JSON.stringify(values),
     }).then((response) => checkStatus(response));
 }
-export function fetch_delete(url){
-    return fetch(serverIP + url, {
-        method: "DELETE",
-        mode: "cors",
-        credentials: "include",
-    }).then((response) => checkStatus(response));
-}
-export function fetch_put(url, values){
-    return fetch(serverIP + url, {
-        method: "PUT",
+export function fetch_ca_post(url, values){
+    return fetch(serverCA + url, {
+        method: "POST",
         mode: "cors",
         credentials: "include",
         headers: {
@@ -40,7 +33,6 @@ export function fetch_put(url, values){
         body: JSON.stringify(values),
     }).then((response) => checkStatus(response));
 }
-
 
 function checkStatus(response){
     if (response.status >= 200 && response.status < 300) {

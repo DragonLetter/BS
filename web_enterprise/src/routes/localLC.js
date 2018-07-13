@@ -381,7 +381,7 @@ const SecondStepForm = Form.create()(
 
         // const contractFileUploadOptions = {
         //     name: 'file',
-        //     action: 'http://localhost:8080/api/Document/Upload',
+        //     action: 'http://39.104.175.115:8080/api/Document/Upload',
         //     withCredentials: true,
         //     onChange(info) {
         //         if (info.file.status !== 'uploading') {
@@ -406,7 +406,7 @@ const SecondStepForm = Form.create()(
         const documentFileUploadOptions = getFileUploadOptions(onAttachmentChange);
         // const documentFileUploadOptions = {
         //     name: 'file',
-        //     action: 'http://localhost:8080/api/Document/Upload',
+        //     action: 'http://39.104.175.115:8080/api/Document/Upload',
         //     onChange(info) {
         //         if (info.file.status !== 'uploading') {
         //             console.log(info.file, info.fileList);
@@ -682,6 +682,7 @@ class LocalLC extends React.Component {
                         secondStepFromVisible: true,
                         loading: false,
                     });
+
                 });
         })
     }

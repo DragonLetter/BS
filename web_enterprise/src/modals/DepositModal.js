@@ -25,7 +25,7 @@ const DepositModal = Form.create()((props) => {
         goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
         contract = applicationForm.Contract ? applicationForm.Contract : [],
         deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
-        title = "信用证草稿确认——" + record.lcNo;
+        title = "缴纳保证金——" + record.lcNo;
 
     function onFileChange(info){
         depositDoc.FileName = info.file.name;

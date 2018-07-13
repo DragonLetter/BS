@@ -1,15 +1,19 @@
-var webpack = require('webpack')
+var webpack = require('webpack');
+var UglifyJsPlugin=require('uglifyjs-webpack-plugin');
 //var server = new webpackDevServer(compiler,{
 //disableHostCheck: true
 //})
+const path = require('path');
 module.exports = {
+    mode: "development",
     entry: {
         main: './src/index.js'
         //vendors: ['react','jquery']
     },
     output: {
-        path: './public',
-        publicPath: 'public/',
+       // path: './public',
+        //publicPath: 'public/',
+        path: path.resolve(__dirname, 'public'),
         filename: 'index.js'
     },
 
@@ -20,7 +24,8 @@ module.exports = {
    },
 
     module: {
-        loaders: [
+        //loaders: [
+        rules: [
             {
                 // edit this for additional asset file types
                 test: /\.(png|jpg|gif)$/,
@@ -31,11 +36,19 @@ module.exports = {
                 // excluding some local linked packages.
                 // for normal use cases only node_modules is needed.
                 exclude: /node_modules|vue\/dist|vue-router\/|vue-loader\/|vue-hot-reload-api\//,
-                loader: 'babel'
+                loader: 'babel-loader',
+                query: {
+                    presets: ['env', 'es2015', 'react', 'stage-2'],
+                    plugins: [ 'transform-decorators-legacy' ]
+                    //presets:['es2015']
+                }
             },
             {   test: /\.css$/,
                 loader: 'style-loader!css-loader?sourceMap'
             },
+            {
+                test: /\.less$/, loader: 'style-loader!css-loader!less-loader'
+             },
             {
                 test: /\.scss$/,
                 loader: "style!css!sass?sourceMap"
@@ -48,22 +61,33 @@ module.exports = {
     },
     // example: if you wish to apply custom babel options
     // instead of using vue-loader's default:
-    babel: {
-        presets: ['es2015', 'stage-0', 'react'],
-        plugins: ['transform-runtime', ["antd",  { "style": "css" }]]
-    },
     plugins: [
-        new webpack.ProvidePlugin({
+        new webpack.LoaderOptionsPlugin({
+            options: {
+                babel: {
+                    presets: ['es2015', 'stage-0', 'react'],
+                    plugins: ['transform-runtime', ["antd",  { "style": "css" }]],
+                    //plugins: ["transform-decorators-legacy","transform-class-properties"]
+                }
+            }
+        }),
+         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
             "window.jQuery": "jquery"
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            comments: false,
-            compress: {
-                warnings: false
-            }
         })
-        // new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js', Infinity) // 这是第三方库打包生成的文件
-    ]
+
+      
+    ],
+
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    compress: false
+                }
+            })
+        ]
+    },
+
 }

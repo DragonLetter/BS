@@ -441,7 +441,8 @@ class TodoList extends React.Component{
             case "受益人交单":
                 return ([<a  onClick={() => this.showDetail(item)}>查看详情</a>, <a  onClick={() => this.handleTransaction(item)}>立即处理</a>]);
             // case "银行确认":
-            case "银行发证":
+            //case "银行发证":
+                 //return ([<a  onClick={() => this.showDetail(item)}>查看详情</a>]);
             case "通知行收到信用证通知":
             case "申请人修改信用证":
             case "发证行承兑或拒付":
@@ -465,7 +466,8 @@ class TodoList extends React.Component{
                         rowKey="id"
                         grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
                         dataSource={list.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...list]}
-                        renderItem={item => (item.title ? (
+                        renderItem={
+                            item => (item.title ? (
                             <List.Item key={item.id}>
                                 <Card title={item.title} actions={this.determineActions(item)}>
                                     <span style={{ display: "block" }}>申请人：{item.applicant}</span>

@@ -100,7 +100,24 @@ exports.addApplicationForm = function (req, res, next) { var args=req.swagger.pa
       };
       fabric.invoke(req,"saveLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
         if (!err) {
-          getApplicationFormByCorp(req,corpNo, res, next);
+          models.Afstate.findOne({
+            'where': {
+                'AFNo': fabricArg1,
+            }
+          }).then(function(data){
+            if(data == null){
+              console.log("query afstates:%s\n",fabricArg1);
+              models.Afstate.create({
+                'AFNo': fabricArg1,
+                'step': 'BankConfirmApplyFormStep',
+                'state': '11',
+              }).then(function(data){
+                console.log("insert afstates");
+              }).catch(function(e){
+              });
+            }
+          });
+                submitApplicationFormByCorp(req, corpNo, fabricArg1, res, next);
         }
         else {
           console.log(err);
@@ -108,6 +125,57 @@ exports.addApplicationForm = function (req, res, next) { var args=req.swagger.pa
       });
     });
 };
+
+exports.updateAFState = function (req, res, next){
+  var args=req.swagger.params;
+  models.Afstate.update(args.body.value,
+    {
+      'where': {'AFNo': args.AFNo.value}
+    }
+  ).then(function(data){
+    console.log(data);
+    if(data[0] == 0){
+      console.log('unknown applicationform');
+      res.end(JSON.stringify("unknown applicationform"));
+    }else if(data[0] == 1){
+      console.log('true');
+      res.end(JSON.stringify("true"));
+    }else{
+      console.log('false');
+      res.end(JSON.stringify("false"));
+    }
+  }).catch(function(e){
+    console.log(e);
+  })
+};
+exports.getAFState = function (req, res, next){
+  var args=req.swagger.params;
+  models.Afstate.findOne({
+    'where': {
+        'AFNo': args.AFNo.value,
+    }
+  }).then(function(data){
+    if( data ){
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(data.dataValues || {}, null, 2));
+    }
+  });
+};
+
+function submitApplicationFormByCorp(req, corpNo, key, res, next){
+  var id = key;
+   // console.log("----No:%s-----\n",id);
+    fabric.invoke(req,"submitLCApplication", [id], function (err, resp) {
+      if (!err) {
+        //console.log("----corpId:%s-----\n",corpNo);
+        var corpId = corpNo;
+        getApplicationFormByCorp(req, corpId, res, next);
+      }
+      else {
+        console.log(err);
+      }
+    });
+}
 
 exports.addFile = function (req, res, next) { var args=req.swagger.params;
   /**

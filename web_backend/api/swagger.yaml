@@ -1417,6 +1417,57 @@ paths:
         405:
           description: "Validation exception"
       x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/afstate/{AFNo}:
+    get:
+      tags:
+      - "ApplicationForm"
+      summary: "Get the state of this ApplicationForm "
+      description: "Returns ApplicationForm state"
+      operationId: "getAFState"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "AFNo"
+        in: "path"
+        description: "the No of the applicationform"
+        required: true
+        type: "string"
+
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Afstate"
+      x-swagger-router-controller: "ApplicationForm"
+    post:
+      tags:
+      - "ApplicationForm"
+      summary: "更新申请表状态"
+      description: ""
+      operationId: "updateAFState"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "AFNo"
+        in: "path"
+        description: "the No of the applicationform"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "ApplicationForm object that needs to be update to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/Afstate"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "ApplicationForm"
   /ApplicationForm/submit:
     post:
       tags:
@@ -3313,6 +3364,35 @@ definitions:
       #   type: "string"
       # ContractId:
       #   type: "string"
+
+  #信用证申请表状态
+  Afstate:
+    type: "object"
+    properties:
+      #信用证申请编号
+      AFNo:
+        type: "string"
+      #步骤
+      step:
+        type: "string"
+      #状态
+      state:
+        type: "string"
+      #办理过程数据lcNo
+      lcNo:
+        type: "string"
+      #办理过程数据depositAmount
+      depositAmount:
+        type: "string"
+      #办理过程数据suggestion
+      suggestion:
+        type: "string"
+      #办理过程数据isAgreed
+      isAgreed:
+        type: "string"
+      #办理过程备注
+      backup:
+        type: "string"
 
   #信用证列表项
   LCListItem:

@@ -49,7 +49,7 @@ const ApproveDialog = Form.create()(
 
 const fileUploadOptions = {
     name: 'file',
-    action: 'http://localhost:8080' + '/api/document/upload',
+    action: 'http://39.104.175.115:8080' + '/api/document/upload',
     withCredentials: true,
     onChange(info) {
         if (info.file.status !== 'uploading') {
@@ -235,6 +235,8 @@ class LetterDraft extends React.Component {
             beneficiary = data.Beneficiary ? data.Beneficiary : [],
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
+            goodsInfo = data.GoodsInfo ? data.GoodsInfo : [],
+            isAtSight = data.isAtSight === "true" ? "即期" : ("发运/服务交付" + data.afterSight + "日后"),
             attachments = data.Attachments ? data.Attachments : [];
         return (
             <Layout style={{ padding: '1px 1px' }}>
@@ -356,30 +358,30 @@ class LetterDraft extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>付款期限</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>延期付款</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{""}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>远期付款期限</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>发运100日后</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{isAtSight}</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物运输</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>允许分批  允许转运</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.allowPartialShipment?"允许分批":"允许转运"}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>最迟装运日期</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>2016/09/01</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.latestShipmentDate}</Col>
                                     </Row>
 
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>装运地点</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>河北沧州</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingPlace}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>目的地</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>江苏泰州</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingDestination}</Col>
                                     </Row>
 
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>货物贸易</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature==1?"货物贸易":"服务贸易"}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}></Col>
@@ -387,7 +389,7 @@ class LetterDraft extends React.Component {
 
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物描述</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={21}>产品：已内酰胺 数量：80吨单价（含税）：CNY10900/吨总金额（含税）：CNY872,000.00</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={21}>{goodsInfo.GoodsDescription}</Col>
                                     </Row>
 
                                     <Row>

@@ -281,12 +281,13 @@ exports.enrollCertificate = function (req, res, next) { var args=req.swagger.par
         res.end(JSON.stringify("unknown applySerialNumber or a cancel apply"));
       }else if(data[0] == 1){
         res.end("enrollSerialNumber:"+crt.enrollSerialNumber);
-        var csrStr = "-----BEGIN CERTIFICATE REQUEST-----\nMIHNMHICAQAwEDEOMAwGA1UEAwwFYWRtaW4wWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAATSs3cUksdTkUmk1zCgE0HpVIlZq4plNINYUJmpR7ji6/45Mrzn3oUXVJfU\nr7bY9dvsjgY7SX0h0AAOihBXPmt3oAAwDAYIKoZIzj0EAwIFAANJADBGAiEAwHyZ\nJqjEeK7DgYKvwqqq1Y81+sGZCTJhywZh1fspOe0CIQDTqbL5Y5LBj8gjHnhojfsl\nTZ6Tvbp5DwiArSCzu9zgjw==\n-----END CERTIFICATE REQUEST-----\n";
+//        var csrStr = "-----BEGIN CERTIFICATE REQUEST-----\nMIHNMHICAQAwEDEOMAwGA1UEAwwFYWRtaW4wWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAATSs3cUksdTkUmk1zCgE0HpVIlZq4plNINYUJmpR7ji6/45Mrzn3oUXVJfU\nr7bY9dvsjgY7SX0h0AAOihBXPmt3oAAwDAYIKoZIzj0EAwIFAANJADBGAiEAwHyZ\nJqjEeK7DgYKvwqqq1Y81+sGZCTJhywZh1fspOe0CIQDTqbL5Y5LBj8gjHnhojfsl\nTZ6Tvbp5DwiArSCzu9zgjw==\n-----END CERTIFICATE REQUEST-----\n";
+        var csrStr = "-----BEGIN CERTIFICATE REQUEST-----\nMIICPDCCAeKgAwIBAgIRAI2q1DP1UyUptczzwWgvzwowCgYIKoZIzj0EAwIwbzEL\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\ncmFuY2lzY28xFzAVBgNVBAoTDkMxLmV4YW1wbGUuY29tMRowGAYDVQQDExFjYS5D\nMS5leGFtcGxlLmNvbTAeFw0xODA2MjkwNzEzNDdaFw0yODA2MjYwNzEzNDdaMG8x\nCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4g\nRnJhbmNpc2NvMRcwFQYDVQQKEw5DMS5leGFtcGxlLmNvbTEaMBgGA1UEAxMRY2Eu\nQzEuZXhhbXBsZS5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARYBKQRHwDV\nhDCL1Mch7UmAHp8rbf2avlRzjv7VLNIhE/3/GTidZ/Mjzq4wQEt+W6Yv+Nu/SveE\n1ZluFTShRvbLo18wXTAOBgNVHQ8BAf8EBAMCAaYwDwYDVR0lBAgwBgYEVR0lADAP\nBgNVHRMBAf8EBTADAQH/MCkGA1UdDgQiBCB8FzE1UUkf6qxRb094IsY0nV937auB\n48Gcey1VJKFK/zAKBggqhkjOPQQDAgNIADBFAiEAmqkymkSll283BBsNtBoVt1Ev\r\nwDUglVFi2FhY/s5I7CECIDE3luCG3L0np0zoYxg/GfwMPwxnjV6qgWbAg10Vigwt\n-----END CERTIFICATE REQUEST-----\n";
         var enrollRequest = {
-          caUrl: "http://localhost:7054",
+          caUrl: "http://39.104.64.103:7054",
           enrollmentID: "admin",
           enrollmentSecret: "adminpw",
-          caName: "ca-org",
+          caName: "ca.C1.example.com",
           csr: csr
         };
         return enrollRequest;

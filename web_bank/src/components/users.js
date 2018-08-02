@@ -151,14 +151,14 @@ class Users extends React.Component {
 
     handleCreateUser = () => {
         var values = {};
-        values.name = 'Dragon@example.com';
-        values.type = 'client';
-        values.affiliation = 'org1.example.com';
-        values.attrs = [{'hf.Registrar.Roles':'client,orderer,peer,user',
-        'hf.Registrar.DelegateRoles':'client,orderer,peer,user'}];
+        values.name = 'Dragon';
+        values.type = 'user';
+        values.affiliation = 'C1.example.com';
+        values.attrs = [{name:'hf.Registrar.Roles',value:'user'},
+            {name:'ecert',value:'default', ecert:true}];
         message.error(JSON.stringify(values));
         fetch_ca_post("/api/v1/register",values)
-        .then((res) => {
+        .then((res) => { 
             message.error(res);
             if( res.status >= 200 && res.status<300 ){
                 alert(JSON.stringify(res));

@@ -1,7 +1,7 @@
 import 'whatwg-fetch'
 import { notification, message } from 'antd';
-const serverIP = "http://39.104.175.115:8080"
-export const clientIP = "http://39.104.175.115:9000"
+const serverIP = "http://localhost:8080"
+export const clientIP = "http://localhost:9000"
 const serverCA = "http://39.104.64.103:7054"
 
 export function fetch_get(url){

@@ -10,6 +10,9 @@ module.exports = function(sequelize, DataTypes) {
     account:DataTypes.STRING,
     depositBank:DataTypes.STRING,
     address:DataTypes.STRING,
+    postcode:DataTypes.STRING,
+    telephone:DataTypes.STRING,
+    telefax:DataTypes.STRING,
     creationTime:DataTypes.DATE,
   });
  

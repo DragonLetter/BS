@@ -97,6 +97,11 @@ exports.addApplicationForm = function (req, res, next) { var args=req.swagger.pa
         "OtherRequire": "none",
         "Contract": values.Contract ? values.Contract : {},
         "Attachments": values.Attachments ? values.Attachments : [],
+        "Overfill": values.Overfill? values.Overfill:"0.00",
+        "Lowfill": values.Lowfill? values.Lowfill:"0.00",
+        "Negotiate":values.Negotiate,
+        "Transfer":values.Transfer,
+        "Confirmed":values.Confirmed,
       };
       fabric.invoke(req,"saveLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
         if (!err) {

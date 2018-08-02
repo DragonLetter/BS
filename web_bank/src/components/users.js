@@ -1,7 +1,7 @@
 import React from 'react'
 import { Layout, Breadcrumb, Popconfirm, Table, Icon, Form, Input, Select, Checkbox, DatePicker, Button, Modal, message } from 'antd'
 const { Header, Content, Sider } = Layout;
-import {fetch_get, fetch_post} from '../common'
+import {fetch_get, fetch_post, fetch_ca_post} from '../common'
 import * as CONSTANTS from '../constants'
 import '../main.css'
 import '../bank.css'
@@ -149,7 +149,33 @@ class Users extends React.Component {
         });
     }
 
+    handleCreateUser = () => {
+        var values = {};
+        values.name = 'Dragon';
+        values.type = 'user';
+        values.affiliation = 'C1.example.com';
+        values.attrs = [{name:'hf.Registrar.Roles',value:'user'},
+            {name:'ecert',value:'default', ecert:true}];
+        message.error(JSON.stringify(values));
+        fetch_ca_post("/api/v1/register",values)
+        .then((res) => { 
+            message.error(res);
+            if( res.status >= 200 && res.status<300 ){
+                alert(JSON.stringify(res));
+                message.error(res);
+                res.json().then((data) => {
+                    alert(data);
+                    message.error(data);
+                });
+            }
+        })
+        .catch((error) => {alert(error)});
+
+    }
     componentDidMount = () => {
+        return this.handleCreateUser();
+        if( sessionStorage.getItem('userType') != 10 )
+            return message.error("当前用户没权限！");
         fetch_get("/api/user/um/"+sessionStorage.getItem("domain"))
         .then((res) => {
             if(res.status >= 200 && res.status < 300){
@@ -172,6 +198,7 @@ class Users extends React.Component {
             if (err) {
                 return;
             }
+            values.causername = sessionStorage.getItem('username');
             values.domain = sessionStorage.getItem('domain');
             values.userType = parseInt(values.userType);
             fetch_post("/api/user/um/",values)
@@ -193,6 +220,7 @@ class Users extends React.Component {
         form.validateFields((err, values) => {
             const password = values.password;
             values.username = user.username;
+            values.causername = sessionStorage.getItem('username');
             values.password = user.password;
             values.userStatus = 0;
             values.domain = user.domain;
@@ -227,6 +255,8 @@ class Users extends React.Component {
     }
 
     showCreateDraftForm = () => {
+        if( sessionStorage.getItem('userType') != 10 )
+            return message.error("当前用户没权限！");
         this.setState({
             user: null,
             pwdisable: false,

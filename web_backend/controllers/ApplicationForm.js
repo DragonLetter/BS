@@ -51,3 +51,10 @@ module.exports.submitApplicationForm = function submitApplicationForm (req, res,
 module.exports.confirmApplicationForm = function submitApplicationForm (req, res, next) {
     ApplicationForm.confirmApplicationForm(req, res, next);
 };
+
+module.exports.getAFState = function getAFState (req, res, next) {
+  ApplicationForm.getAFState(req, res, next);
+};
+module.exports.updateAFState = function updateAFState (req, res, next) {
+  ApplicationForm.updateAFState(req, res, next);
+};

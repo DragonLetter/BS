@@ -113,11 +113,6 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                             </Col>
-                            {/* <Col span={12} key={3}>
-                            <FormItem {...formItemLayout} label={`账号`}>
-                                <span>12345678909876</span>
-                            </FormItem>
-                        </Col> */}
                             <Col span={12} key={1}>
                                 <FormItem {...formItemLayout} label={`通知银行`}>
                                     {getFieldDecorator('AdvisingBankId', {
@@ -127,26 +122,44 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                             </Col>
-                        </Row>
-                        {/* <Row>
-                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>通知行信息</Col>
-                        </Row>
-                        <Row gutter={40}>
-                            <Col span={12} key={2}>
-                                <FormItem {...formItemLayout} label={`通知银行`}>
-                                    {getFieldDecorator('AdvisingBankId', {
-                                        rules: [{ required: true, message: '请选择通知银行!' }],
+                            <Col span={24} key={2} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`是否可议付`}>
+                                    {getFieldDecorator('Negotiate', {
+                                        rules: [{ required: true, message: '请选择是否可议付！' }],
                                     })(
-                                        <Select placeholder="通知行名称" maxLength = "40">{bankOptions}</Select>
+                                        <RadioGroup defaultValue={3}>
+                                            <Radio value={1}>以下银行可议付</Radio>
+                                            <Radio value={2}>任意银行可议付</Radio>
+                                            <Radio value={3}>不可议付</Radio>
+                                        </RadioGroup>
                                         )}
                                 </FormItem>
                             </Col>
-                            <Col span={12} key={3}>
-                                <FormItem {...formItemLayout} label={`账号`}>
-                                    <span>12345678909876</span>
+                            <Col span={24} key={3} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`是否可转让`}>
+                                    {getFieldDecorator('Transfer', {
+                                        rules: [{ required: true, message: '请选择是否可转让！' }],
+                                    })(
+                                        <RadioGroup defaultValue={2}>
+                                            <Radio value={1}>可转让</Radio>
+                                            <Radio value={2}>不可转让</Radio>
+                                        </RadioGroup>
+                                        )}
                                 </FormItem>
                             </Col>
-                        </Row> */}
+                            <Col span={24} key={4} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`是否可保兑`}>
+                                    {getFieldDecorator('Confirmed', {
+                                        rules: [{ required: true, message: '请选择是否可保兑！' }],
+                                    })(
+                                        <RadioGroup defaultValue={2}>
+                                            <Radio value={1}>可保兑</Radio>
+                                            <Radio value={2}>不可保兑</Radio>
+                                        </RadioGroup>
+                                        )}
+                                </FormItem>
+                            </Col>
+                        </Row>
                         <Row>
                             <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>申请详情</Col>
                         </Row>
@@ -156,7 +169,10 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('Currency', {
                                         rules: [{ required: true, message: '请输入结算货币!' }],
                                     })(
-                                        <Input placeholder="结算货币" />
+                                        <Select>
+                                            <Option value="CNY">人民币</Option>
+                                            <Option value="USD">美元</Option>
+                                        </Select>
                                         )}
                                 </FormItem>
                             </Col>
@@ -165,10 +181,6 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('Amount', {
                                         rules: [{ required: true, message: '请输入结算金额!' }],
                                     })(
-                                        /* <div>
-                                            <Input placeholder="RMB" style={{ width: '60%', marginRight: 10 }} />
-                                            <Checkbox>允许浮动3%</Checkbox>
-                                        </div> */
                                         <InputNumber
                                             formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                             parser={value => value.replace(/\$\s?|(,*)/g, '')}
@@ -208,7 +220,7 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                                 <div style={{ marginTop: -62, marginRight: 160, float: 'right' }} >
-                                    <InputNumber id="afterSightDay" style={{ width: 40 }} />日后
+                                    <InputNumber id="afterSightDay" style={{ width: 60 }} />日后
                                 </div>
                             </Col>
                             <Col span={12} key={5}>
@@ -271,6 +283,17 @@ const AddDraftForm = Form.create()(
                                             <Radio value={2}>服务贸易</Radio>
                                         </RadioGroup>
                                         )}
+                                </FormItem>
+                            </Col>
+                            <Col span={12} key={10}>
+                                <FormItem {...formItemLayout} label={`溢短装比例`}>
+                                    {getFieldDecorator('fill', {
+                                        rules: [{ required: true, message: '请选择输入溢短装!' }],
+                                    })(
+                                    <div style={{ marginTop: 0, marginLeft: 0 }} >
+                                        短装<InputNumber id="Lowfill" style={{ width: 80 }} />    溢装<InputNumber id="Overfill" style={{ width: 80 }} />
+                                    </div>
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={12} style={{ marginLeft: "-10%" }}>
@@ -537,6 +560,9 @@ class LocalLC extends React.Component {
                         bankNo: data[i].no,
                         bankName: data[i].name,
                         address: data[i].address,
+                        postcode: data[i].postcode,
+                        telephone: data[i].telephone,
+                        telefax: data[i].telefax,
                         accountName: data[i].accountName,
                         accountNo: data[i].accountNo,
                     })
@@ -659,6 +685,8 @@ class LocalLC extends React.Component {
             } else {
                 values.AfterSight = document.getElementById("afterSightDay").value;
             }
+            values.Overfill = document.getElementById("Overfill").value;
+            values.Lowfill = document.getElementById("Lowfill").value;
             values.BeneficiaryId = parseInt(values.BeneficiaryId);
             values.IssueBankId = parseInt(values.IssueBankId);
             values.AdvisingBankId = parseInt(values.AdvisingBankId);

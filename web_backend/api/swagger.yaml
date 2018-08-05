@@ -201,6 +201,18 @@ paths:
         description: "信用证状态."
         type: "string"
       - in: query
+        name: lcNo
+        description: "信用证编号."
+        type: "string"
+      - in: query
+        name: applicant
+        description: "申请人."
+        type: "string"
+      - in: query
+        name: beneficiary
+        description: "受益人."
+        type: "string"
+      - in: query
         name: startDate
         description: "start date"
         type: string

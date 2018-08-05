@@ -87,6 +87,12 @@ class Letters extends React.Component{
                     this.handleLetters(data);
                 });
             }
+            else
+            {
+                this.setState({
+                    letters:[],
+                });
+            }
         });
     }
 

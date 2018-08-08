@@ -201,7 +201,7 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
                     console.log("------endData :%s-------\n",endDate);                
                     console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
                     console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
-                    txs.push(chaincodeTx2ViewTx(lc));   
+                   
                     if ((stepArrByIssuingBank.indexOf(lcStep) > -1 || stepArrByAdvisingBank.indexOf(lcStep) > -1)
                         && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
                            txs.push(chaincodeTx2ViewTx(lc));

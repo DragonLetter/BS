@@ -93,7 +93,7 @@ class HotTags extends React.Component {
       const { selectedTags } = this.state;
       return (
         <div>
-          <strong style={{ marginRight: 8 }}>{CONSTANTS.COMM_SELECT_TYPE}</strong>
+          <strong style={{ marginRight: 18 }}>{CONSTANTS.COMM_SELECT_TYPE}</strong>
           {tagsFromServer.map(tag => (
             <CheckableTag
               key={tag}
@@ -190,7 +190,7 @@ class TobeProcessed extends React.Component{
 
     handleLetters = (data) => {
         const letters = [];
-        for(let i = 0; i < data.length; i++){
+        for(let i = 0; i < data.length; i++){            
             letters.push({
                 key: data[i].id,
                 number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
@@ -218,6 +218,12 @@ class TobeProcessed extends React.Component{
             startData = arr[0];
             endData = arr[1];
         }
+        // alert(sessionStorage.getItem("bankno") 
+        // + "?status=" + this.state.tags
+        // + "&lcNo=" +document.getElementById("lcno").value 
+        // + "&applicant=" +document.getElementById("letter_applicant").value 
+        // + "&beneficiary=" +document.getElementById("letter_beneficiary").value 
+        // + "&startDate=" + startData + "&endDate=" + endData);
         fetch_get("/api/bank/transaction/processing/" + sessionStorage.getItem("bankno") 
          + "?status=" + this.state.tags
          + "&lcNo=" +document.getElementById("lcno").value 
@@ -225,8 +231,9 @@ class TobeProcessed extends React.Component{
          + "&beneficiary=" +document.getElementById("letter_beneficiary").value 
          + "&startDate=" + startData + "&endDate=" + endData)
         .then((res) => {
-            if(res.status >= 200 && res.status < 300){
-                res.json().then((data) => { 
+            if(res.status >= 200 && res.status < 300){     
+                                
+                res.json().then((data) => {                                                              
                     this.handleLetters(data);
                  });
             }
@@ -239,13 +246,12 @@ class TobeProcessed extends React.Component{
         });
     }
 
-    keypress(e) {     
-        if (e.which === 13) 
-        {
-             this.handleselect();             
-        }
-        //   message.error();
-      }
+    // keypress(e) {     
+    //     if (e.which === 13) 
+    //     {
+    //          this.handleselect();             
+    //     }
+    //   }
 
     render(){
         return (
@@ -262,7 +268,7 @@ class TobeProcessed extends React.Component{
                       
                         </Row>
                         <Row>         
-                            <Col style={{ marginTop: '15px', marginBottom: '15px', fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={24}>
+                            <Col style={{ marginTop: '15px',  fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={24}>
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_NUMBER}</strong>
                                 <Input id = "lcno" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginRight: '15px'}} placeholder="信用证编号" />
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.COMM_SELECT_DATE}</strong>
@@ -272,9 +278,9 @@ class TobeProcessed extends React.Component{
                         <Row>         
                             <Col style={{ marginTop: '15px', marginBottom: '15px', fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={24}>
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_APPLICANT}</strong>
-                                <Input id = "letter_applicant" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginRight: '15px'}} placeholder="申请人" />
+                                <Input id = "letter_applicant" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginLeft:'28px', marginRight: '15px'}} placeholder="申请人" />
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_BENEFICIARY}</strong>
-                                <Input id = "letter_beneficiary" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginRight: '15px'}} placeholder="受益人" />
+                                <Input id = "letter_beneficiary" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginLeft:'15px',marginRight: '15px'}} placeholder="受益人" />
                                 <Button  type="primary" style={{marginLeft: '15px'}} onClick={() => this.refreshPage()}>重置</Button>                          
                             </Col>      
                         </Row>

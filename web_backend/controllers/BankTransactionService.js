@@ -181,7 +181,32 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
                 var lcNum= lc.Record.lcNo;
                 var lcApplicant = lc.Record.LetterOfCredit.Applicant.Name;
                 var lcBeneficiary = lc.Record.LetterOfCredit.Beneficiary.Name;
-                if (lc.Record.ApplicationForm.IssuingBank.No == bankId){
+            
+                //开证行和通知行是同一家银行
+                if (lc.Record.ApplicationForm.IssuingBank.No == bankId 
+                     && lc.Record.ApplicationForm.AdvisingBank.No == bankId)
+                {
+                    console.log("-------bankId:%s-------\n",bankId);
+                    console.log("-------lcSetp:%s-------\n",lcStep);
+                    console.log("-------lcNo:%s-------\n",lcNo);
+                    console.log("-------lcNum:%s-------\n",lcNum);
+                    console.log("-------applicant:%s-------\n",applicant);
+                    console.log("-------lcApplicant:%s-------\n",lcApplicant);
+                    console.log("-------beneficiary:%s-------\n",beneficiary);
+                    console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
+                    console.log("------current status:%s-------\n",lc.Record.lcStatus);
+                    console.log("------select status:%s-------\n",status);
+                    console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
+                    console.log("------startDate :%s-------\n",startDate);
+                    console.log("------endData :%s-------\n",endDate);                
+                    console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
+                    console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                    txs.push(chaincodeTx2ViewTx(lc));   
+                    if ((stepArrByIssuingBank.indexOf(lcStep) > -1 || stepArrByAdvisingBank.indexOf(lcStep) > -1)
+                        && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                           txs.push(chaincodeTx2ViewTx(lc));
+                    }
+                }else if (lc.Record.ApplicationForm.IssuingBank.No == bankId){//开证行
                     // console.log("-------bankId:%s-------\n",bankId);
                     // console.log("-------lcSetp:%s-------\n",lcStep);
                     // console.log("-------lcNo:%s-------\n",lcNo);
@@ -197,12 +222,12 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
                     // console.log("------endData :%s-------\n",endDate);                
                     // console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
                     // console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
-                    //txs.push(chaincodeTx2ViewTx(lc));                    
+                    // txs.push(chaincodeTx2ViewTx(lc));                    
                     if (stepArrByIssuingBank.indexOf(lcStep) > -1
                         && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
                            txs.push(chaincodeTx2ViewTx(lc));
                     }
-                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId){
+                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId){//通知行
                     // console.log("-------bankId:%s-------\n",bankId);
                     // console.log("-------lcSetp:%s-------\n",lcStep);
                     // console.log("-------lcNo:%s-------\n",lcNo);

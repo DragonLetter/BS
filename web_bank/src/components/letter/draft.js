@@ -33,8 +33,10 @@ const ApproveDialog = Form.create()(
                 <Form>
                     <FormItem label="信用证编号" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
                         {
-                            getFieldDecorator('LCNumber', { initialValue: dataform? dataform.lcNo:"",
-                                rules: [{ required: true, message: '请填写国结系统分配的信用证编号.' }], })
+                            getFieldDecorator('LCNumber', {
+                                initialValue: dataform ? dataform.lcNo : "",
+                                rules: [{ required: true, message: '请填写国结系统分配的信用证编号.' }],
+                            })
                                 (
                                 <Input />
                                 )
@@ -42,21 +44,25 @@ const ApproveDialog = Form.create()(
                     </FormItem>
                     <FormItem label="保证金金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
                         {
-                            getFieldDecorator('depositAmount', { initialValue: dataform? dataform.depositAmount:"",
-                                rules: [{ required: true, message: '请填写正确的金额.' }], })
+                            getFieldDecorator('depositAmount', {
+                                initialValue: dataform ? dataform.depositAmount : "",
+                                rules: [{ required: true, message: '请填写正确的金额.' }],
+                            })
                                 (
                                 <InputNumber
                                     defaultValue={0}
                                     formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                    />
+                                />
                                 )
                         }
                     </FormItem>
                     <FormItem {...formItemLayout} label="审核说明">
                         {
-                            getFieldDecorator('comment', { initialValue: dataform? dataform.suggestion:"",
-                                 rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }], })
+                            getFieldDecorator('comment', {
+                                initialValue: dataform ? dataform.suggestion : "",
+                                rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
+                            })
                                 (
                                 <TextArea rows={4} placeholder="请填写审核说明,内容必须填写。" />
                                 )
@@ -120,7 +126,7 @@ class LetterDraft extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
-            afstate:{},
+            afstate: {},
             letter: {}
         }
     }
@@ -131,7 +137,7 @@ class LetterDraft extends React.Component {
         this.getAFStateInfo();
     }
     getAFStateInfo = () => {
-        fetch_get("/api/applicationform/afstate/" + this.props.params.id )
+        fetch_get("/api/applicationform/afstate/" + this.props.params.id)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
                     res.json().then((data) => {
@@ -139,19 +145,19 @@ class LetterDraft extends React.Component {
                         afdata.AFNo = data.AFNo;
                         afdata.step = data.step;
                         afdata.state = data.state;
-                        if( data.lcNo != null && data.lcNo.length>0 )
+                        if (data.lcNo != null && data.lcNo.length > 0)
                             afdata.lcNo = data.lcNo;
-                        if( data.suggestion != null && data.suggestion.length>0 )
+                        if (data.suggestion != null && data.suggestion.length > 0)
                             afdata.suggestion = data.suggestion;
-                        if( data.depositAmount != null && data.depositAmount.length>0 )
+                        if (data.depositAmount != null && data.depositAmount.length > 0)
                             afdata.depositAmount = data.depositAmount;
-                        if( data.isAgreed != null && data.isAgreed.length>0 )
+                        if (data.isAgreed != null && data.isAgreed.length > 0)
                             afdata.isAgreed = data.isAgreed;
-                        if( data.backup != null && data.backup.length>0 )
+                        if (data.backup != null && data.backup.length > 0)
                             afdata.backup = data.backup;
-                        if( data.createdAt != null && data.createdAt.length>0 )
+                        if (data.createdAt != null && data.createdAt.length > 0)
                             afdata.createdAt = data.createdAt;
-                        if( data.updatedAt != null && data.updatedAt.length>0 )
+                        if (data.updatedAt != null && data.updatedAt.length > 0)
                             afdata.updatedAt = data.updatedAt;
                         this.setState({
                             afstate: afdata,
@@ -242,73 +248,80 @@ class LetterDraft extends React.Component {
             appdata.lcNo = values.LCNumber;
             appdata.suggestion = values.comment;
             appdata.isAgreed = "true";
-            if(sessionStorage.getItem('userType') == 11 )
-            {
+            if (sessionStorage.getItem('userType') == 11) {
                 var afstate = this.state.afstate;
                 afstate.state = '12';
                 afstate.lcNo = appdata.lcNo;
                 afstate.depositAmount = appdata.depositAmount;
                 afstate.suggestion = appdata.suggestion;
                 afstate.isAgreed = appdata.isAgreed;
-                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            this.closeApproveDialog();
-                            this.closeRejectDialog();
-                            message.success("经办审核完成, 等待复核确认.");
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                message.success("经办审核完成, 等待复核确认.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
                 return;
             }
-            else if(sessionStorage.getItem('userType') == 12 )
-            {
+            else if (sessionStorage.getItem('userType') == 12) {
                 var afstate = this.state.afstate;
                 afstate.state = '13';
-                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            this.closeApproveDialog();
-                            this.closeRejectDialog();
-                            message.success("复核审核完成, 等待授权确认.");
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                message.success("复核审核完成, 等待授权确认.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
                 return;
-            }else{    
-                var afstate = this.state.afstate;
-                afstate.state = '0';
-                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            message.success("授权审核完成, 等待企业确认.");
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
+            } else {
+
                 appdata.no = this.props.params.id;
-            fetch_post("/api/bank/ApplicationAudit", appdata)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            this.closeApproveDialog();
-                            this.closeRejectDialog();
-                            message.success("审核完成, 等待企业确认.");
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
+                fetch_post("/api/bank/ApplicationAudit", appdata)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                this.ApproveUpdateAfState();
+                                message.success("审核完成, 等待企业确认.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
             }
         });
+    }
+
+    //同意---更新经办/复合/授权数据库状态
+    ApproveUpdateAfState = () => {
+        var afstate = this.state.afstate;
+        afstate.state = '11';//初始化身份--经办
+        afstate.step = 'BankIssueLCStep' //流程到银行发证
+        afstate.suggestion = "";
+        appdata.depositAmount = "";
+        fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+            .then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        // message.success("授权审核完成, 等待企业确认.");
+                    });
+                } else {
+                    message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                }
+            });
     }
 
     // 拒绝申请 Dialog
@@ -337,61 +350,46 @@ class LetterDraft extends React.Component {
             appdata.lcNo = values.LCNumber;
             appdata.suggestion = values.comment;
             appdata.isAgreed = "false";
-            if(sessionStorage.getItem('userType') == 12)
-            {
-                var afstate = this.state.afstate;
-                afstate.state = '11';         
-                afstate.lcNo = appdata.lcNo;
-                afstate.depositAmount = appdata.depositAmount;
-                afstate.suggestion = appdata.suggestion;
-                afstate.isAgreed = appdata.isAgreed;               
-                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            message.success("复合审核完成, 已驳回企业重新处理。");
-                            this.closeRejectDialog();
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
-                return;
-            }else if(sessionStorage.getItem('userType') == 13)
-            {
+            if (sessionStorage.getItem('userType') == 12) {
                 var afstate = this.state.afstate;
                 afstate.state = '11';
                 afstate.lcNo = appdata.lcNo;
-                afstate.depositAmount = appdata.depositAmount;
+                // afstate.depositAmount = appdata.depositAmount;
                 afstate.suggestion = appdata.suggestion;
-                afstate.isAgreed = appdata.isAgreed;               
-                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            message.success("授权审核完成, 已驳回企业重新处理。");
-                            this.closeRejectDialog();
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
+                afstate.isAgreed = appdata.isAgreed;
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                message.success("复合审核完成, 已驳回经办重新处理。");
+                                this.closeRejectDialog();
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
+                return;
+            } else if (sessionStorage.getItem('userType') == 13) {
+                var afstate = this.state.afstate;
+                afstate.state = '11';
+                afstate.lcNo = appdata.lcNo;
+                // afstate.depositAmount = appdata.depositAmount;
+                afstate.suggestion = appdata.suggestion;
+                afstate.isAgreed = appdata.isAgreed;
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                message.success("授权审核完成, 已驳回经办重新处理。");
+                                this.closeRejectDialog();
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
                 return;
             }
-           else{    
-                var afstate = this.state.afstate;
-                afstate.state = '11';
-                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
-                .then((res) => {
-                    if (res.status >= 200 && res.status < 300) {
-                        res.json().then((data) => {
-                            // message.success("授权审核完成, 等待企业确认.");
-                        });
-                    } else {
-                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
-                    }
-                });
-                
+            else {
                 let approveData = {};
                 approveData.no = this.props.params.id;
                 approveData.depositAmount = "0.00";
@@ -404,14 +402,34 @@ class LetterDraft extends React.Component {
                             res.json().then((data) => {
                                 message.error("审核完成, 已驳回企业重新处理。");
                                 this.closeRejectDialog();
+                                this.rejectUpdateAfState();
                             });
                         } else {
                             message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
                         }
-    
+
                     });
             }
         });
+    }
+
+    //拒绝---更新经办/复合/授权数据库状态
+    rejectUpdateAfState = () => {
+        var afstate = this.state.afstate;
+        afstate.state = '11';
+        // afstate.suggestion = values.comment;
+        afstate.isAgreed = "false";
+        appdata.depositAmount = "";
+        fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+            .then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        // message.success("授权审核完成, 等待企业确认.");
+                    });
+                } else {
+                    message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                }
+            });
     }
 
     // TABS选择回调
@@ -430,10 +448,10 @@ class LetterDraft extends React.Component {
             goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
             isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
             attachments = applicationForm.Attachments ? applicationForm.Attachments : [];
-    
+
         let btnDivHtml;
-        if (this.state.letter != null && this.state.letter.CurrentStep != "" && this.state.letter.CurrentStep == "BankConfirmApplyFormStep" && 
-            parseInt(this.state.afstate.state)==sessionStorage.getItem('userType') ) {
+        if (this.state.letter != null && this.state.letter.CurrentStep != "" && this.state.letter.CurrentStep == "BankConfirmApplyFormStep" &&
+            parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginLeft: '16px', marginRight: '16px', marginBottom: '20px' }}>
                     <Row>
@@ -520,7 +538,7 @@ class LetterDraft extends React.Component {
                                 </Row>
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物运输</Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.allowPartialShipment?"允许分批":"允许转运"}</Col>
+                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.allowPartialShipment ? "允许分批" : "允许转运"}</Col>
                                     <Col span={3}></Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>最迟装运日期</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.latestShipmentDate}</Col>
@@ -536,7 +554,7 @@ class LetterDraft extends React.Component {
 
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature==1?"货物贸易":"服务贸易"}</Col>
+                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature == 1 ? "货物贸易" : "服务贸易"}</Col>
                                     <Col span={3}></Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}></Col>
@@ -549,7 +567,7 @@ class LetterDraft extends React.Component {
 
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}>{applicationForm.ChargeInIssueBank?"在开证行发生的费用由申请人承担":"在开证行外发生的费用由申请人承担"}</Col>
+                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}>{applicationForm.ChargeInIssueBank ? "在开证行发生的费用由申请人承担" : "在开证行外发生的费用由申请人承担"}</Col>
                                 </Row>
                             </div>
 

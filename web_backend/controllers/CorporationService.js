@@ -27,18 +27,25 @@ exports.deleteCorporation = function (req, res, next) { var args=req.swagger.par
 }
 
 exports.findCorporationsByName = function (req, res, next) { var args=req.swagger.params;
-  models.Corporation.findOne({
-    'where': {
-        'name': args.bankName.value,
-    }
-}).then(function(corporation){
-    if (Object.keys(corporation).length > 0) {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(corporation));
-    } else {
-      res.end();
-    }
-})
+  /**
+   * Finds Corporations by name
+   * Multiple status values can be provided with comma separated strings
+   *
+   * bankName String name of Corporation to return
+   * returns List
+   **/
+  var examples = {};
+  examples['application/json'] = [ {
+  "no" : "aeiou",
+  "domain" : "aeiou",
+  "name" : "aeiou"
+} ];
+  if (Object.keys(examples).length > 0) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+  } else {
+    res.end();
+  }
 }
 
 exports.getCorporationById = function (req, res, next) { var args=req.swagger.params;

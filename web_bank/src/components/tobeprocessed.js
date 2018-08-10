@@ -6,6 +6,7 @@ import {fetch_get, fetch_post} from '../common'
 import * as CONSTANTS from '../constants'
 import '../main.css'
 import '../bank.css'
+import { isMoment } from 'moment';
 
 const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
@@ -19,7 +20,8 @@ const columns = [
     { title: CONSTANTS.LETTER_APPLICANT, dataIndex: 'applicant', key: 'applicant' },
     { title: CONSTANTS.LETTER_BENEFICIARY, dataIndex: 'beneficiary', key: 'beneficiary' }, 
     { title: CONSTANTS.LETTER_AMOUNT, dataIndex: 'amount', key: 'amount' },
-    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('+')).replace('T', ' ')}</span> },
+    // { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('+')).replace('T', ' ')}</span> },
+    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('T'))}</span> },
     { title: CONSTANTS.COMM_OPERATION, key: 'operation', render: (text, record, index) => renderAction(record)},
   ];
 
@@ -57,23 +59,41 @@ const tagsFromServer = [
     "拒付",
     "闭卷"
 ];
+var status_value="";
 class HotTags extends React.Component {
     state = {
       selectedTags: [],
     };
   
-    handleChange(tag, checked) {
-      const { selectedTags } = this.state;
-      const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag);
-      this.setState({ selectedTags: nextSelectedTags });
-      this.props.handleSelectedTags(nextSelectedTags);
+    handleChange(tag, checked) {     
+    //   const { selectedTags } = this.state;
+    //   const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag);
+    //   this.setState({ selectedTags: nextSelectedTags });          
+    //   this.props.handleSelectedTags(nextSelectedTags);
+   
+
+
+    const { selectedTags } = this.state;
+    if (status_value == tag)
+    {
+        status_value = "";
+        checked = false;
+    }
+    else
+    {
+        status_value = tag;
+        checked = true;
+    }
+ 
+    this.setState({ selectedTags:status_value });       
+    this.props.handleSelectedTags(status_value);
     }
   
     render() {
       const { selectedTags } = this.state;
       return (
         <div>
-          <strong style={{ marginRight: 8 }}>{CONSTANTS.COMM_SELECT_TYPE}</strong>
+          <strong style={{ marginRight: 18 }}>{CONSTANTS.COMM_SELECT_TYPE}</strong>
           {tagsFromServer.map(tag => (
             <CheckableTag
               key={tag}
@@ -129,7 +149,7 @@ class TobeProcessed extends React.Component{
     };
 
     handleSelectedTags = (selectedTags) => {
-        this.state.tags = selectedTags.join(';');
+        this.state.tags = selectedTags;//selectedTags.join(';');
         this.getTxsData();
 
     }
@@ -143,9 +163,34 @@ class TobeProcessed extends React.Component{
         this.getTxsData();
     }
 
+    refreshPage = () => {
+        // document.head.innerHTML += '<meta http-equiv="refresh" content="20">'
+        //location.reload();
+       // return;
+        this.state.tags = "";
+        this.state.dateRanges = null;
+        document.getElementById("lcno").value ="";
+        document.getElementById("letter_applicant").value ="";
+        document.getElementById("letter_beneficiary").value ="";
+  
+        // document.getElementById("datepicker").value = "";
+        //  document.getElementsByName("datepickers").value=";
+        
+        // alert("date： "+document.getElementsByName("datepickers").value);        
+         this.getTxsData();
+       
+    }
+
+    handleselect = () => {        
+        this.getTxsData();        
+    }
+
+
+    
+
     handleLetters = (data) => {
         const letters = [];
-        for(let i = 0; i < data.length; i++){
+        for(let i = 0; i < data.length; i++){            
             letters.push({
                 key: data[i].id,
                 number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
@@ -165,15 +210,48 @@ class TobeProcessed extends React.Component{
     }
 
     getTxsData = () => {
-        fetch_get("/api/bank/transaction/processing/" + sessionStorage.getItem("bankno") + "?status=" + this.state.tags + "&date=" + this.state.dateRanges)
+        var startData = '1990-01-01';
+        var endData = '9999-01-01';        
+        if (this.state.dateRanges != null)
+        {
+            var arr = this.state.dateRanges.toString().split(";");
+            startData = arr[0];
+            endData = arr[1];
+        }
+        // alert(sessionStorage.getItem("bankno") 
+        // + "?status=" + this.state.tags
+        // + "&lcNo=" +document.getElementById("lcno").value 
+        // + "&applicant=" +document.getElementById("letter_applicant").value 
+        // + "&beneficiary=" +document.getElementById("letter_beneficiary").value 
+        // + "&startDate=" + startData + "&endDate=" + endData);
+        fetch_get("/api/bank/transaction/processing/" + sessionStorage.getItem("bankno") 
+         + "?status=" + this.state.tags
+         + "&lcNo=" +document.getElementById("lcno").value 
+         + "&applicant=" +document.getElementById("letter_applicant").value 
+         + "&beneficiary=" +document.getElementById("letter_beneficiary").value 
+         + "&startDate=" + startData + "&endDate=" + endData)
         .then((res) => {
-            if(res.status >= 200 && res.status < 300){
-                res.json().then((data) => { 
+            if(res.status >= 200 && res.status < 300){     
+                                
+                res.json().then((data) => {                                                              
                     this.handleLetters(data);
                  });
             }
+            else
+            {
+                this.setState({
+                    letters:[],
+                });
+            }
         });
     }
+
+    // keypress(e) {     
+    //     if (e.which === 13) 
+    //     {
+    //          this.handleselect();             
+    //     }
+    //   }
 
     render(){
         return (
@@ -182,19 +260,31 @@ class TobeProcessed extends React.Component{
                     <Breadcrumb.Item>{CONSTANTS.COMM_TB_PROCESSED}</Breadcrumb.Item>
                 </Breadcrumb>
                 <Content style={{ background: '#fff', padding: 0, margin: 0, minHeight: 280 }}>
-                    <div style={{margin: '12px 16px', display:'none'}}>
+                    <div style={{margin: '12px 16px', display:'block'}}>
                         <Row>
                             <Col style={{ marginTop: '15px', fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={16}>
                                 <HotTags handleSelectedTags = { selectedTags => this.handleSelectedTags(selectedTags)}></HotTags>
                             </Col>
                       
                         </Row>
-                        <Row>
-                        <Col style={{ marginTop: '15px', marginBottom: '15px', fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={24}>
+                        <Row>         
+                            <Col style={{ marginTop: '15px',  fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={24}>
+                                <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_NUMBER}</strong>
+                                <Input id = "lcno" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginRight: '15px'}} placeholder="信用证编号" />
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.COMM_SELECT_DATE}</strong>
-                                <RangePicker onChange={ this.handleSelectedDate }/>                            
+                                <RangePicker name = "datepickers" onChange={ this.handleSelectedDate }/>                                  
                             </Col>      
                         </Row>
+                        <Row>         
+                            <Col style={{ marginTop: '15px', marginBottom: '15px', fontWeight:800, fontSize:'14px', color:'#004a7c' }} span={24}>
+                                <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_APPLICANT}</strong>
+                                <Input id = "letter_applicant" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginLeft:'28px', marginRight: '15px'}} placeholder="申请人" />
+                                <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_BENEFICIARY}</strong>
+                                <Input id = "letter_beneficiary" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginLeft:'15px',marginRight: '15px'}} placeholder="受益人" />
+                                <Button  type="primary" style={{marginLeft: '15px'}} onClick={() => this.refreshPage()}>重置</Button>                          
+                            </Col>      
+                        </Row>
+                       
                     </div>
                     <div style={{margin: '12px 16px'}}>
                         <Table

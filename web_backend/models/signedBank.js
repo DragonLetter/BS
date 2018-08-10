@@ -11,7 +11,6 @@ module.exports = function(sequelize, DataTypes) {
     accountNo:DataTypes.INTEGER,
     accountName:DataTypes.STRING,
     remark:DataTypes.STRING,
-    state:DataTypes.INTEGER,
   });
  
   return SignedBank;

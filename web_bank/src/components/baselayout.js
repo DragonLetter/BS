@@ -81,7 +81,7 @@ class BaseLayout extends React.Component {
                         defaultSelectedKeys={['2']}
                         style={{ lineHeight: '64px', marginLeft: 200, float: 'right'}}
                     >
-                        <Search
+                        {/* <Search
                             placeholder="搜索"
                             style={{ width: 300, marginLeft: 20, marginRight:20, float: 'left'}}
                             onSearch={value => console.log(value)}
@@ -89,7 +89,7 @@ class BaseLayout extends React.Component {
                         <SubMenu title={<Popover placement="bottom" content={helpCenter} trigger="click"><Icon type="question-circle-o" style={{fontSize:15}}/></Popover>}>
                         </SubMenu>
                         <SubMenu title={<Popover placement="bottom" title={"通知中心"} content={notifications} trigger="click"><Icon type="message" style={{fontSize:15}}/></Popover>}>
-                        </SubMenu>
+                        </SubMenu> */}
                         <SubMenu title={<Popover placement="bottom" content={userCenter} trigger="click"><Icon type="user" style={{fontSize:15}}/></Popover>}>
                         </SubMenu>
                     </Menu>

@@ -25,12 +25,16 @@ const DraftModal = (props) => {
         attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
         depositInfo = record.LCTransDeposit ? record.LCTransDeposit : [],
         title = "国内信用证详情——" + (record.lcNo || '等待银行审核'),
-        transport = (goodsInfo.allowPartialShipment === "1" ? "允许分批 " : '') + (goodsInfo.allowTransShipment === "1" ? "允许转运" : ''),
+        transport = (goodsInfo.allowPartialShipment === "1" ? "允许分批/分次 " : '') + (goodsInfo.allowTransShipment === "1" ? "允许转运/分期" : ''),
         isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
         tradeType = goodsInfo.tradeNature === "1" ? "货物贸易" : "服务贸易",
         chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
         chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
         docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
+        Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
+        Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
+        Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
+        OverLow = "短装:"+applicationForm.Lowfill+"    溢装:"+applicationForm.Overfill,
         transProgressFlow = record.TransProgressFlow ? record.TransProgressFlow : [],
         timeItem = transProgressFlow.reverse().map((flow, index) => <Timeline.Item key={index} dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />} color="red">
             <p style={{ fontWeight: 800 }}>{flow.Status}</p>
@@ -105,6 +109,20 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>账号</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{beneficiary.Account}</Col>
                         </Row>
+                        <Row key={5}>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>是否可议付</Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{Negotiate}</Col>
+                            <Col span={3}></Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>是否可转让</Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{Transfer}</Col>
+                        </Row>
+                        <Row key={5}>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>是否可保兑</Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{Confirmed}</Col>
+                            <Col span={3}></Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{}</Col>
+                        </Row>
 
                         <Row key={6}>
                             <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>详细信息</Col>
@@ -114,7 +132,7 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicationForm.Currency}</Col>
                             <Col span={3}></Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>金额</Col>
-                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicationForm.amount}</Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>信用证:{applicationForm.amount}  保证金:{applicationForm.EnsureAmount}</Col>
                         </Row>
                         <Row key={8}>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日</Col>
@@ -150,8 +168,8 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{tradeType}</Col>
                             <Col span={3}></Col>
-                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
-                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}></Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>溢短装</Col>
+                            <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{OverLow}</Col>
                         </Row>
 
                         <Row key={13}>

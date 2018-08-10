@@ -2,9 +2,9 @@ import fetch from 'dva/fetch';
 import { notification, message } from 'antd';
 
 //export const clientIP = "http://39.104.175.115:8000"
-//export const serverIP = "http://39.104.175.115:8080"
+export const serverIP = "http://39.104.175.115:8080"
 export const clientIP = "http://localhost:8000"
-export const serverIP = "http://localhost:8080"
+//export const serverIP = "http://localhost:8080"
 
 export function fetch_get(url){
     return fetch(serverIP + url, {

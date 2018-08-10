@@ -76,6 +76,7 @@ exports.uploadFile = function (req, res, next) {
 function getCertificateId(req)
 {
   var cert= keyHelper.getCertificate(req);
+
   var findResult= models.Certificate.findOne( { where: {certificate: cert} })
   .then(result=>{
     var row=result.dataValues;

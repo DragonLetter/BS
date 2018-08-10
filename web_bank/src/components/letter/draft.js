@@ -332,24 +332,85 @@ class LetterDraft extends React.Component {
         const form = this.rejectForm;
         form.validateFields((err, values) => {
             if (err) { return; }
-            let approveData = {};
-            approveData.no = this.props.params.id;
-            approveData.depositAmount = "0.00";
-            approveData.lcNo = "";
-            approveData.suggestion = values.comment;
-            approveData.isAgreed = "false";
-            fetch_post("/api/bank/applicationaudit", approveData)
+            let appdata = {};
+            // appdata.depositAmount = values.depositAmount.toString();
+            appdata.lcNo = values.LCNumber;
+            appdata.suggestion = values.comment;
+            appdata.isAgreed = "false";
+            if(sessionStorage.getItem('userType') == 12)
+            {
+                var afstate = this.state.afstate;
+                afstate.state = '11';         
+                afstate.lcNo = appdata.lcNo;
+                afstate.depositAmount = appdata.depositAmount;
+                afstate.suggestion = appdata.suggestion;
+                afstate.isAgreed = appdata.isAgreed;               
+                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
                 .then((res) => {
                     if (res.status >= 200 && res.status < 300) {
                         res.json().then((data) => {
-                            message.error("审核完成, 已驳回企业重新处理。");
+                            message.success("复合审核完成, 已驳回企业重新处理。");
                             this.closeRejectDialog();
                         });
                     } else {
                         message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
                     }
-
                 });
+                return;
+            }else if(sessionStorage.getItem('userType') == 13)
+            {
+                var afstate = this.state.afstate;
+                afstate.state = '11';
+                afstate.lcNo = appdata.lcNo;
+                afstate.depositAmount = appdata.depositAmount;
+                afstate.suggestion = appdata.suggestion;
+                afstate.isAgreed = appdata.isAgreed;               
+                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
+                .then((res) => {
+                    if (res.status >= 200 && res.status < 300) {
+                        res.json().then((data) => {
+                            message.success("授权审核完成, 已驳回企业重新处理。");
+                            this.closeRejectDialog();
+                        });
+                    } else {
+                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                    }
+                });
+                return;
+            }
+           else{    
+                var afstate = this.state.afstate;
+                afstate.state = '11';
+                fetch_post("/api/ApplicationForm/afstate/"+this.props.params.id, afstate)
+                .then((res) => {
+                    if (res.status >= 200 && res.status < 300) {
+                        res.json().then((data) => {
+                            // message.success("授权审核完成, 等待企业确认.");
+                        });
+                    } else {
+                        message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                    }
+                });
+                
+                let approveData = {};
+                approveData.no = this.props.params.id;
+                approveData.depositAmount = "0.00";
+                approveData.lcNo = "";
+                approveData.suggestion = values.comment;
+                approveData.isAgreed = "false";
+                fetch_post("/api/bank/applicationaudit", approveData)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                message.error("审核完成, 已驳回企业重新处理。");
+                                this.closeRejectDialog();
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+    
+                    });
+            }
         });
     }
 

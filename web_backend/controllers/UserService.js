@@ -5,12 +5,8 @@ var log4js = require("log4js");
 var path = require('path');
 var NodeCache = require( "node-cache" );
 var logger = log4js.getLogger();
-var FabricCAServices = require('fabric-ca-client');
-var FabricCAClient = FabricCAServices.FabricCAClient;
 var keyHelper=require("../keyhelper");
 var options  = require(path.join(__dirname, '..', 'config', 'fabric.json'));
-
-
 exports.createUser = function (req, res, next) { var args=req.swagger.params;
   /**
    * Create user

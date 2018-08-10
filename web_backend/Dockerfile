@@ -1,5 +1,5 @@
 #设置基础镜像,如果本地没有该镜像，会从Docker.io服务器pull镜像
-FROM node
+FROM node:8.9.0
 
 #创建app目录,保存我们的代码
 RUN mkdir -p /usr/src/node
@@ -14,6 +14,9 @@ COPY . /usr/src/node
 #RUN npm install --registry=https://registry.npm.taobao.org
 RUN npm install yarn -g
 RUN yarn
+#RUN npm rebuild
+#RUN npm install grpc
+#RUN npm install --unsafe-perm
 #暴露container的端口
 EXPOSE 8080
 

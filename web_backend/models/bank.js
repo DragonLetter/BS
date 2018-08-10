@@ -6,9 +6,6 @@ module.exports = function(sequelize, DataTypes) {
     domain:DataTypes.STRING,
     no:DataTypes.STRING,
     address:DataTypes.STRING,
-    postcode:DataTypes.STRING,
-    telephone:DataTypes.STRING,
-    telefax:DataTypes.STRING,
     remark:DataTypes.STRING,
   });
 

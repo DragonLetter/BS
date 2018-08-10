@@ -290,6 +290,8 @@ exports.enrollCertificate = function (req, res, next) { var args=req.swagger.par
           caName: "ca.C1.example.com",
           csr: csr
         };
+        console.error(csr);
+        console.error("\n\n");
         return enrollRequest;
       }else{
         console.log('false');
@@ -356,8 +358,11 @@ exports.enroll = function(args){
       trustedRoots: [],
       verify: false
     };
+//    console.error(cryptoSuite);
+//    console.error("\n\n");
     // need to enroll it with CA server
     var cop = new copService(args.caUrl, tlsOptions, args.caName, cryptoSuite);
+//    var cop = new copService(args.caUrl, tlsOptions, args.caName);
     /*cop._fabricCAClient = new FabricCAClient({
       caname: caName,
       protocol: endpoint.protocol,

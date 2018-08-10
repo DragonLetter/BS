@@ -1,8 +1,7 @@
 import 'whatwg-fetch'
 import { notification, message } from 'antd';
-const serverIP = "http://localhost:8080"
-export const clientIP = "http://localhost:9000"
-const serverCA = "http://39.104.64.103:7054"
+const serverIP = "http://39.104.175.115:8080"
+export const clientIP = "http://39.104.175.115:9000"
 
 export function fetch_get(url){
     return fetch(serverIP + url, {
@@ -24,21 +23,26 @@ export function fetch_post(url, values){
     }).then((response) => checkStatus(response));
 }
 export function fetch_ca_post(url, values){
-    return fetch(serverCA + url, {
+    return fetch(serverIP + url, {
         method: "POST",
-        mode: "no-cors",
+        mode: "cors",
+        credentials: "include",
         headers: {
-            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify(values),
-    }).then((response) => function(response){ return response;});
+    }).then((response) => checkStatus(response));
 }
+
 function checkStatus(response){
     if (response.status >= 200 && response.status < 300) {
         return response;
     } else if (response.status === 401) {
         window.location.href = clientIP + "/#/";
         return;
+    }
+    else if  (response.status === 405) {
+        return response;
     }
     notification.error({
         message: `请求错误 ${response.status}: ${response.url}`,

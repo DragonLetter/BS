@@ -13,6 +13,7 @@ var http= require('http').Server(app);
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
 var serverPort = 8080;
+//var enterpriseClientIp = "http://localhost:8000", bankClientIp = "http://localhost:9000";
 var enterpriseClientIp = "http://39.104.175.115:8000", bankClientIp = "http://39.104.175.115:9000";
 app.use(compression());
 app.use(cookieParser());
@@ -20,7 +21,8 @@ app.use(session({ secret: 'Plume@Fabric', resave: true, saveUninitialized: true 
 app.all('*', function(req, res, next) {  
 //    if( req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp )
     {
-        res.header("Access-Control-Allow-Origin", req.headers.origin);  
+//        res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", req.headers.origin);  
         res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");  
         res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
         res.header('Access-Control-Allow-Credentials', true) ;

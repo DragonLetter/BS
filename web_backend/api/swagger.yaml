@@ -11,7 +11,8 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 
 #### ------- route config region --------
-host: "39.104.175.115:8080"
+#host: "39.104.175.115:8080"
+host: "localhost:8080"
 basePath: "/api"
 #### endregion
 
@@ -2646,6 +2647,12 @@ definitions:
         type: "string"
       address:
         type: "string"
+      postcode:
+        type: "string"
+      telephone:
+        type: "string"
+      telefax:
+        type: "string"
       creationTime:
         type: "string"
         format: "date-time"
@@ -2660,6 +2667,12 @@ definitions:
         type: "string"
       address:
         type: string
+      postcode:
+        type: "string"
+      telephone:
+        type: "string"
+      telefax:
+        type: "string"
       remark:  
         type: string
   appLoginInput:

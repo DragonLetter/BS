@@ -40,7 +40,8 @@
     "react-countup": "^3.0.2",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.0.0",
-    "react-fittext": "^1.0.0"
+    "react-fittext": "^1.0.0",
+    "react-pdf-js": "^4.0.0-alpha.6"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

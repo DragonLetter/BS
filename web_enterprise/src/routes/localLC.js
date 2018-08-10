@@ -1,5 +1,6 @@
-import React from 'react'
-import { Popconfirm, Upload, Row, Layout, Breadcrumb, Collapse, InputNumber, Table, Badge, Timeline, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd'
+import React from 'react';
+import PDF from 'react-pdf-js';
+import { Popconfirm, Upload, Row, Layout, Breadcrumb, Collapse, InputNumber, Table, Badge, Timeline, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd';
 import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/common';
 import DraftModal from '../modals/DraftModal';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
@@ -7,14 +8,46 @@ const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
 
-const FormItem = Form.Item
-const Option = Select.Option
-const RadioGroup = Radio.Group
-const CheckboxGroup = Checkbox.Group
+const InputGroup = Input.Group;
+const FormItem = Form.Item;
+const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 const { TextArea } = Input;
 
 let contract = {}, attachments = [], formValues, No;
 
+const AddDraftProtocol = Form.create()(
+    (props) => {
+        const options = [
+            { label: '', value: '' },
+        ];
+        const { visible, onCancel, onSubmit, data, form } = props;
+        const { getFieldDecorator } = form;
+        const formItemLayout = {
+            labelCol: { span: 5 },
+            wrapperCol: { span: 19 },
+        };
+
+        return (
+            <Modal
+                visible={visible}
+                title="信用证申请协议"
+                okText="同意"
+                cancelText="取消"
+                onCancel={onCancel}
+                onOk={onSubmit}
+                width="80%"
+                style={{ top: 20 }}
+            >
+                <Layout style={{ padding: '1px 1px' }}>
+                    <div style={{ width: '100%', height: 30 }}><span style={{ float: 'center', padding: 5 }}>信用证合同协议</span></div>
+                    <div><PDF file="protocol.pdf" fillWidth fillHeight /></div>
+                </Layout>
+            </Modal>
+        );
+    }
+);
 const AddDraftForm = Form.create()(
     (props) => {
         const options = [
@@ -81,25 +114,6 @@ const AddDraftForm = Form.create()(
                                 </FormItem>
                             </Col>
                         </Row>
-                        {/* <Row>
-                            <Col style={{marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>受益人账户信息</Col>
-                        </Row>
-                        <Row gutter={40}>
-                            <Col span={12} key={0}>
-                                <FormItem {...formItemLayout} label={`申请人`}>
-                                    {getFieldDecorator('BeneficiaryId', {
-                                    rules: [{ required: true, message: '请选择受益人!' }],
-                                    })(
-                                        <Select placeholder="企业名称" maxLength = "40" onSelect={handleSelect}>{corpOptions}</Select>
-                                    )}
-                                </FormItem>
-                            </Col>
-                            <Col span={12} key={1}>
-                                <FormItem {...formItemLayout} label={`地址`}>
-                                    <span id="beneficiaryAddress"></span>
-                                </FormItem>
-                            </Col>
-                        </Row> */}
                         <Row>
                             <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>银行信息</Col>
                         </Row>
@@ -113,11 +127,6 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                             </Col>
-                            {/* <Col span={12} key={3}>
-                            <FormItem {...formItemLayout} label={`账号`}>
-                                <span>12345678909876</span>
-                            </FormItem>
-                        </Col> */}
                             <Col span={12} key={1}>
                                 <FormItem {...formItemLayout} label={`通知银行`}>
                                     {getFieldDecorator('AdvisingBankId', {
@@ -127,26 +136,44 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                             </Col>
-                        </Row>
-                        {/* <Row>
-                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>通知行信息</Col>
-                        </Row>
-                        <Row gutter={40}>
-                            <Col span={12} key={2}>
-                                <FormItem {...formItemLayout} label={`通知银行`}>
-                                    {getFieldDecorator('AdvisingBankId', {
-                                        rules: [{ required: true, message: '请选择通知银行!' }],
+                            <Col span={24} key={2} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`是否可议付`}>
+                                    {getFieldDecorator('Negotiate', {
+                                        rules: [{ required: true, message: '请选择是否可议付！' }],
                                     })(
-                                        <Select placeholder="通知行名称" maxLength = "40">{bankOptions}</Select>
+                                        <RadioGroup defaultValue={3}>
+                                            <Radio value={1}>以下银行可议付</Radio>
+                                            <Radio value={2}>任意银行可议付</Radio>
+                                            <Radio value={3}>不可议付</Radio>
+                                        </RadioGroup>
                                         )}
                                 </FormItem>
                             </Col>
-                            <Col span={12} key={3}>
-                                <FormItem {...formItemLayout} label={`账号`}>
-                                    <span>12345678909876</span>
+                            <Col span={24} key={3} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`是否可转让`}>
+                                    {getFieldDecorator('Transfer', {
+                                        rules: [{ required: true, message: '请选择是否可转让！' }],
+                                    })(
+                                        <RadioGroup defaultValue={2}>
+                                            <Radio value={1}>可转让</Radio>
+                                            <Radio value={2}>不可转让</Radio>
+                                        </RadioGroup>
+                                        )}
                                 </FormItem>
                             </Col>
-                        </Row> */}
+                            <Col span={24} key={4} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`是否可保兑`}>
+                                    {getFieldDecorator('Confirmed', {
+                                        rules: [{ required: true, message: '请选择是否可保兑！' }],
+                                    })(
+                                        <RadioGroup defaultValue={2}>
+                                            <Radio value={1}>可保兑</Radio>
+                                            <Radio value={2}>不可保兑</Radio>
+                                        </RadioGroup>
+                                        )}
+                                </FormItem>
+                            </Col>
+                        </Row>
                         <Row>
                             <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>申请详情</Col>
                         </Row>
@@ -156,27 +183,26 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('Currency', {
                                         rules: [{ required: true, message: '请输入结算货币!' }],
                                     })(
-                                        <Input placeholder="结算货币" />
+                                        <Select>
+                                            <Option value="CNY">人民币</Option>
+                                            <Option value="USD">美元</Option>
+                                        </Select>
                                         )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={1}>
                                 <FormItem {...formItemLayout} label={`金额`}>
                                     {getFieldDecorator('Amount', {
-                                        rules: [{ required: true, message: '请输入结算金额!' }],
+                                        rules: [{ required: true, message: '请输入信用证金额!' }],
                                     })(
-                                        /* <div>
-                                            <Input placeholder="RMB" style={{ width: '60%', marginRight: 10 }} />
-                                            <Checkbox>允许浮动3%</Checkbox>
-                                        </div> */
-                                        <InputNumber
-                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                            placeholder="结算金额"
-                                            style={{ width: "100%" }}
-                                        />
+                                            <InputNumber formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="信用证金额" style={{ width: "32%" }}/>
                                         )}
                                 </FormItem>
+                                <div style={{ marginTop: -60, marginRight: 180, float: 'right' }} >
+                                    <InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }}/>
+                                </div>
                             </Col>
                             <Col span={12} key={2}>
                                 <FormItem {...formItemLayout} label={`到期日`}>
@@ -197,71 +223,21 @@ const AddDraftForm = Form.create()(
                                 </FormItem>
                             </Col>
                             <Col span={12} key={4}>
-                                <FormItem {...formItemLayout} label={`远期付款期限`}>
+                                <FormItem {...formItemLayout} label={`付款期限`}>
                                     {getFieldDecorator('IsAtSight', {
-                                        rules: [{ required: true, message: '请选择运期付款期限！' }],
+                                        rules: [{ required: true, message: '请选择即期/远期付款期限！' }],
                                     })(
                                         <RadioGroup>
                                             <Radio value={true}>即期</Radio>
-                                            <Radio value={false}>发运/服务交付</Radio>
+                                            <Radio value={false}>远期</Radio>
                                         </RadioGroup>
                                         )}
                                 </FormItem>
                                 <div style={{ marginTop: -62, marginRight: 160, float: 'right' }} >
-                                    <InputNumber id="afterSightDay" style={{ width: 40 }} />日后
+                                    <InputNumber id="afterSightDay" style={{ width: 60 }} />日后
                                 </div>
                             </Col>
                             <Col span={12} key={5}>
-                                <FormItem {...formItemLayout} label={`货物运输`}>
-                                    {getFieldDecorator('AllowPartialShippment', {
-                                        rules: [{ required: true, message: '请选择货物运输方式！' }],
-                                    })(
-                                        <CheckboxGroup options={[{ label: '允许分批', value: '1' }, { label: '允许转运', value: '2' },]} />
-                                        )}
-                                </FormItem>
-                            </Col>
-                            <Col span={12} key={6}>
-                                <FormItem {...formItemLayout} label={`最迟装运日期`}>
-                                    {getFieldDecorator('LastestShipDate', {
-                                        rules: [{ required: true, message: '请选择最近装运日期！' }],
-                                    })(
-                                        <DatePicker placeholder="最迟装运日期" style={{ width: '100%' }} />
-                                        )}
-                                </FormItem>
-                            </Col>
-                            <Col span={12} key={7}>
-                                <FormItem {...formItemLayout} label={`运输方式`}>
-                                    {getFieldDecorator('ShippingWay', {
-                                        rules: [{ required: true, message: '请选择运输方式！' }],
-                                    })(
-                                        <Select>
-                                            <Option value="公路">公路</Option>
-                                            <Option value="铁路">铁路</Option>
-                                            <Option value="海运">海运</Option>
-                                            <Option value="航运">航运</Option>
-                                        </Select>
-                                        )}
-                                </FormItem>
-                            </Col>
-                            <Col span={12} key={8}>
-                                <FormItem {...formItemLayout} label={`装运地点`}>
-                                    {getFieldDecorator('ShippingPlace', {
-                                        rules: [{ required: true, message: '请输入装运地点!' }],
-                                    })(
-                                        <Input placeholder="装运地点" />
-                                        )}
-                                </FormItem>
-                            </Col>
-                            <Col span={12} key={9}>
-                                <FormItem {...formItemLayout} label={`目的地`}>
-                                    {getFieldDecorator('ShippingDestination', {
-                                        rules: [{ required: true, message: '请输入目的地!' }],
-                                    })(
-                                        <Input placeholder="目的地" />
-                                        )}
-                                </FormItem>
-                            </Col>
-                            <Col span={12} key={10}>
                                 <FormItem {...formItemLayout} label={`贸易性质`}>
                                     {getFieldDecorator('TradeType', {
                                         rules: [{ required: true, message: '请选择贸易性质!' }],
@@ -273,16 +249,61 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                             </Col>
-                            <Col span={24} key={12} style={{ marginLeft: "-10%" }}>
-                                <FormItem {...formItemLayout} label={`货物描述`}>
-                                    {getFieldDecorator('GoodsDescription', {
-                                        rules: [{ required: true, message: '请输入货物描述!' }],
+                            <Col span={12} key={6}>
+                                <FormItem {...formItemLayout} label={`货物/服务方式`}>
+                                    {getFieldDecorator('ShippingWay', {
+                                        rules: [{ required: true, message: '请选择货物运输或交货方式/服务方式！' }],
                                     })(
-                                        <TextArea rows={4} placeholder="请输入货物描述" />
+                                        <Input placeholder="货货运输或交货方式/服务方式" />
                                         )}
                                 </FormItem>
                             </Col>
-                            <Col span={24} key={13} style={{ marginLeft: "-10%" }}>
+                            <Col span={12} key={7}>
+                                <FormItem {...formItemLayout} label={`装运地(港)`}>
+                                    {getFieldDecorator('ShippingPlace', {
+                                        rules: [{ required: true, message: '请输入装运地(港)!' }],
+                                    })(
+                                        <Input placeholder="装运地(港)" />
+                                        )}
+                                </FormItem>
+                            </Col>
+                            <Col span={12} key={8}>
+                                <FormItem {...formItemLayout} label={`货物/服务目的地`}>
+                                    {getFieldDecorator('ShippingDestination', {
+                                        rules: [{ required: true, message: '请输入目的地!' }],
+                                    })(
+                                        <Input placeholder="目的地" />
+                                        )}
+                                </FormItem>
+                            </Col>
+                            <Col span={12} key={9}>
+                                <FormItem {...formItemLayout} label={`货物/服务提供`}>
+                                    {getFieldDecorator('AllowPartialShippment', {
+                                        rules: [{ required: true, message: '请选择货物的分批分期和转运规定，服务的分次分期提供规定！' }],
+                                    })(
+                                        <CheckboxGroup options={[{ label: '允许分批/分次', value: '1' }, { label: '允许转运/分期', value: '2' },]} />
+                                        )}
+                                </FormItem>
+                            </Col>
+                            <Col span={12} key={10}>
+                                <FormItem {...formItemLayout} label={`最迟货运/服务提供日`}>
+                                    {getFieldDecorator('LastestShipDate', {
+                                        rules: [{ required: true, message: '请选择最迟货运/服务提供日！' }],
+                                    })(
+                                        <DatePicker placeholder="最迟货运/服务提供日" style={{ width: '100%' }} />
+                                        )}
+                                </FormItem>
+                            </Col>
+                            <Col span={24} key={11} style={{ marginLeft: "-10%" }}>
+                                <FormItem {...formItemLayout} label={`货物/服务描述`}>
+                                    {getFieldDecorator('GoodsDescription', {
+                                        rules: [{ required: true, message: '请输入货物/服务描述!' }],
+                                    })(
+                                        <TextArea rows={4} placeholder="请输入货物/服务描述" />
+                                        )}
+                                </FormItem>
+                            </Col>
+                            <Col span={24} key={12} style={{ marginLeft: "-10%" }}>
                                 <FormItem {...formItemLayout} label={`单据要求`}>
                                     {getFieldDecorator('DocumentRequire', {
                                         rules: [{ required: true, message: '请选择所要求的单据类型!' }],
@@ -291,28 +312,22 @@ const AddDraftForm = Form.create()(
                                         )}
                                 </FormItem>
                             </Col>
-                            <Col span={24} key={14} style={{ marginLeft: "-10%" }}>
-                                {/* <FormItem {...formItemLayout} label={`其它条款`}>
-                                    {getFieldDecorator('name', {
-                                        rules: [{ required: true, message: '请输入货物描述!' }],
-                                    })(
-                                        <div>
-                                            <span>[ ]在开证行产生的费用，由<CheckboxGroup options={[`申请人`, `收益人`]} />承担。</span><br/>
-                                            <span>[ ]在开证行外产生的费用，由<CheckboxGroup options={[`申请人`, `收益人`]} />承担。</span><br/>
-                                            <span>[ ]单据必须自运输单据签发日<Input style={{ width: 26 }} />日内提交，且不能低于信用证有效期</span><br/>
-                                            <span>[ ]发起日期不能早于开证日期</span>
-                                        </div>
-                                        )}
-                                </FormItem> */}
+                            <Col span={24} key={13} style={{ marginLeft: "-10%" }}>
                                 <FormItem {...formItemLayout} label={`其它条款`}>
+                                    <span>[ ]溢短装比例:</span>
+                                    {getFieldDecorator('fill', {
+                                        rules: [{ required: false, message: '请输入溢短装!' }],
+                                    })(
+                                        <span style={{ marginTop: 0, marginLeft: 0 }} >
+                                        短装 <InputNumber id="Lowfill" style={{ width: 80 }} />    溢装 <InputNumber id="Overfill" style={{ width: 80 }} />
+                                        </span>
+                                    )}
+                                </FormItem>
+                                <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
                                     <span>[ ]在开证行产生的费用，由</span>
                                     {getFieldDecorator('ChargeInIssueBank', {
                                         rules: [{ required: true, message: '请选择费用承担方!' }],
                                     })(
-                                        /* <span>[ ]在开证行产生的费用，由<RadioGroup>
-                                            <Radio value={true}>申请人</Radio>
-                                            <Radio value={false}>受益人</Radio>
-                                        </RadioGroup>承担。</span> */
                                         <RadioGroup>
                                             <Radio value={1}>申请人</Radio>
                                             <Radio value={2}>受益人</Radio>
@@ -379,53 +394,9 @@ const SecondStepForm = Form.create()(
             attachments.push(attachment);
         }
 
-        // const contractFileUploadOptions = {
-        //     name: 'file',
-        //     action: 'http://39.104.175.115:8080/api/Document/Upload',
-        //     withCredentials: true,
-        //     onChange(info) {
-        //         if (info.file.status !== 'uploading') {
-        //             console.log(info.file, info.fileList);
-        //         }
-        //         if (info.file.status === 'done') {
-        //             message.success(`${info.file.name} 上传成功`);
-        //             contract.Contract.FileName = info.file.name;
-        //             contract.Contract.FileHash = info.file.response.fileHash;
-        //             contract.Contract.FileSignature = info.file.response.signature;
-        //         } else if (info.file.status === 'error') {
-        //             message.error(`${info.file.name} 上传失败`);
-        //         }
-        //     },
-        //     onRemove(file) {
-        //         //console.log(file);
-        //     }
-        // };
-
         const contractFileUploadOptions = getFileUploadOptions(onContractChange);
         
         const documentFileUploadOptions = getFileUploadOptions(onAttachmentChange);
-        // const documentFileUploadOptions = {
-        //     name: 'file',
-        //     action: 'http://39.104.175.115:8080/api/Document/Upload',
-        //     onChange(info) {
-        //         if (info.file.status !== 'uploading') {
-        //             console.log(info.file, info.fileList);
-        //         }
-        //         if (info.file.status === 'done') {
-        //             let attachment = {};
-        //             attachment.FileName = info.file.name;
-        //             attachment.FileHash = info.file.response.fileHash;
-        //             attachment.FileSignature = info.file.response.signature;
-        //             contract.Attachments.push(attachment);
-        //             message.success(`${info.file.name} 上传成功`);
-        //         } else if (info.file.status === 'error') {
-        //             message.error(`${info.file.name} 上传失败`);
-        //         }
-        //     },
-        //     onRemove(file) {
-        //         console.log(file);
-        //     }
-        // };
 
         return (
             <Modal
@@ -482,6 +453,7 @@ class LocalLC extends React.Component {
             pagination: true,
             showHeader: true,
             display: false,
+            createDraftProtocolVisible: false,
             createDraftFromVisible: false,
             secondStepFromVisible: false,
             draftModalVisible: false,
@@ -537,6 +509,9 @@ class LocalLC extends React.Component {
                         bankNo: data[i].no,
                         bankName: data[i].name,
                         address: data[i].address,
+                        postcode: data[i].postcode,
+                        telephone: data[i].telephone,
+                        telefax: data[i].telefax,
                         accountName: data[i].accountName,
                         accountNo: data[i].accountNo,
                     })
@@ -567,6 +542,11 @@ class LocalLC extends React.Component {
                 });
             });
     }
+    closeProtocolForm = () => {
+        this.setState({
+            createDraftProtocolVisible: false,
+        });
+    }
 
     closeForm = () => {
         this.setState({
@@ -586,12 +566,15 @@ class LocalLC extends React.Component {
         });
     }
 
-    showCreateDraftForm = () => {
+    showCreateDraftProtocol = () => {
         this.setState({
-            createDraftFromVisible: true,
+            createDraftProtocolVisible: true,
         })
     }
 
+    saveCreateProtocolRef = (form) =>{
+        this.createProtocol = form;
+    }
     saveCreateFormRef = (form) => {
         this.createForm = form;
     }
@@ -599,12 +582,18 @@ class LocalLC extends React.Component {
     saveSecondStepFormRef = (form) => {
         this.secondStepForm = form;
     }
-
+    handleProtocolSubmit = () => {
+        const form = this.createProtocol;
+        form.validateFields((err, values) => {
+            if (err) {
+                return;
+            }
+            this.setState({createDraftProtocolVisible:false,
+                createDraftFromVisible:true,
+            })
+        });
+    }
     handleSubmit = () => {
-        this.setState({
-            createDraftFromVisible: false,
-            loading: true,
-        })
         const form = this.createForm;
         form.validateFields((err, values) => {
             if (err) {
@@ -659,12 +648,16 @@ class LocalLC extends React.Component {
             } else {
                 values.AfterSight = document.getElementById("afterSightDay").value;
             }
+            values.Overfill = document.getElementById("Overfill").value;
+            values.Lowfill = document.getElementById("Lowfill").value;
+            values.EnsureAmount = document.getElementById("EnsureAmount").value;
             values.BeneficiaryId = parseInt(values.BeneficiaryId);
             values.IssueBankId = parseInt(values.IssueBankId);
             values.AdvisingBankId = parseInt(values.AdvisingBankId);
             values.AfterSight = parseInt(values.AfterSight);
             values.DocDelay = parseInt(values.DocDelay);
             formValues = values;
+            message.error(JSON.stringify(formValues));
             request('/api/applicationform', {
                 method: "POST",
                 body: values,
@@ -679,10 +672,10 @@ class LocalLC extends React.Component {
                     }
                     No = Math.max(...keyArray);
                     this.setState({
+                        createDraftFromVisible: false,
                         secondStepFromVisible: true,
                         loading: false,
                     });
-
                 });
         })
     }
@@ -755,7 +748,7 @@ class LocalLC extends React.Component {
             <PageHeaderLayout title="国内信用证">
                 <Content style={{ background: '#fff', padding: 10, margin: 0, minHeight: 280 }}>
                     <div style={{ marginBottom: 14, height: 30 }}>
-                        <Button size='large' type='primary' style={{ float: 'right' }} onClick={this.showCreateDraftForm.bind(this)}><Icon type="plus" />开证申请</Button>
+                        <Button size='large' type='primary' style={{ float: 'right' }} onClick={this.showCreateDraftProtocol.bind(this)}><Icon type="plus" />开证申请</Button>
                     </div>
                     <div style={{ marginBottom: '12px' }}>
                         <Table
@@ -766,14 +759,12 @@ class LocalLC extends React.Component {
                         />
                     </div>
                 </Content>
-                {/* <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                    <div>
-                        <div style={{ marginBottom: 14, height: 30 }}>
-                            <Button size='large' type='primary' style={{ float: 'right' }} onClick={this.showCreateDraftForm.bind(this)}><Icon type="plus" />开证申请</Button>
-                        </div>
-                        <Table columns={columns} dataSource={this.state.LCs} {...this.state} />
-                    </div>
-                </Content> */}
+                <AddDraftProtocol
+                    ref={this.saveCreateProtocolRef}
+                    visible={this.state.createDraftProtocolVisible}
+                    onCancel={this.closeProtocolForm}
+                    onSubmit={this.handleProtocolSubmit}
+                />
                 <AddDraftForm
                     ref={this.saveCreateFormRef}
                     visible={this.state.createDraftFromVisible}

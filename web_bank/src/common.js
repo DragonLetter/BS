@@ -23,7 +23,7 @@ export function fetch_post(url, values){
     }).then((response) => checkStatus(response));
 }
 export function fetch_ca_post(url, values){
-    return fetch(serverCA + url, {
+    return fetch(serverIP + url, {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -40,6 +40,8 @@ function checkStatus(response){
     } else if (response.status === 401) {
         window.location.href = clientIP + "/#/";
         return;
+    } else if (response.status === 405) {
+        return response;
     }
     notification.error({
         message: `请求错误 ${response.status}: ${response.url}`,

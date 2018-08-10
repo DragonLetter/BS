@@ -8,7 +8,7 @@ app.get("/", function(req, res){
     res.render('index');
 });
 
-app.set('views', '../')
+app.set('views', path.resolve(__dirname, '../'))
 app.set('view engine', 'html');
 app.engine('html', ejs.renderFile);
 

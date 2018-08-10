@@ -45,7 +45,8 @@ exports.getTxsByBankId = function (req, res, next) { var args=req.swagger.params
     var bankId = args.bankId.value;
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
         if(resp == null || resp.result == null) {
-            res.end();
+            res.status(405).end();
+            //res.end();
         } else {
             var txs= [];
             var resultObj=JSON.parse(resp.result);
@@ -60,7 +61,8 @@ exports.getTxsByBankId = function (req, res, next) { var args=req.swagger.params
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify(txs));
             } else {
-                res.end();
+                //res.end();
+                res.status(405).end();
             }
         }
     });
@@ -70,6 +72,36 @@ function selectTxWithStatus(status, txStatus){
     if(status == "" || status == undefined || status == null || status == "null") {
         return true;
     } else if (status == txStatus){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+function selectTxWithLcNo(lcNo, lcNum){
+    if(lcNo == "" || lcNo == undefined || lcNo == null || lcNo == "null") {
+        return true;
+    } else if (lcNo == lcNum){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+function selectTxWithApplicant(applicant, lcApplicant){
+    if(applicant == "" || applicant == undefined || applicant == null || applicant == "null") {
+        return true;
+    } else if (applicant == lcApplicant){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+function selectTxWithBeneficiary(beneficiary, lcBeneficiary){
+    if(beneficiary == "" || beneficiary == undefined || beneficiary == null || beneficiary == "null") {
+        return true;
+    } else if (beneficiary == lcBeneficiary){
         return true;
     } else{
         return false;
@@ -87,7 +119,7 @@ function selectTxWithDateRange(applyTime, startDate, endDate){
     var appDate = new Date(applyTime);
     var stDate = new Date(startDate);
     var enDate = new Date(endDate);
-
+    console.log("---------appDate:%s------------\n",appDate);
     if( appDate > stDate && appDate <= enDate) {
         return true;
     } else {
@@ -95,8 +127,12 @@ function selectTxWithDateRange(applyTime, startDate, endDate){
     }
 }
 
-function selectTxWithParams(applyTime, startDate, endDate, inputStatus, txStatus) {
-    if (selectTxWithDateRange(applyTime, startDate, endDate) && selectTxWithStatus(inputStatus, txStatus)) {
+//信用证编号查询
+function selectTxWithParams(applyTime, startDate, endDate, lcNo, lcNum,  applicant, lcApplicant, beneficiary, lcBeneficiary,inputStatus, txStatus) {
+    if (selectTxWithDateRange(applyTime, startDate, endDate) && selectTxWithStatus(inputStatus, txStatus)
+    && selectTxWithLcNo(lcNo, lcNum)
+    && selectTxWithApplicant(applicant, lcApplicant)
+    && selectTxWithBeneficiary(beneficiary, lcBeneficiary)) {
         return true;            
     } else {
         return false;
@@ -126,37 +162,100 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
 
     var bankId = args.bankId.value;
     var status = args.status.value;
+    var lcNo = args.lcNo.value;
+    var applicant = args.applicant.value;
+    var beneficiary = args.beneficiary.value;
     var startDate = args.startDate.value;
     var endDate = args.endDate.value;
     //console.log("---------bankid------------:%s\n",bankId);
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
         var txs = [];                    
         if(resp == null || resp.result == null) {
-            res.end();
+            res.status(405).end();
+            //res.end();
         } else {
             var resultObj = JSON.parse(resp.result);
             for (var i = 0; i < resultObj.length; i++) {
                 var lc = resultObj[i];
                 var lcStep = lc.Record.CurrentStep;
-                if (lc.Record.ApplicationForm.IssuingBank.No == bankId){
-                    txs.push(chaincodeTx2ViewTx(lc));
-                    /*if (stepArrByIssuingBank.indexOf(lcStep) > -1
-                        && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                var lcNum= lc.Record.lcNo;
+                var lcApplicant = lc.Record.LetterOfCredit.Applicant.Name;
+                var lcBeneficiary = lc.Record.LetterOfCredit.Beneficiary.Name;
+            
+                //开证行和通知行是同一家银行
+                if (lc.Record.ApplicationForm.IssuingBank.No == bankId 
+                     && lc.Record.ApplicationForm.AdvisingBank.No == bankId)
+                {
+                    console.log("-------bankId:%s-------\n",bankId);
+                    console.log("-------lcSetp:%s-------\n",lcStep);
+                    console.log("-------lcNo:%s-------\n",lcNo);
+                    console.log("-------lcNum:%s-------\n",lcNum);
+                    console.log("-------applicant:%s-------\n",applicant);
+                    console.log("-------lcApplicant:%s-------\n",lcApplicant);
+                    console.log("-------beneficiary:%s-------\n",beneficiary);
+                    console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
+                    console.log("------current status:%s-------\n",lc.Record.lcStatus);
+                    console.log("------select status:%s-------\n",status);
+                    console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
+                    console.log("------startDate :%s-------\n",startDate);
+                    console.log("------endData :%s-------\n",endDate);                
+                    console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
+                    console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                   
+                    if ((stepArrByIssuingBank.indexOf(lcStep) > -1 || stepArrByAdvisingBank.indexOf(lcStep) > -1)
+                        && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
                            txs.push(chaincodeTx2ViewTx(lc));
-                    }*/
-                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId){
-                    txs.push(chaincodeTx2ViewTx(lc));
-                    /*if (stepArrByAdvisingBank.indexOf(lcStep) > -1
-                        && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                    }
+                }else if (lc.Record.ApplicationForm.IssuingBank.No == bankId){//开证行
+                    // console.log("-------bankId:%s-------\n",bankId);
+                    // console.log("-------lcSetp:%s-------\n",lcStep);
+                    // console.log("-------lcNo:%s-------\n",lcNo);
+                    // console.log("-------lcNum:%s-------\n",lcNum);
+                    // console.log("-------applicant:%s-------\n",applicant);
+                    // console.log("-------lcApplicant:%s-------\n",lcApplicant);
+                    // console.log("-------beneficiary:%s-------\n",beneficiary);
+                    // console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
+                    // console.log("------current status:%s-------\n",lc.Record.lcStatus);
+                    // console.log("------select status:%s-------\n",status);
+                    // console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
+                    // console.log("------startDate :%s-------\n",startDate);
+                    // console.log("------endData :%s-------\n",endDate);                
+                    // console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
+                    // console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                    // txs.push(chaincodeTx2ViewTx(lc));                    
+                    if (stepArrByIssuingBank.indexOf(lcStep) > -1
+                        && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                           txs.push(chaincodeTx2ViewTx(lc));
+                    }
+                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId){//通知行
+                    // console.log("-------bankId:%s-------\n",bankId);
+                    // console.log("-------lcSetp:%s-------\n",lcStep);
+                    // console.log("-------lcNo:%s-------\n",lcNo);
+                    // console.log("-------lcNum:%s-------\n",lcNum);
+                    // console.log("-------applicant:%s-------\n",applicant);
+                    // console.log("-------lcApplicant:%s-------\n",lcApplicant);
+                    // console.log("-------beneficiary:%s-------\n",beneficiary);
+                    // console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
+                    // console.log("------current status:%s-------\n",lc.Record.lcStatus);
+                    // console.log("------select status:%s-------\n",status);
+                    // console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
+                    // console.log("------startDate :%s-------\n",startDate);
+                    // console.log("------endData :%s-------\n",endDate);                
+                    // console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
+                    // console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                    // txs.push(chaincodeTx2ViewTx(lc));
+                    if (stepArrByAdvisingBank.indexOf(lcStep) > -1
+                        && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
                         txs.push(chaincodeTx2ViewTx(lc));
-                    }*/
+                    }
                 }
             }
             if (txs.length > 0) {
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify(txs));
             } else {
-                res.end();
+                res.status(405).end();
+                //res.end();
             }
         }
     });

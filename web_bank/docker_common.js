@@ -40,6 +40,9 @@ function checkStatus(response){
         window.location.href = clientIP + "/#/";
         return;
     }
+    else if  (response.status === 405) {
+        return response;
+    }
     notification.error({
         message: `请求错误 ${response.status}: ${response.url}`,
         description: response.statusText,

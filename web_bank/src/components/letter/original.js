@@ -18,7 +18,7 @@ let isFileUploaded = false;
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onOk, data, form } = props;
+        const { visible, onCancel, onOk, dataform, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 }, };
 
@@ -35,9 +35,47 @@ const ApproveDialog = Form.create()(
                 <Form>
                     <FormItem {...formItemLayout} label="审核说明">
                         {
-                            getFieldDecorator('comment', { rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }], })
+                            getFieldDecorator('comment', {
+                                initialValue: dataform ? dataform.suggestion : "",
+                                rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
+                            })
                                 (
                                 <TextArea rows={4} placeholder="请填写审核说明,内容必须填写。" />
+                                )
+                        }
+                    </FormItem>
+                </Form>
+            </Modal>
+        );
+    }
+);
+
+
+const RejectDialog = Form.create()(
+    (props) => {
+        const options = [{ label: '', value: '' },];
+        const { visible, onCancel, onReject,dataform, data, form } = props;
+        const { getFieldDecorator } = form;
+        const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 }, };
+
+        return (
+            <Modal
+                visible={visible}
+                title="信用证开立"
+                okText="驳回"
+                cancelText="取消"
+                onCancel={onCancel}
+                onOk={onReject}
+                width='800'
+            >
+                <Form>
+                    <FormItem {...formItemLayout} label="驳回说明">
+                        {
+                            getFieldDecorator('comment', { 
+                                initialValue: dataform ? dataform.suggestion : "",
+                                rules: [{ required: true, message: '请将审核的说明填写至此' }], })
+                                (
+                                <TextArea rows={4} placeholder="请将审核的说明填写至此。" />
                                 )
                         }
                     </FormItem>
@@ -109,6 +147,7 @@ class LetterDraft extends React.Component {
             rejectDialogVisible: false,
             deposit: {},
             depositDoc: {},
+            afstate: {},
             letters: {}
         }
     }
@@ -117,6 +156,28 @@ class LetterDraft extends React.Component {
         this.getLCDraftDetail();
         this.getLCProcessFlows();
         this.getDepositData();
+        this.getAFStateInfo();
+    }
+
+    getAFStateInfo = () => {
+        fetch_get("/api/applicationform/afstate/" + this.props.params.id)
+            .then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        var afdata = {};
+                        afdata.AFNo = data.AFNo;
+                        afdata.step = data.step;
+                        afdata.state = data.state;
+                        if (data.lcNo != null && data.lcNo.length > 0)
+                            afdata.lcNo = data.lcNo;
+                        if (data.suggestion != null && data.suggestion.length > 0)
+                            afdata.suggestion = data.suggestion;
+                        this.setState({
+                            afstate: afdata,
+                        });
+                    });
+                }
+            });
     }
 
     getLCDraftDetail = () => {
@@ -193,8 +254,24 @@ class LetterDraft extends React.Component {
         this.approveForm = form;
     }
 
+    saveRejectRef = (form) => {
+        this.rejectForm = form;
+    }
+
+    showRejectDialog = () => {
+        this.setState({
+            rejectDialogVisible: true,
+        });
+    }
+
+    closeRejectDialog = () => {
+        this.setState({
+            rejectDialogVisible: false,
+        });
+    }
+
     HandleRequestData = (values) => {
-      //  if (!isFileUploaded) { return; }
+        //  if (!isFileUploaded) { return; }
         var result = {
             no: this.props.params.id,
             suggestion: values.comment,
@@ -205,7 +282,48 @@ class LetterDraft extends React.Component {
             if (res.status >= 200 && res.status < 300) {
                 res.json().then((data) => {
                     this.closeApproveDialog();
+                    this.approveUpdateAfState();
                     message.success("审核完成, 等待企业确认.");
+
+                });
+            } else {
+                message.error("交易执行失败，请检查审核信息.");
+            }
+        });
+    }
+
+    approveUpdateAfState = () => {
+        var afstate = this.state.afstate;
+        afstate.state = '11';//初始化身份--经办
+        afstate.step = 'AdvisingBankReceiveLCNoticeStep' //流程到银行开立
+        afstate.suggestion = "";
+        fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+            .then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        this.closeApproveDialog();
+                        // message.success("复核审核完成, 等待授权确认.");
+                    });
+                } else {
+                    message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                }
+            });
+    }
+
+    HandleRejectRequestData = (values) => {
+        //  if (!isFileUploaded) { return; }
+        var result = {
+            no: this.props.params.id,
+            suggestion: values.comment,
+            isAgreed: "false",
+            depositDoc: lcAttachment
+        };
+        fetch_post("/api/bank/letterofcredit/bankissuing", result).then((res) => {
+            if (res.status >= 200 && res.status < 300) {
+                res.json().then((data) => {
+                    this.closeRejectDialog();
+                    this.rejectUpdateAfState();
+                    message.success("审核完成, 已驳回重新处理。.");
                 });
             } else {
                 message.error("交易执行失败，请检查审核信息.");
@@ -217,11 +335,117 @@ class LetterDraft extends React.Component {
         const form = this.approveForm;
         form.validateFields((err, values) => {
             if (err) { return; }
-            this.HandleRequestData(values);
+            if (sessionStorage.getItem('userType') == 11) {
+                var afstate = this.state.afstate;
+                afstate.state = '12';
+                afstate.lcNo = this.state.letters.LCNo;
+                afstate.suggestion = values.comment;
+                afstate.isAgreed = "true";
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                message.success("经办审核完成, 等待复核确认.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
+                return;
+            }
+            else if (sessionStorage.getItem('userType') == 12) {
+                var afstate = this.state.afstate;
+                afstate.state = '13';
+                afstate.suggestion = values.comment;
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                message.success("复核审核完成, 等待授权确认.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
+                return;
+            } else {
+                this.HandleRequestData(values);
+            }
         });
 
     }
 
+    handleReject = () => {
+        const form = this.rejectForm;
+        form.validateFields((err, values) => {
+            if (err) { return; }
+            if (sessionStorage.getItem('userType') == 12) {
+                var afstate = this.state.afstate;
+                afstate.state = '11';
+                afstate.lcNo = this.state.letters.LCNo;
+                afstate.suggestion = values.comment;
+                afstate.isAgreed = "false";
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                message.success("复合审核完成, 已驳回经办重新处理。.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
+                return;
+            }
+            else if (sessionStorage.getItem('userType') == 13) {
+                var afstate = this.state.afstate;
+                afstate.state = '11';
+                afstate.suggestion = values.comment;
+                afstate.isAgreed = "false";
+                fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+                    .then((res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            res.json().then((data) => {
+                                this.closeApproveDialog();
+                                this.closeRejectDialog();
+                                message.success("授权审核完成, 已驳回经办重新处理。.");
+                            });
+                        } else {
+                            message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                        }
+                    });
+                return;
+            } else {
+
+                this.HandleRejectRequestData(values);
+            }
+        });
+    }
+
+    rejectUpdateAfState = () => {
+        var afstate = this.state.afstate;
+        afstate.state = '11';//初始化身份--经办
+        afstate.step = 'BankConfirmApplyFormStep' //流程到银行确认
+        afstate.suggestion = values.comment;
+        afstate.isAgreed = "false";
+        fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
+            .then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        this.closeApproveDialog();
+                        // message.success("复核审核完成, 等待授权确认.");
+                    });
+                } else {
+                    message.error(CONSTANTS.ERROR_APPLICATION_FORM_APPROVED);
+                }
+            });
+    }
     // TABS选择回调
     tabsCallback = (key) => {
         this.getLCDraftDetail();
@@ -238,6 +462,24 @@ class LetterDraft extends React.Component {
             goodsInfo = data.GoodsInfo ? data.GoodsInfo : [],
             isAtSight = data.isAtSight === "true" ? "即期" : ("发运/服务交付" + data.afterSight + "日后"),
             attachments = data.Attachments ? data.Attachments : [];
+
+        let btnDivHtml;
+        if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
+            btnDivHtml = (
+                <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
+                    <Row>
+                        <Col style={{ fontSize: '13px' }} span={24} offset={0}>
+                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />信用证开立</Button>
+                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />驳回</Button>
+                        </Col>
+                    </Row>
+                </div>
+            );
+        } else {
+            btnDivHtml = (<div></div>);
+        }
+
+
         return (
             <Layout style={{ padding: '1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', fontSize: 13, fontWeight: 800, background: '#F3F1EF' }}>
@@ -275,12 +517,9 @@ class LetterDraft extends React.Component {
                                     </Row>
                                 </div>
                             </div>
-                            <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
-                                <Row>
-                                    <Col style={{ fontSize: '13px' }} span={24} offset={0}>
-                                        <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />信用证开立</Button>
-                                    </Col>
-                                </Row>
+
+                            <div>
+                                {btnDivHtml}
                             </div>
 
                         </TabPane>
@@ -365,7 +604,7 @@ class LetterDraft extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物运输</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.allowPartialShipment?"允许分批":"允许转运"}</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.allowPartialShipment ? "允许分批" : "允许转运"}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>最迟装运日期</Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.latestShipmentDate}</Col>
@@ -381,7 +620,7 @@ class LetterDraft extends React.Component {
 
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature==1?"货物贸易":"服务贸易"}</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature == 1 ? "货物贸易" : "服务贸易"}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}></Col>
@@ -429,6 +668,13 @@ class LetterDraft extends React.Component {
                     visible={this.state.approveDialogVisible}
                     onCancel={this.closeApproveDialog}
                     onOk={this.handleApprove}
+                    dataform={this.state.afstate}
+                />
+                <RejectDialog
+                    ref={this.saveRejectRef}
+                    visible={this.state.rejectDialogVisible}
+                    onCancel={this.closeRejectDialog}
+                    onReject={this.handleReject}
                 />
             </Layout>
         )

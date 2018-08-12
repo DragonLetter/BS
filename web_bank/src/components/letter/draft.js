@@ -447,7 +447,11 @@ class LetterDraft extends React.Component {
             advisingBank = applicationForm.AdvisingBank ? applicationForm.AdvisingBank : [],
             goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
             isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
-            attachments = applicationForm.Attachments ? applicationForm.Attachments : [];
+            attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
+            Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
+            Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
+            Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
+            OverLow = "短装:"+applicationForm.Lowfill+"    溢装:"+applicationForm.Overfill  ;
 
         let btnDivHtml;
         if (this.state.letter != null && this.state.letter.CurrentStep != "" && this.state.letter.CurrentStep == "BankConfirmApplyFormStep" &&
@@ -511,6 +515,20 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>账号</Col>
                                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{beneficiary.Account}</Col>
                                 </Row>
+                                <Row key={5}>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>是否可议付</Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{Negotiate}</Col>
+                                    <Col span={3}></Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>是否可转让</Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{Transfer}</Col>
+                                </Row>
+                                <Row key={5}>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>是否可保兑</Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{Confirmed}</Col>
+                                    <Col span={3}></Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{}</Col>
+                                </Row>
 
                                 <Row>
                                     <Col style={{ marginTop: '30px', marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>详细信息</Col>
@@ -520,7 +538,7 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicationForm.Currency}</Col>
                                     <Col span={3}></Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>金额</Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicationForm.amount}</Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>信用证:{applicationForm.amount}  保证金:{applicationForm.EnsureAmount}</Col>
                                 </Row>
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日</Col>
@@ -556,8 +574,8 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature == 1 ? "货物贸易" : "服务贸易"}</Col>
                                     <Col span={3}></Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}></Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>溢短装</Col>
+                                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{OverLow}</Col>
                                 </Row>
 
                                 <Row>

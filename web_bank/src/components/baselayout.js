@@ -8,7 +8,7 @@ const { Header, Content, Sider, Footer } = Layout;
 const SubMenu = Menu.SubMenu
 const Search = Input.Search
 
-export const loginAddr = "http://localhost:8000/#/";
+export const loginAddr = "http://localhost:9000";
 
 class BaseLayout extends React.Component {
     constructor(props) {
@@ -67,13 +67,14 @@ class BaseLayout extends React.Component {
             <p style={{width: 180, padding: 5, textAlign: 'center'}}><Icon type="exclamation-circle-o" style={{fontSize:13, marginRight: 5}}/>您还没有任何通知。</p>
           </div>
         );
-
+        var title_str = "数字信用证银行系统-"+sessionStorage.getItem('bankname');
+        var user_name = sessionStorage.getItem('username');
         return (
             <Layout>
                 <Header className="header">
                     <div className="logo" />
-                    <div style={{fontSize: 15, color: 'white', height: 38, width: 300, display: 'inline', position: 'absolute', top: 0, left: 20}}>
-                        <Link to="/lcpayment/index" style={{color: 'white'}}>数字信用证银行系统</Link>
+                    <div style={{fontSize: 15, color: 'white', height: 38, width: 350, display: 'inline', position: 'absolute', top: 0, left: 20}}>
+                        <Link to="/lcpayment/index" style={{color: 'white'}}>{title_str}</Link>
                     </div>
                     <Menu
                         theme="dark"
@@ -90,7 +91,7 @@ class BaseLayout extends React.Component {
                         </SubMenu>
                         <SubMenu title={<Popover placement="bottom" title={"通知中心"} content={notifications} trigger="click"><Icon type="message" style={{fontSize:15}}/></Popover>}>
                         </SubMenu> */}
-                        <SubMenu title={<Popover placement="bottom" content={userCenter} trigger="click"><Icon type="user" style={{fontSize:15}}/></Popover>}>
+                        <SubMenu title={<Popover placement="bottom" content={userCenter} trigger="click"><Icon type="user" style={{fontSize:15}}/>{user_name}</Popover>}>
                         </SubMenu>
                     </Menu>
                 </Header>

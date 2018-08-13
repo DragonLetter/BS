@@ -24,14 +24,15 @@ export function fetch_post(url, values){
     }).then((response) => checkStatus(response));
 }
 export function fetch_ca_post(url, values){
-    return fetch(serverCA + url, {
+    return fetch(serverIP + url, {
         method: "POST",
-        mode: "no-cors",
+        mode: "cors",
+        credentials: "include",
         headers: {
-            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify(values),
-    }).then((response) => function(response){ return response;});
+    }).then((response) => checkStatus(response));
 }
 function checkStatus(response){
     if (response.status >= 200 && response.status < 300) {

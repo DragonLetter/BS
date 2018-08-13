@@ -402,7 +402,7 @@ class LetterRedemption extends React.Component {
     rejectUpdateAfState = (values) => {
         var afstate = this.state.afstate;
         afstate.state = '11';//初始化身份--经办
-        afstate.step = 'IssuingBankAcceptOrRejectStep' //流程到发证行承兑或拒付
+        afstate.step = 'IssuingBankCloseLCStep' //闭卷
         afstate.suggestion = values.comment;
         afstate.isAgreed = "false";
         fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)

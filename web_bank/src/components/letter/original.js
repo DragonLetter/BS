@@ -462,6 +462,9 @@ class LetterDraft extends React.Component {
             goodsInfo = data.GoodsInfo ? data.GoodsInfo : [],
             isAtSight = data.isAtSight === "true" ? "即期" : ("发运/服务交付" + data.afterSight + "日后"),
             attachments = data.Attachments ? data.Attachments : [],
+            chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
+            chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
+            docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
             Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
             Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
             Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
@@ -651,7 +654,7 @@ class LetterDraft extends React.Component {
 
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d', minHeight: '40px' }} span={21}>信用证在国际贸易中还提供担保作用。国际贸易的买卖双方签订了货物买卖合同，双方会在合同条款中选择采用信用证的方法作为支付手段。通常买方向自己的开户银行申请开出信用证。在信用证担保关系中，买方称为“开证人”或“申请人”，银行称为“开证银行”，而卖方称为“受益人”。由于信用证是银行提供的，所以，银行从中提供了担保作用：银行一定会向卖方付款的。卖方发货后，取得单证。卖方在开证银行收到货款，及时将单证交给银行，银行再将单证的货权转让给买方。买方在申请银行开出信用证时，向银行交付了一定比例的保证金。当买方收到货物时就要向银行交付剩余的款额。所以，从上述运作过程中，可以看出银行提供了信用，信用证也是一种保证的合约。
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
                                     </Col>
                                     </Row>
                                     <Row>

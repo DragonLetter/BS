@@ -448,6 +448,9 @@ class LetterDraft extends React.Component {
             goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
             isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
             attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
+            chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
+            chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
+            docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
             Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
             Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
             Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
@@ -585,7 +588,7 @@ class LetterDraft extends React.Component {
 
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
-                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}>{applicationForm.ChargeInIssueBank ? "在开证行发生的费用由申请人承担" : "在开证行外发生的费用由申请人承担"}</Col>
+                                    <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
                                 </Row>
                             </div>
 

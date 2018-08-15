@@ -10,8 +10,8 @@ module.exports.bankIssuing = function bankIssuing (req, res, next) {
 };
 
 // 通知行：审核并签名共识（同意通知 or 拒绝通知）
-module.exports.advisingBankAduit = function advisingBankAduit (req, res, next) {
-  LetterofCreditService.advisingBankAduit(req, res, next);
+module.exports.advisingBankAudit = function advisingBankAudit (req, res, next) {
+  LetterofCreditService.advisingBankAudit(req, res, next);
 };
 
 // 开证行、通知行、受益人同意通知或者拒绝信用证正本修改

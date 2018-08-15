@@ -35,7 +35,7 @@ exports.bankIssuing = function (req, res, next) { var args=req.swagger.params;
  * Params：body
  * return: nil
  **/
-exports.advisingBankAduit = function (req, res, next) { var args=req.swagger.params;
+exports.advisingBankAudit = function (req, res, next) { var args=req.swagger.params;
     let value = args.body.value, no = value.no, suggestion = value.suggestion, isAgreed = value.isAgreed;
     fabric.invoke(req,"advisingBankReceiveLCNotice", [no, suggestion, isAgreed], function(err, resp){
         if(!err) {

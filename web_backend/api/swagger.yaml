@@ -1,6 +1,8 @@
 swagger: "2.0"
+
+#### ------- info region --------
 info:
-  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  description: "This is a sample server Petstore server. You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/). For this sample, you can use the api key `special-key` to test the authorization filters."
   version: "1.0.0"
   title: "Swagger DragonLedger"
   termsOfService: "http://swagger.io/terms/"
@@ -9,64 +11,70 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+#### endregion
 
 #### ------- route config region --------
-host: "39.104.175.115:8080"
-#host: "localhost:8080"
+#host: "39.104.175.115:8080"
+host: "localhost:8080"
 basePath: "/api"
 #### endregion
 
 #### ------- tags region ----------------
 tags:
-
-# contribute by zengyi
-- name: "Test"
-  description: "测试某些功能时用"
+# 银行端相关接口
 - name: "Bank"
   description: "银行信息"
-- name: "Corporation"
-  description: "企业，商户信息"
-- name: "ApplicationForm"
-  description: "信用证申请表"
-- name: "Document"
-  description: "文档的上传下载"
-- name: "SignedBank"
-  description: "银行签约信息"
-- name: "CorpPartnership"
-  description: "企业客户信息"
-- name: "LCIssue"
-  description: "信用证流转"
-- name: "LetterofCredit"
-  description: "企业端，信用证操作接口"
-- name: "BlockchainStatus"
-  description: "区块链相关状态"
-  
-# contribute by lixiaohu
 - name: "Bank Service: Network Metrics"
-  description: "银行端，的关键业务指标"
+  description: "银行端，关键业务指标"
 - name: "Bank Service: Transaction"
   description: "银行端，业务流程查询接口"
 - name: "Bank Service: LetterofCredit"
   description: "银行端，业务流程操作接口"
 - name: "Bank Service: Application"
   description: "银行端，信用证申请查询、操作"
-
-# contribute by lixiaohu
+- name: "BclcInterface"
+  description: "BCLC系统接口"
+# 企业端相关接口
+- name: "Corporation"
+  description: "企业，商户信息"
+- name: "ApplicationForm"
+  description: "信用证申请表"
+- name: "SignedBank"
+  description: "银行签约信息"
+- name: "CorpPartnership"
+  description: "企业客户信息"
+- name: "LetterofCredit"
+  description: "企业端，信用证操作接口"
+# 公共接口
+- name: "Document"
+  description: "文档的上传下载"
+- name: "LCIssue"
+  description: "信用证流转"
+- name: "BlockchainStatus"
+  description: "区块链相关状态"
 - name: "SYSTEM: User"
   description: "系统用户"
 - name: "SYSTEM: Blockchain"
   description: "区块链网络"
 - name: "SYSTEM: Certificate"
   description: "证书申请"
+- name: "Transaction"
+  description: "交易信息"
+- name: "User"
+  description: "用户相关操作"
+# 测试
+- name: "Test"
+  description: "测试某些功能时用"
+#### endregion
 
+#### ------- schemes region ----------------
 schemes:
 - "http"
+#### endregion
+
+#### ------- paths region ----------------
 paths:
-
-# ---------------------  contribute by lixiaohu  -------------------------------------
-## ---------------------  contribute by lixiaohu  -------------------------------------
-### ---------------------  contribute by lixiaohu  -------------------------------------
-
+# 银行服务
   /bank/metrics/network:
     get:
       tags: 
@@ -86,7 +94,6 @@ paths:
         404:
           description: "Resource not found"
       x-swagger-router-controller: "Metrics"
-  
   /bank/metrics/{bankId}:
     get:
       tags: 
@@ -108,7 +115,6 @@ paths:
           schema:
             $ref: "#/definitions/Metrics"
       x-swagger-router-controller: "Metrics"
-
   /bank/ApplicationAudit:
     post:
       tags:
@@ -157,7 +163,6 @@ paths:
         404:
           description: "Application not found"
       x-swagger-router-controller: "BankApplication"
-
   /bank/transaction/{bankId}:
     get:
       tags: 
@@ -181,7 +186,6 @@ paths:
             items:
               $ref: "#/definitions/Transaction"
       x-swagger-router-controller: "BankTransaction"
-
   /bank/transaction/processing/{bankId}:
     get:
       tags: 
@@ -231,7 +235,6 @@ paths:
             items:
               $ref: "#/definitions/Transaction"
       x-swagger-router-controller: "BankTransaction"
-  
   /bank/transaction/processflow/{txId}:
     get:
       tags: 
@@ -253,7 +256,6 @@ paths:
           schema:
             $ref: "#/definitions/LCTxProcessflow"
       x-swagger-router-controller: "BankTransaction"
-
   /bank/transaction/draft/{txId}:
     get:
       tags: 
@@ -275,7 +277,6 @@ paths:
           schema:
             $ref: "#/definitions/LCTxLetterofCredit"
       x-swagger-router-controller: "BankTransaction"
-
   /bank/transaction/deposit/{txId}:
     get:
       tags: 
@@ -297,7 +298,6 @@ paths:
           schema:
             $ref: "#/definitions/LCTxDeposit"
       x-swagger-router-controller: "BankTransaction"
-
   /bank/transaction/depositdocs/{txId}:
     get:
       tags: 
@@ -319,7 +319,6 @@ paths:
           schema:
             $ref: "#/definitions/LCTxDepositDoc"
       x-swagger-router-controller: "BankTransaction"
-
   /bank/transaction/contracts/{txId}:
     get:
       tags: 
@@ -343,102 +342,95 @@ paths:
             items:
               $ref: "#/definitions/LCTxContract"
       x-swagger-router-controller: "BankTransaction"
-
   # 获取指定交易的信用证，正本附件
   /bank/Transaction/LetterOfCredit/{txId}:
-      get:
-        tags: 
-        - "Bank Service: Transaction"
-        summary: "获取指定交易的信用证，正本附件"
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的信用证，正本附件"
+      description: ""
+      operationId: "getLCOriginalByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
         description: ""
-        operationId: "getLCOriginalByTxId"
-        produces: 
-        - "application/json"
-        parameters:
-        - name: "txId"
-          in: "path"
-          description: ""
-          required: true
-          type: "string"
-        responses:
-          200:
-            description: OK
-            schema:
-              $ref: "#/definitions/LCTxOriginalAttachment"
-        x-swagger-router-controller: "BankTransaction"
-
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LCTxOriginalAttachment"
+      x-swagger-router-controller: "BankTransaction"
   # 获取指定交易的来单信息
   /bank/Transaction/DocsReceived/{txId}:
-      get:
-        tags: 
-        - "Bank Service: Transaction"
-        summary: "获取指定交易的来单信息"
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的来单信息"
+      description: ""
+      operationId: "getLCDocsReceivedByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
         description: ""
-        operationId: "getLCDocsReceivedByTxId"
-        produces: 
-        - "application/json"
-        parameters:
-        - name: "txId"
-          in: "path"
-          description: ""
-          required: true
-          type: "string"
-        responses:
-          200:
-            description: OK
-            schema:
-                $ref: "#/definitions/LCTransDocsReceived"
-        x-swagger-router-controller: "BankTransaction"
-
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: "#/definitions/LCTransDocsReceived"
+      x-swagger-router-controller: "BankTransaction"
   # 获取指定交易的承兑信息
   /bank/Transaction/AcceptPayment/{txId}:
-      get:
-        tags: 
-        - "Bank Service: Transaction"
-        summary: "获取指定交易的承兑信息"
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的承兑信息"
+      description: ""
+      operationId: "getLCAcceptPaymentByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
         description: ""
-        operationId: "getLCAcceptPaymentByTxId"
-        produces: 
-        - "application/json"
-        parameters:
-        - name: "txId"
-          in: "path"
-          description: ""
-          required: true
-          type: "string"
-        responses:
-          200:
-            description: OK
-            schema:
-                $ref: "#/definitions/LCTxAcceptPayment"
-        x-swagger-router-controller: "BankTransaction" 
-
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: "#/definitions/LCTxAcceptPayment"
+      x-swagger-router-controller: "BankTransaction" 
   # 获取指定交易的闭卷信息
   /bank/Transaction/Closing/{txId}:
-      get:
-        tags: 
-        - "Bank Service: Transaction"
-        summary: "获取指定交易的闭卷信息"
+    get:
+      tags: 
+      - "Bank Service: Transaction"
+      summary: "获取指定交易的闭卷信息"
+      description: ""
+      operationId: "getLCClosingByTxId"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "txId"
+        in: "path"
         description: ""
-        operationId: "getLCClosingByTxId"
-        produces: 
-        - "application/json"
-        parameters:
-        - name: "txId"
-          in: "path"
-          description: ""
-          required: true
-          type: "string"
-        responses:
-          200:
-            description: OK
-            schema:
-                $ref: "#/definitions/LCTxCLosing"
-        x-swagger-router-controller: "BankTransaction"
-
-### --------
-##  -------- 信用证业务流程，操作接口 ------- 银行端 ------
-#   --------
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+              $ref: "#/definitions/LCTxCLosing"
+      x-swagger-router-controller: "BankTransaction"
+  # 信用证业务流程，操作接口 ------- 银行端 ------
   /bank/LetterofCredit/bankIssuing:
     post:
       tags:
@@ -461,157 +453,148 @@ paths:
           schema:
             type: "string"
       x-swagger-router-controller: "BankLetterofCredit"
-
   /bank/LetterofCredit/AdvisingBankAudit:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "通知行：审核并签名共识（同意通知 or 拒绝通知）"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "通知行：审核并签名共识（同意通知 or 拒绝通知）"
+      description: ""
+      operationId: "advisingBankAudit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "advisingBankAduit"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCAdvising"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit"
-
+        required: true
+        schema:
+            $ref: "#/definitions/LCAdvising"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit"
   /bank/LetterofCredit/AmendCountersign:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "开证行、通知行、受益人同意通知或者拒绝信用证正本修改"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "开证行、通知行、受益人同意通知或者拒绝信用证正本修改"
+      description: ""
+      operationId: "amendCountersign"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "amendCountersign"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCAmending"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit"
-
+        required: true
+        schema:
+            $ref: "#/definitions/LCAmending"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit"
   /bank/LetterofCredit/advisingBankDocsReceivedAudit:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "通知行：确认交单"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "通知行：确认交单"
+      description: ""
+      operationId: "advisingBankDocsReceivedAudit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "advisingBankDocsReceivedAudit"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCDocsReceived"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit"
-  
+        required: true
+        schema:
+            $ref: "#/definitions/LCDocsReceived"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit"
   /bank/LetterofCredit/issuingBankReviseRetire:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "通知行：确认交单"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "通知行：确认交单"
+      description: ""
+      operationId: "issuingBankReviseRetire"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "issuingBankReviseRetire"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCRevise"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit"
-
+        required: true
+        schema:
+            $ref: "#/definitions/LCRevise"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit"
   /bank/LetterofCredit/IssuingBankDocsReceivedAudit:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "开证行：办理交单（拒绝之后，不符点修改）"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "开证行：办理交单（拒绝之后，不符点修改）"
+      description: ""
+      operationId: "issuingBankDocsReceivedAudit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "issuingBankDocsReceivedAudit"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCDocsReceived"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit"
-
+        required: true
+        schema:
+            $ref: "#/definitions/LCDocsReceived"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit"
   /bank/LetterofCredit/AcceptancePayment:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "开证行，兑或者拒付"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "开证行，兑或者拒付"
+      description: ""
+      operationId: "acceptancePayment"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "acceptancePayment"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCAcceptPayment"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit"          
-
+        required: true
+        schema:
+            $ref: "#/definitions/LCAcceptPayment"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit"          
   /bank/LetterofCredit/Closing:
-      post:
-        tags: 
-        - "Bank Service: LetterofCredit"
-        summary: "开证行，闭卷"
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "开证行，闭卷"
+      description: ""
+      operationId: "LCClosing"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "LCClosing"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-            $ref: "#/definitions/LCClosing"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "BankLetterofCredit" 
+        required: true
+        schema:
+          $ref: "#/definitions/LCClosing"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit" 
 
-### --------
-##  -------- 信用证业务流程，操作接口 ------- 企业端 ------
-#   --------
+# 信用证业务流程，操作接口 ------- 企业端 ------
   /LetterofCredit/Deposit:
     post:
       tags: 
@@ -632,7 +615,6 @@ paths:
         200:
           description: "OK"
       x-swagger-router-controller: "LetterofCredit"
-  
   /LetterofCredit/retire:
     post:
       tags: 
@@ -653,95 +635,90 @@ paths:
         200:
           description: "OK"
       x-swagger-router-controller: "LetterofCredit"
-
   /LetterofCredit:
-      put:
-        tags: 
-        - "LetterofCredit"
-        summary: "编辑信用证正本信息"
+    put:
+      tags: 
+      - "LetterofCredit"
+      summary: "编辑信用证正本信息"
+      description: ""
+      operationId: "updateLetterofCredit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
         description: ""
-        operationId: "updateLetterofCredit"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/LCTxLetterofCredit"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LetterofCredit"
-  
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/LCTxLetterofCredit"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"
   /LetterofCredit/Amending:
-      post:
-        tags: 
-        - "LetterofCredit"
-        summary: "申请人修改信用证"
-        description: "申请人修改信用证"
-        operationId: "lcAmendation"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCAmendationForm"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LetterofCredit"    
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "申请人修改信用证"
+      description: "申请人修改信用证"
+      operationId: "lcAmendation"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/LCAmendationForm"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"    
   /LetterofCredit/beneficiaryHandle:
-      post:
-        tags: 
-        - "LetterofCredit"
-        summary: "申请人修改信用证"
-        description: "申请人修改信用证"
-        operationId: "beneficiaryHandleLCNotice"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/LCBeneficiary"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LetterofCredit"      
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "申请人修改信用证"
+      description: "申请人修改信用证"
+      operationId: "beneficiaryHandleLCNotice"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/LCBeneficiary"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"      
   /LetterofCredit/beneficiaryHandoverBills:
-      post:
-        tags: 
-        - "LetterofCredit"
-        summary: "申请人修改信用证"
-        description: "申请人修改信用证"
-        operationId: "beneficiaryHandoverBills"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: ""
-          required: true
-          schema:
-              $ref: "#/definitions/HandoverBills"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LetterofCredit"                               
-# ------------------------------------------------------------------------------------
-## ------------------------------------------------------------------------------------
-### ------------------------------------------------------------------------------------           
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "申请人修改信用证"
+      description: "申请人修改信用证"
+      operationId: "beneficiaryHandoverBills"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/HandoverBills"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"                               
 
-# contribute by zengyi
+# 文档操作
   /Document/Upload:
     post:
       tags:
@@ -791,6 +768,8 @@ paths:
         404:
           description: "找不到文件"
       x-swagger-router-controller: "Document"
+
+# 测试
   /Test/{account}:
     get:
       tags:
@@ -839,6 +818,8 @@ paths:
         200:
           description: "successful operation"
       x-swagger-router-controller: "Test"    
+
+# 银行信息
   /Bank:
     get:
       tags:
@@ -987,6 +968,8 @@ paths:
         404:
           description: "Bank not found"
       x-swagger-router-controller: "Bank"
+
+# 签约银行信息
   /SignedBank:
     post:
       tags:
@@ -1114,6 +1097,8 @@ paths:
         404:
           description: "SignedBank not found"
       x-swagger-router-controller: "SignedBank"
+
+# 企业信息
   /Corporation:
     get:
       tags:
@@ -1183,7 +1168,6 @@ paths:
         405:
           description: "Validation exception"
       x-swagger-router-controller: "Corporation"
-
   /Corporation/Query/{bankName}:
     get:
       tags:
@@ -1210,7 +1194,6 @@ paths:
         400:
           description: "Invalid name value"
       x-swagger-router-controller: "Corporation"
-
   /Corporation/{CorporationId}:
     get:
       tags:
@@ -1260,6 +1243,8 @@ paths:
         404:
           description: "Corporation not found"
       x-swagger-router-controller: "Corporation"
+
+# 企业客户信息
   /CorpPartnership:
     post:
       tags:
@@ -1361,6 +1346,8 @@ paths:
         404:
           description: "Corporation not found"
       x-swagger-router-controller: "CorpPartnership"
+
+# 信用证申请表单信息
   /ApplicationForm:
     get:
       tags:
@@ -1671,7 +1658,31 @@ paths:
         404:
           description: "ApplicationForm not found"
       x-swagger-router-controller: "ApplicationForm"
+  /ApplicationForm/File/:
+    post:
+      tags:
+      - "ApplicationForm"
+      summary: "add file to application"
+      description: ""
+      operationId: "addFile"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/LCFile"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "ApplicationForm"
 
+# 交易信息
   /transaction/corp/processing/{corpId}:
     get:
       tags: 
@@ -1740,7 +1751,7 @@ paths:
               $ref: "#/definitions/Transaction"
       x-swagger-router-controller: "CorpTransaction"
   
-  #create by hanbairan
+# 证书申请
   /certificate/apply:
     post:
       tags:
@@ -1994,7 +2005,7 @@ paths:
             type: "string"
       x-swagger-router-controller: "Certificate"
 
-  #create by hanbairan
+# 用户相关操作
   /user:
     post:
       tags:
@@ -2285,32 +2296,7 @@ paths:
           description: "User not found"
       x-swagger-router-controller: "User"    
 
-# --------------------- contribute by zhulianglinag -----------------
-  #上传文件
-  /ApplicationForm/File/:
-    post:
-      tags:
-      - "ApplicationForm"
-      summary: "add file to application"
-      description: ""
-      operationId: "addFile"
-      consumes:
-      - "application/json"
-      
-      produces:
-      
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        required: true
-        schema:
-          $ref: "#/definitions/LCFile"
-      responses:
-        405:
-          description: "Invalid input"
-      x-swagger-router-controller: "ApplicationForm"
-      
+# 信用证流转
   /LCIssue/{lcno}:
     #获取信用证文本信息，包括草稿、文本
     get:
@@ -2362,46 +2348,46 @@ paths:
       x-swagger-router-controller: "LCIssue"
   #信用证修改
   /LCIssue/edit:
-      post:
-        tags: 
-        - "LCIssue"
-        summary: "信用证修改"
-        description: "edit LCIssue"
-        operationId: "LCIssueEdit"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: "lc edit info"
-          required: true
-          schema:
-            $ref: "#/definitions/LCEdit"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LCIssue" 
+    post:
+      tags: 
+      - "LCIssue"
+      summary: "信用证修改"
+      description: "edit LCIssue"
+      operationId: "LCIssueEdit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "lc edit info"
+        required: true
+        schema:
+          $ref: "#/definitions/LCEdit"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LCIssue" 
   #信用证交单
   /LCIssue/surrender:
-      post:
-        tags: 
-        - "LCIssue"
-        summary: "信用证交单"
-        description: "surrender documents"
-        operationId: "surrenderDocuments"
-        produces: 
-        - "application/json"
-        parameters:
-        - in: "body"
-          name: "body"
-          description: "LCDocumentsSurrender"
-          required: true
-          schema:
-            $ref: "#/definitions/LCDocumentsSurrender"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LCIssue" 
+    post:
+      tags: 
+      - "LCIssue"
+      summary: "信用证交单"
+      description: "surrender documents"
+      operationId: "surrenderDocuments"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "LCDocumentsSurrender"
+        required: true
+        schema:
+          $ref: "#/definitions/LCDocumentsSurrender"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LCIssue" 
   #根据信用证编号获取项下交单信息
   /LCIssue/surrender/lc/{lcno}:
     #获取信用证文本信息，包括草稿、文本
@@ -2427,7 +2413,6 @@ paths:
             items:
               $ref: "#/definitions/LCDocumentsSurrender"
       x-swagger-router-controller: "LCIssue"
-
   #根据ID交单信息
   /LCIssue/surrender/{id}:
     #获取信用证文本信息，包括草稿、文本
@@ -2455,24 +2440,26 @@ paths:
       x-swagger-router-controller: "LCIssue"
   #企业接受不符点
   /LCIssue/discrepancy/corp/accept/{id}:
-      get:
-        tags: 
-        - "LCIssue"
-        summary: "不符点接受"
-        description: "edit LCIssue"
-        operationId: "DiscrepancyAccept"
-        produces: 
-        - "application/json"
-        parameters:
-        - name: "id"
-          in: "path"
-          description: ""
-          required: true
-          type: "string"
-        responses:
-          default:
-            description: "OK"
-        x-swagger-router-controller: "LCIssue" 
+    get:
+      tags: 
+      - "LCIssue"
+      summary: "不符点接受"
+      description: "edit LCIssue"
+      operationId: "DiscrepancyAccept"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LCIssue" 
+
+# 区块链状态
   /BlockchainStatus/channel:
     get:
       tags:
@@ -2560,9 +2547,35 @@ paths:
             items:
               $ref: "#/definitions/txInfo"
       x-swagger-router-controller: "BlockchainStatus"
+
+# BCLC系统接口
+  /BclcApi/UnionChainSaveData/{appId}:
+    post:
+      tags: 
+      - "BclcInterface"
+      summary: "保存交易数据到BCLC系统"
+      description: "Commit transaction data to BCLC"
+      operationId: "unionChainSaveData"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "appId"
+        in: "path"
+        description: "ID of Application"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/BclcCreditResp"
+        504:
+          description: "Timeout"
+      x-swagger-router-controller: "BclcInterface" 
 #### endregion
 
-#### ---------- securityDefine ----------
+#### ---------- securityDefine region ----------
 securityDefinitions:
   Bankstore_auth:
     type: "oauth2"
@@ -2577,10 +2590,7 @@ securityDefinitions:
     in: "header"
 #### endregion
 
-
-
-#### ---------- view model definitions ---------
-
+#### ---------- view model definitions region ---------
 definitions:
   blockchainStatus:
     type: "object"
@@ -2627,7 +2637,6 @@ definitions:
         format: "date-time"
       chaincodename:
         type: "string"
-# contribute by zengyi
   Corporation:
     type: "object"
     properties:
@@ -2752,7 +2761,6 @@ definitions:
         type: "integer"
       mime:
         type: "string"
-
   SignedBank:
     type: "object"
     properties:
@@ -2768,7 +2776,6 @@ definitions:
         type: string
       remark:  
         type: string
-
   CorpPartnership:
     type: "object"
     properties:
@@ -2783,9 +2790,6 @@ definitions:
       creationTime:
         type: "string"
         format: "date-time"
-
-# ---------------------  contribute by lixiaohu  -------------------------------------
-
   Metrics:
     type: "object"
     properties:
@@ -2809,7 +2813,6 @@ definitions:
         type: "string"
       Currency:
         type: "string"
-
   Transaction:
     type: "object"
     properties:
@@ -2836,7 +2839,6 @@ definitions:
         type: "string"
       issuseDate:
         type: "string"
-
   TransProgress:
     type: "object"
     properties:
@@ -2850,7 +2852,6 @@ definitions:
         type: "string"
       description:
         type: "string"
-
   LCTxProcessflow:
     type: "object"
     properties:
@@ -2872,7 +2873,6 @@ definitions:
         $ref: "#/definitions/TransProgress"
       LCCLose:
         $ref: "#/definitions/TransProgress"
-
   LCTxDeposit:
     type: "object"
     properties:
@@ -2882,7 +2882,6 @@ definitions:
         type: "string"
       depositDoc:
         $ref: "#/definitions/Document"
-  
   LCRetireBill:
     type: "object"
     properties:
@@ -2890,7 +2889,6 @@ definitions:
         type: "string"
       commitAmount:
         type: "string"
-
   issueData:
     type: "object"
     properties:
@@ -2902,14 +2900,11 @@ definitions:
         type: "string"
       depositDoc:
         $ref: "#/definitions/Document"   
-
   HandoverBills:
     type: "object"
     properties:
       no:
         type: "string"
-      
-
   LCTransDocsReceived:
     type: "object"
     properties:
@@ -2933,7 +2928,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Document"
-
   LCTxAcceptPayment:
     type: "object"
     properties:
@@ -2955,7 +2949,6 @@ definitions:
         type: "string"
       acceptExpireDate:
         type: "string"
-
   LCTxCLosing:
     type: "object"
     properties:
@@ -2975,7 +2968,6 @@ definitions:
         type: "string"
       comments:
         type: "string"
-        
   Document:
     type: "object"
     properties:
@@ -2991,7 +2983,6 @@ definitions:
         type: "string"
       uploader:
         type: "string"
-
   LCTxDepositDoc:
     type: "object"
     properties:
@@ -3001,8 +2992,7 @@ definitions:
         type: "string"
       document:
         $ref: "#/definitions/Document"
-
-#信用证正本附件
+  #信用证正本附件
   LCTxOriginalAttachment:
     type: "object"
     properties:
@@ -3012,8 +3002,7 @@ definitions:
         type: "string"
       document:
         $ref: "#/definitions/Document"
-
-#提货单信息
+  #提货单信息
   BillOfLanding:
     type: "object"
     properties:
@@ -3031,8 +3020,7 @@ definitions:
         type: "string"
       document:
         $ref: "#/definitions/Document"
-
-#合同及附件材料
+  #合同及附件材料
   LCTxContract:
     type: "object"
     properties:
@@ -3042,8 +3030,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Document"
-
-### LetterofCredit Settle Process Related Model
+  # LetterofCredit Settle Process Related Model
   DraftAudit:
     type: "object"
     properties:
@@ -3057,7 +3044,6 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-
   DepositConfirmed:
     type: "object"
     properties:
@@ -3065,7 +3051,6 @@ definitions:
         type: "string"
       depositId:
         type: "string"
-
   GoodsInfo:
     type: "object"
     properties:
@@ -3089,7 +3074,6 @@ definitions:
         type: "string"
       goodDescription:  #货物描述
         type: "string"
-        
   LCTxLetterofCredit:
     type: "object"
     properties:
@@ -3166,8 +3150,7 @@ definitions:
       # 合同附件
       Contract:
         $ref: "#/definitions/Document"
-      
-  # 信用证开立，开证行    
+        # 信用证开立，开证行    
   LCIssuing:
     type: "object"
     properties:
@@ -3177,7 +3160,6 @@ definitions:
         type: "string"
       description:
         type: "string"
-
   # 信用证通知，通知行    
   LCAdvising:
     type: "object"
@@ -3188,7 +3170,6 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-  
   # 信用证通知，通知行    
   LCBeneficiary:
     type: "object"
@@ -3199,8 +3180,7 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-  
-   # 信用证修改，开证行
+  # 信用证修改，开证行
   LCAmendationForm:
     type: "object"
     properties:
@@ -3231,7 +3211,6 @@ definitions:
         type: "string"
       description:
         type: "string"
-
   # 信用证来单审核，开证行
   LCDocsReceived:
     type: "object"
@@ -3242,7 +3221,6 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-
   LCRevise:
     type: "object"
     properties:
@@ -3252,7 +3230,6 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-        
   # 承兑付款，确认付款
   LCAcceptPayment:
     type: "object"
@@ -3267,7 +3244,6 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-
   # 开证行，确认申请人付款赎单
   LCClosing:
     type: "object"
@@ -3278,8 +3254,6 @@ definitions:
         type: "string"
       description:
         type: "string"
-
-
   # 区块链共识状态
   Consensus:
     type: "object"
@@ -3304,9 +3278,7 @@ definitions:
         type: "string"
       ABStatus:
         type: "string"
-
-
-  # ---------------contribute by zhulianglinag--------------------------
+  # 申请表
   ApplicationForm:
     type: "object"
     properties:
@@ -3389,7 +3361,6 @@ definitions:
       #   type: "string"
       # ContractId:
       #   type: "string"
-
   #信用证申请表状态
   Afstate:
     type: "object"
@@ -3418,7 +3389,6 @@ definitions:
       #办理过程备注
       backup:
         type: "string"
-
   #信用证列表项
   LCListItem:
     type: "object"
@@ -3440,7 +3410,6 @@ definitions:
         type: "string"
       Status:
         type: "string"
-
   LCFile:
     type: "object"
     properties:
@@ -3453,7 +3422,6 @@ definitions:
         type: "string"
       FilePath: 
         type: "string"
-
   #信用证信息：草稿、正本
   LCIssue:
     type: "object"
@@ -3533,7 +3501,6 @@ definitions:
       Status:
         type: "integer"
         format: "int32"
-
   LCEdit:
     type: "object"
     properties:
@@ -3544,7 +3511,6 @@ definitions:
         type: "string"
       EditInfo:
         type: "string"
-
   #单据
   LCDocument:
     type: "object"
@@ -3579,8 +3545,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/LCDocument"
-  
-  ##contribute by hanbairan
   CertificateApply:
     type: "object"
     properties:
@@ -3596,9 +3560,50 @@ definitions:
         type: "string"
       userId:
         type: "string"
+  #Bclc信用证保存结果
+  BclcCreditResp:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      MemberHash:
+        type: "string"
+      TxData:
+        $ref: "#/definitions/BclcTxData"
+  BclcTxData:
+    type: "object"
+    properties:
+      curId:
+        type: "string"
+      curStep:
+        type: "integer"
+        format: "int64"
+      cryptoData:
+        type: "string"
+      rootId:
+        type: "string"
+      sendMember:
+        $ref: "#/definitions/BclcMemberData"
+      recieveMember:
+        $ref: "#/definitions/BclcMemberData"
+      notifyMember:
+        $ref: "#/definitions/BclcMemberData"
+      LC_TX_CODE:
+        type: "string"
+  BclcMemberData:
+    type: "object"
+    properties:
+      member:
+        type: "string"
+      key:
+        type: "string"
 #### endregion
 
+#### ---------- externalDocs region ---------
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
-
+#### endregion

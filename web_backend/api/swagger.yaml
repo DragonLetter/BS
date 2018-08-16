@@ -2549,7 +2549,7 @@ paths:
       x-swagger-router-controller: "BlockchainStatus"
 
 # BCLC系统接口
-  /BclcApi/UnionChainSaveData/{appId}:
+  /BclcInterface/UnionChainSaveData/{appId}:
     post:
       tags: 
       - "BclcInterface"

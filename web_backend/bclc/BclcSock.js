@@ -1,10 +1,14 @@
 var net = require('net');
+var path = require('path');
+var conf  = require(path.join(__dirname, '..', 'config', 'bclc.json'));
 
-// var HOST = '127.0.0.1';
-// var PORT = 6969;
+var HOST = conf["ip"];
+var PORT = conf["port"];
 var client = new net.Socket();
+var bclcSock = {};
 
-export function BclcSockSendData(HOST, PORT, DataString) {
+// Socket接口发送请求数据
+bclcSock.sendData = function BclcSockSendData(DataString) {
     client.connect(PORT, HOST, function() {
         console.log('Connected to ' + HOST + ':' + PORT);
         //建立连接后向服务器发送数据
@@ -12,7 +16,8 @@ export function BclcSockSendData(HOST, PORT, DataString) {
     });
 }
 
-export function BclcSockRecvData() {
+// Socket接口接受返回结果
+bclcSock.recvData = function BclcSockRecvData() {
     // 客户端处理服务器的返回数据
     client.on('data', function(data) {
         console.log('Recv data:' + data);
@@ -21,3 +26,5 @@ export function BclcSockRecvData() {
     });
     return data;
 }
+
+module.exports = bclcSock;

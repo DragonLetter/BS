@@ -506,17 +506,17 @@ class LetterDraft extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>开证金额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.amount}</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.amount}{data.Currency}</Col>
                                         <Col span={3}></Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>信用证余额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>10,123,000.00 RMB</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>应缴余额</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.commitAmount}{data.Currency}</Col>
                                     </Row>
                                     <Row>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单金额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>1,100,000.00 RMB</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.depositAmount}{data.Currency}</Col>
                                         <Col span={3}></Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单日期</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>2017/09/01 17:01</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日期</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.expiryDate}</Col>
                                     </Row>
                                 </div>
                                 <div>

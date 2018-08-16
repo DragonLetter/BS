@@ -106,10 +106,6 @@ const lccolumns = [
     { title: '上传时间', dataIndex: 'datetime', key: 'datetime' },
 ];
 
-const lcdata = [
-    { key: 1, name: '信用证正本电子件', hash: '1FVKW4rp5rN23dqFVk2tYGY4niAXMB8eZC ', signature: '3JjPf13Rd8g6WAyvg8yiPnrsdjJt1NP4FC', datetime: '2017/09/01 17:01' },
-];
-
 // 合同及附件证明材料部分组件
 const columns = [
     { title: '名称', dataIndex: 'name', key: 'name', width: '20%', render: text => <a href="www.baidu.com">{text}</a> },
@@ -382,7 +378,7 @@ class AcceptanceByAdvisingBank extends React.Component {
                 res.json().then((data) => {
                     this.closeApproveDialog();
                     this.closeRejectDialog();
-                    message.success("审核完成, 等待企业确认.");
+                    message.success("审核完成, 等待开证行确认.");
                 });
             } else {
                 message.error("交易执行失败，请检查审核信息.");
@@ -440,6 +436,7 @@ class AcceptanceByAdvisingBank extends React.Component {
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
             attachments = data.Attachments ? data.Attachments : [];
+        let lcdata = [];// data.LCOriginalAttachment ? data.LCOriginalAttachment : [];
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
@@ -486,17 +483,17 @@ class AcceptanceByAdvisingBank extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>开证金额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.amount}</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.amount}{data.Currency}</Col>
                                         <Col span={3}></Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>信用证余额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>10,123,000.00 RMB</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>应缴余额</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.commitAmount}{data.Currency}</Col>
                                     </Row>
                                     <Row>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单金额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>1,100,000.00 RMB</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.depositAmount}{data.Currency}</Col>
                                         <Col span={3}></Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单日期</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>2017/09/01 17:01</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日期</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.expiryDate}</Col>
                                     </Row>
                                 </div>
                                 <div>

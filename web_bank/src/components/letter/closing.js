@@ -71,10 +71,6 @@ const lccolumns = [
     { title: '上传时间', dataIndex: 'datetime', key: 'datetime' },
 ];
 
-const lcdata = [
-    { key: 1, name: '信用证正本电子件', hash: '1FVKW4rp5rN23dqFVk2tYGY4niAXMB8eZC ', signature: '3JjPf13Rd8g6WAyvg8yiPnrsdjJt1NP4FC', datetime: '2017/09/01 17:01' },
-];
-
 // 合同及附件证明材料部分组件
 const columns = [
     { title: '名称', dataIndex: 'name', key: 'name', width: '20%', render: text => <a href="www.baidu.com">{text}</a> },
@@ -302,6 +298,13 @@ class LetterCLosing extends React.Component {
     }
 
     render() {
+        let data = this.state.letters ? this.state.letters : [],
+            applicant = data.Applicant ? data.Applicant : [],
+            beneficiary = data.Beneficiary ? data.Beneficiary : [],
+            issuingBank = data.IssuingBank ? data.IssuingBank : [],
+            advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
+            attachments = data.Attachments ? data.Attachments : [];
+        let lcdata = [];// data.LCOriginalAttachment ? data.LCOriginalAttachment : [];
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
@@ -348,21 +351,21 @@ class LetterCLosing extends React.Component {
                         </TabPane>
 
                         <TabPane tab="信用证正本" key="2">
-                            <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
+                        <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
                                 <div>
                                     <Row>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>申请人信息</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>申请人</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>江苏海洋化纤有限公司</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicant.Name}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>账号</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>157700000012444</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicant.Account}</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>地址</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>江苏泰州市海洋路89号，邮编：225000</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{applicant.Address}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}></Col>
@@ -374,17 +377,17 @@ class LetterCLosing extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>受益人</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>河北旭日化工有限公司</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{beneficiary.Name}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>地址</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>河北省沧州市渤海新区69号</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{beneficiary.Address}</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>开户行</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>中国银行沧州分行</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{beneficiary.DepositBank}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>账号</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>157700000012444</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{beneficiary.Account}</Col>
                                     </Row>
                                 </div>
                                 <div>
@@ -393,10 +396,10 @@ class LetterCLosing extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>开证行</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>中国银行沧州分行</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{issuingBank.Name}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>地址</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>河北省沧州市中山路81号 邮编21005</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{issuingBank.Address}</Col>
                                     </Row>
                                 </div>
                                 <div>
@@ -405,10 +408,10 @@ class LetterCLosing extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>通知行</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>中国银行沧州分行</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{advisingBank.Name}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>地址</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>河北省沧州市中山路81号 邮编21005</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{advisingBank.Address}</Col>
                                     </Row>
                                 </div>
                                 <div>
@@ -424,8 +427,8 @@ class LetterCLosing extends React.Component {
                                     showHeader={false}
                                 />
                                 <Table
-                                    columns={columns}
-                                    dataSource={data}
+                                    columns={attachmentColumns}
+                                    dataSource={attachments}
                                     pagination={false}
                                     showHeader={false}
                                 />

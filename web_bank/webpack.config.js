@@ -1,28 +1,26 @@
-var webpack = require('webpack')
-//var server = new webpackDevServer(compiler,{
-//disableHostCheck: true
-//})
-//var path = require("path")
+var webpack = require('webpack');
+var UglifyJsPlugin=require('uglifyjs-webpack-plugin');
+var path = require("path")
+
 module.exports = {
     entry: {
         main: './src/main.js'
         //vendors: ['react','jquery']
     },
     output: {
-        path: './build',
         publicPath: 'build/',
-        //path: path.resolve(__dirname, './build'),
+        path: path.resolve(__dirname, './build'),
         filename: 'build.js'
     },
 
     devServer: {
       inline: true,
       disableHostCheck: true,
-      port: 9000
+      port: 9000// require(path.resolve(__dirname, './config/nodeconf.json'))["Bank"].Port
    },
 
     module: {
-        loaders: [
+        rules: [
             {
                 // edit this for additional asset file types
                 test: /\.(png|jpg|gif)$/,
@@ -33,7 +31,13 @@ module.exports = {
                 // excluding some local linked packages.
                 // for normal use cases only node_modules is needed.
                 exclude: /node_modules|vue\/dist|vue-router\/|vue-loader\/|vue-hot-reload-api\//,
-                loader: 'babel'
+                //loader: 'babel'
+                loader: 'babel-loader',
+                query: {
+                    presets: ['env', 'es2015', 'react', 'stage-2'],
+                    plugins: [ 'transform-decorators-legacy' ]
+                    //presets:['es2015']
+                }
             },
             {   test: /\.css$/,
                 loader: 'style-loader!css-loader?sourceMap'
@@ -50,16 +54,30 @@ module.exports = {
     },
     // example: if you wish to apply custom babel options
     // instead of using vue-loader's default:
-    babel: {
-        presets: ['es2015', 'stage-0', 'react'],
-        plugins: ['transform-runtime', ["antd",  { "style": "css" }]]
-    },
     plugins: [
-        new webpack.ProvidePlugin({
+        new webpack.LoaderOptionsPlugin({
+            options: {
+                babel: {
+                    presets: ['es2015', 'stage-0', 'react'],
+                    plugins: ['transform-runtime', ["antd",  { "style": "css" }]],
+                    //plugins: ["transform-decorators-legacy","transform-class-properties"]
+                }
+            }
+        }),
+         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
             "window.jQuery": "jquery"
         })
-        // new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js', Infinity) // 这是第三方库打包生成的文件
-    ]
+    ],
+
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    compress: false
+                }
+            })
+        ]
+    }
 }

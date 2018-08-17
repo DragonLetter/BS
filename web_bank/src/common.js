@@ -1,11 +1,14 @@
-import 'whatwg-fetch'
+import 'whatwg-fetch';
 import { notification, message } from 'antd';
+
 var path = require('path');
 
 // 获取节点配置信息
 var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
-const serverIP = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
-export const clientIP = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port;
+const serverIP = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port.toString();
+export const clientIP = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port.toString();
+//const serverIP = "http://127.0.0.1:8080";
+//export const clientIP = "http://127.0.0.1:9000";
 
 export function fetch_get(url) {
     return fetch(serverIP + url, {

@@ -1,39 +1,38 @@
 "use strict";
 
-var fs        = require("fs");
-var path      = require("path");
+var fs = require("fs");
+var path = require("path");
 var Sequelize = require("sequelize");
-var env       = process.env.NODE_ENV || "development";
-var config    = require(path.join(__dirname, '..', 'config', 'dbconfig.json'))[env];
+var env = process.env.NODE_ENV || "development";
+var config = require(path.join(__dirname, '..', 'config', 'dbconfig.json'))[env];
 if (process.env.DATABASE_URL) {
-  var sequelize = new Sequelize(process.env.DATABASE_URL,config);
+  var sequelize = new Sequelize(process.env.DATABASE_URL, config);
 } else {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
-var db        = {};
+var db = {};
 
 fs
   .readdirSync(__dirname)
-  .filter(function(file) {
+  .filter(function (file) {
     return (file.indexOf(".") !== 0) && (file !== "index.js");
   })
-  .forEach(function(file) {
+  .forEach(function (file) {
     var model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
 
+db["SignedBank"].belongsTo(db["Bank"], { as: 'Bank', constraints: false });
+db["SignedBank"].belongsTo(db["Corporation"], { as: 'Corporation', constraints: false });
+db["CorpPartnership"].belongsTo(db["Corporation"], { as: 'Corporation', constraints: false });
 
-  db["SignedBank"].belongsTo(db["Bank"], {as: 'Bank', constraints: false });
-  db["SignedBank"].belongsTo(db["Corporation"], {as: 'Corporation', constraints: false });
-  db["CorpPartnership"].belongsTo(db["Corporation"], {as: 'Corporation', constraints: false });
-
-Object.keys(db).forEach(function(modelName) {
+Object.keys(db).forEach(function (modelName) {
   if ("associate" in db[modelName]) {
     db[modelName].associate(db);
   }
 });
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+// db.Sequelize = Sequelize;
 
 module.exports = db;

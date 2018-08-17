@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var Transaction = sequelize.define("Transaction", {
     channelname: DataTypes.STRING,
     blockid: DataTypes.INTEGER,
@@ -8,6 +8,6 @@ module.exports = function(sequelize, DataTypes) {
     createdt: DataTypes.INTEGER,
     chaincodename: DataTypes.DATE,
   });
- 
+
   return Transaction;
 };

@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var Block = sequelize.define("Block", {
     blockNum: DataTypes.INTEGER,
     datahash: DataTypes.STRING,
@@ -9,6 +9,5 @@ module.exports = function(sequelize, DataTypes) {
     txcount: DataTypes.INTEGER,
   });
 
- 
   return Block;
 };

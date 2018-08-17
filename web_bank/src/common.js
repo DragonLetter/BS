@@ -1,9 +1,13 @@
 import 'whatwg-fetch'
 import { notification, message } from 'antd';
-const serverIP = "http://39.104.175.115:8080"
-export const clientIP = "http://39.104.175.115:9000"
+var path = require('path');
 
-export function fetch_get(url){
+// 获取节点配置信息
+var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
+const serverIP = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
+export const clientIP = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port;
+
+export function fetch_get(url) {
     return fetch(serverIP + url, {
         method: "GET",
         mode: "cors",
@@ -11,18 +15,7 @@ export function fetch_get(url){
     }).then((response) => checkStatus(response));
 }
 
-export function fetch_post(url, values){
-    return fetch(serverIP + url, {
-        method: "POST",
-        mode: "cors",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json; charset=utf-8",
-        },
-        body: JSON.stringify(values),
-    }).then((response) => checkStatus(response));
-}
-export function fetch_ca_post(url, values){
+export function fetch_post(url, values) {
     return fetch(serverIP + url, {
         method: "POST",
         mode: "cors",
@@ -34,7 +27,19 @@ export function fetch_ca_post(url, values){
     }).then((response) => checkStatus(response));
 }
 
-function checkStatus(response){
+export function fetch_ca_post(url, values) {
+    return fetch(serverIP + url, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(values),
+    }).then((response) => checkStatus(response));
+}
+
+function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
         return response;
     } else if (response.status === 401) {

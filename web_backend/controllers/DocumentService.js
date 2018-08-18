@@ -3,6 +3,9 @@ var models = require('../models');
 var Sequelize = require("sequelize");
 var crypto = require('crypto');
 var keyHelper=require("../keyhelper");
+var pdf = require('html-pdf');
+var fs = require('fs');
+
 exports.downloadFile = function (req, res, next) { var args=req.swagger.params;
   /**
    * 根据文件Hash获得文件内容
@@ -89,9 +92,14 @@ function getCertificateId(req)
    return findResult;
 }
 
-// function md5(str) {
-//   var md5sum = crypto.createHash("md5");
-//   md5sum.update(str);
-//   str = md5sum.digest("hex");
-//   return str;
-// };
+exports.transHtml2Pdf = function (req, res, next) { 
+  var args=req.swagger.params;
+  var value = args.body.value;
+  var options = {format:true};
+  pdf.create(value.data.toString(),options).toBuffer(function(err, buffer){
+    if(err) return console.log(err);
+    res.setHeader('Content-Type', 'application/json');
+    var vals = {"pdf":buffer};
+    res.end(JSON.stringify(vals));
+  }); 
+}

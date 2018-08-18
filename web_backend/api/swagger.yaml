@@ -747,6 +747,28 @@ paths:
           schema:
             $ref: "#/definitions/DocResponse"
       x-swagger-router-controller: "Document"
+  /Document/Trans:
+    post:
+      tags:
+      - "Document"
+      summary: "上传一个html文件，返回转换后的pdf数据流"
+      description: ""
+      operationId: "transHtml2Pdf"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/TransData"
+      responses:
+        200:
+          description: "successful operation"
+        404:
+          description: "文件转换失败"
+      x-swagger-router-controller: "TransData"
   /Document/{fileHash}:
     get:
       tags:
@@ -2904,6 +2926,11 @@ definitions:
     type: "object"
     properties:
       no:
+        type: "string"
+  TransData:
+    type: "object"
+    properties:
+      data:
         type: "string"
   LCTransDocsReceived:
     type: "object"

@@ -36,6 +36,7 @@
     "ws": "1.1.*"
   },
   "dependencies": {
+    "html-pdf": "^2.2.0",
     "lodash": "^4.17.4",
     "log4js": "^2.3.10",
     "moment": "^2.19.4",

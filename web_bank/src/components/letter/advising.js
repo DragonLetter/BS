@@ -85,29 +85,11 @@ const RejectDialog = Form.create()(
     }
 );
 
-// 信用证正本部分组件
-const lccolumns = [
-    { title: '名称', dataIndex: 'name', key: 'name', width: '20%', render: text => <a href="www.baidu.com">{text}</a> },
-    { title: '编号', dataIndex: 'hash', key: 'hash' },
-    { title: '签名', dataIndex: 'signature', key: 'signature' },
-    { title: '上传时间', dataIndex: 'datetime', key: 'datetime' },
-];
-
-const lcdata = [
-    { key: 1, name: '信用证正本电子件', hash: '1FVKW4rp5rN23dqFVk2tYGY4niAXMB8eZC ', signature: '3JjPf13Rd8g6WAyvg8yiPnrsdjJt1NP4FC', datetime: '2017/09/01 17:01' },
-];
-
 // 合同及附件证明材料部分组件
 const columns = [
     { title: '名称', dataIndex: 'FileName', key: 'FileName' },
     { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
     { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-];
-
-const data = [
-    { key: 1, name: '海洋化纤公司贸易合同', hash: '1FVKW4rp5rN23dqFVk2tYGY4niAXMB8eZC ', signature: '3JjPf13Rd8g6WAyvg8yiPnrsdjJt1NP4FC', datetime: '2017/09/01 17:01' },
-    { key: 2, name: '企业营业执照扫描件', hash: '1FVKW4rp5rN23dqFVk2tYGY4niAXMB8eZC ', signature: '3JjPf13Rd8g6WAyvg8yiPnrsdjJt1NP4FC', datetime: '2017/09/01 17:01' },
-    { key: 3, name: '资金证明文件扫描件', hash: '1FVKW4rp5rN23dqFVk2tYGY4niAXMB8eZC ', signature: '3JjPf13Rd8g6WAyvg8yiPnrsdjJt1NP4FC', datetime: '2017/09/01 17:01' },
 ];
 
 class LetterDraft extends React.Component {
@@ -419,6 +401,8 @@ class LetterDraft extends React.Component {
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
             attachments = data.Attachments ? data.Attachments : [];
+        let lcdata = [];
+        lcdata[0] = data.Contract;
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
@@ -509,7 +493,7 @@ class LetterDraft extends React.Component {
                                     <Col style={{ marginTop: '30px', marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}></Col>
                                 </Row>
                                 <Table
-                                    columns={lccolumns}
+                                    columns={columns}
                                     dataSource={lcdata}
                                     pagination={false}
                                     showHeader={false}

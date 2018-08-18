@@ -254,7 +254,7 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('ShippingWay', {
                                         rules: [{ required: true, message: '请选择货物运输或交货方式/服务方式！' }],
                                     })(
-                                        <Input placeholder="货货运输或交货方式/服务方式" />
+                                        <Input placeholder="货物运输或交货方式/服务方式" />
                                         )}
                                 </FormItem>
                             </Col>

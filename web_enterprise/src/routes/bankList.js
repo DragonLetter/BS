@@ -153,6 +153,7 @@ class Bank extends React.Component {
             }
             values.corporationId = parseInt(sessionStorage.getItem("userId"));
             values.bankId = parseInt(values.bankId);
+            values.state = 0;
             request("/api/signedbank", {
                 method: "POST",
                 body: values,

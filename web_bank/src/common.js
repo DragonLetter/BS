@@ -5,21 +5,22 @@ var path = require('path');
 
 // 获取节点配置信息
 var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
-const serverIP = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port.toString();
+const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port.toString();
 export const clientIP = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port.toString();
-//const serverIP = "http://127.0.0.1:8080";
-//export const clientIP = "http://127.0.0.1:9000";
+const serverCA = "http://" + nodeConf["CA"].IP + ":" + nodeConf["CA"].Port.toString();
 
+// 向BackEnd发送get请求
 export function fetch_get(url) {
-    return fetch(serverIP + url, {
+    return fetch(serverBackEnd + url, {
         method: "GET",
         mode: "cors",
         credentials: "include",
     }).then((response) => checkStatus(response));
 }
 
+// 向BackEnd发送post请求
 export function fetch_post(url, values) {
-    return fetch(serverIP + url, {
+    return fetch(serverBackEnd + url, {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -30,8 +31,9 @@ export function fetch_post(url, values) {
     }).then((response) => checkStatus(response));
 }
 
+// 向CA发送post请求
 export function fetch_ca_post(url, values) {
-    return fetch(serverIP + url, {
+    return fetch(serverCA + url, {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -42,6 +44,7 @@ export function fetch_ca_post(url, values) {
     }).then((response) => checkStatus(response));
 }
 
+// 检查返回结果
 function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
         return response;

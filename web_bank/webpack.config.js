@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 var UglifyJsPlugin=require('uglifyjs-webpack-plugin');
 var path = require("path")
+var nodeConf = require(path.resolve(__dirname, './config/nodeconf.json'));
 
 module.exports = {
     entry: {
@@ -16,7 +17,7 @@ module.exports = {
     devServer: {
       inline: true,
       disableHostCheck: true,
-      port: 9000// require(path.resolve(__dirname, './config/nodeconf.json'))["Bank"].Port
+      port: nodeConf["Bank"].Port
    },
 
     module: {

@@ -16,9 +16,9 @@ var http = require('http').Server(app);
 
 // 获取backend服务端口，银行端地址和端口，企业端地址和端口等配置
 var nodeConf = require(path.join(__dirname, './config/nodeconf.json'));
-var serverPort = nodeConf["BackEnd"].ServicePort;
-var enterpriseClientIp = "http://" + nodeConf["Enterprise"].IP + nodeConf["Enterprise"].Port;
-var bankClientIp = "http://" + nodeConf["Bank"].IP + nodeConf["Enterprise"].Port;
+var serverPort = nodeConf["BackEnd"].Port;
+var enterpriseClientIp = "http://" + nodeConf["Enterprise"].IP + nodeConf["Enterprise"].Port.toString();
+var bankClientIp = "http://" + nodeConf["Bank"].IP + nodeConf["Enterprise"].Port.toString();
 
 app.use(compression());
 app.use(cookieParser());

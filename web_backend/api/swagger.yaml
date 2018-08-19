@@ -719,6 +719,28 @@ paths:
       x-swagger-router-controller: "LetterofCredit"                               
 
 # 文档操作
+  /Document/TransFData:
+    post:
+      tags:
+      - "Document"
+      summary: "上传一个文档，返回文档的Hash值、长度等内容"
+      description: ""
+      operationId: "TransFData"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "file data"
+        required: true
+        schema:
+            $ref: "#/definitions/TransFData"
+      responses:
+        200:
+          description: "成功上传"
+          schema:
+            $ref: "#/definitions/TransFData"
+      x-swagger-router-controller: "Document"
   /Document/Upload:
     post:
       tags:
@@ -747,28 +769,6 @@ paths:
           schema:
             $ref: "#/definitions/DocResponse"
       x-swagger-router-controller: "Document"
-  /Document/Trans:
-    post:
-      tags:
-      - "Document"
-      summary: "上传一个html文件，返回转换后的pdf数据流"
-      description: ""
-      operationId: "transHtml2Pdf"
-      produces: 
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: ""
-        required: true
-        schema:
-            $ref: "#/definitions/TransData"
-      responses:
-        200:
-          description: "successful operation"
-        404:
-          description: "文件转换失败"
-      x-swagger-router-controller: "TransData"
   /Document/{fileHash}:
     get:
       tags:
@@ -2927,7 +2927,7 @@ definitions:
     properties:
       no:
         type: "string"
-  TransData:
+  TransFData:
     type: "object"
     properties:
       data:

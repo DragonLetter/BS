@@ -93,6 +93,7 @@ function getCertificateId(req)
 }
 
 exports.transHtml2Pdf = function (req, res, next) { 
+  return res.end();
   var args=req.swagger.params;
   var value = args.body.value;
   var options = {format:true};
@@ -102,4 +103,29 @@ exports.transHtml2Pdf = function (req, res, next) {
     var vals = {"pdf":buffer};
     res.end(JSON.stringify(vals));
   }); 
-}
+};
+exports.TransFData = function(req, res, next){
+  var args=req.swagger.params;
+  var content = args.body.data;
+  var options = {format:true};
+  pdf.create(content,options).toBuffer(function(err, buffer){
+    if(err) return console.log(err);
+    res.setHeader('Content-Type', 'application/json');
+    var vals = {"data":buffer};
+    res.end(JSON.stringify(vals));
+  }); 
+  return;
+  var examples = {};
+  examples['application/json'] = [{
+    "fileName": "string",
+    "fileHash": "string",
+    "length": 0,
+    "mime": "string"
+  }];
+  if (Object.keys(examples).length > 0) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+  } else {
+    res.end();
+  }
+};

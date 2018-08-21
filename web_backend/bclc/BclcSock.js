@@ -1,9 +1,10 @@
 var net = require('net');
 var path = require('path');
-var conf  = require(path.join(__dirname, '..', 'config', 'bclc.json'));
+var conf  = require(path.join(__dirname, '..', 'config', 'nodeconf.json'));
 
-var HOST = conf["ip"];
-var PORT = conf["port"];
+var bclcConf = conf["Bclc"];
+var HOST = conf.IP;
+var PORT = conf.Port;
 var client = new net.Socket();
 var bclcSock = {};
 

@@ -24,6 +24,8 @@ tags:
 # 银行端相关接口
 - name: "Bank"
   description: "银行信息"
+- name: "BankRecord"
+  description: "银行操作记录"
 - name: "Bank Service: Network Metrics"
   description: "银行端，关键业务指标"
 - name: "Bank Service: Transaction"
@@ -990,6 +992,87 @@ paths:
         404:
           description: "Bank not found"
       x-swagger-router-controller: "Bank"
+  /Bank/BankRecord/{LcNo}:
+    get:
+      tags:
+      - "BankRecord"
+      summary: "Get bank operation records by LcNo."
+      description: "Returns Bank operation records of LcNo."
+      operationId: "getBankRecordByLcNo"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "LcNo"
+        in: "path"
+        description: "LcNo of operation records"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/BankRecord"
+      x-swagger-router-controller: "BankRecord"
+    post:
+      tags:
+      - "BankRecord"
+      summary: "Add a new bank record to the database."
+      description: ""
+      operationId: "addBankRecord"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "LcNo"
+        in: "path"
+        description: "LcNo of operation records"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Bank record object that needs to be added to the database"
+        required: true
+        schema:
+          $ref: "#/definitions/BankRecord"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "BankRecord"
+    put:
+      tags:
+      - "BankRecord"
+      summary: "Update an existing bank record"
+      description: ""
+      operationId: "updateBankRecord"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "LcNo"
+        in: "path"
+        description: "LcNo of operation records"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Bank record object that needs to be added to the database."
+        required: true
+        schema:
+          $ref: "#/definitions/BankRecord"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Bank record not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "BankRecord"
 
 # 签约银行信息
   /SignedBank:
@@ -2706,6 +2789,24 @@ definitions:
         type: "string"
       remark:  
         type: string
+  BankRecord:
+    type: "object"
+    properties:
+      AFNo:
+        type: "string"
+      LcNo:
+        type: "string"
+      step:
+        type: "integer"
+        format: "int64"
+      userName:
+        type: string
+      isAgreed:
+        type: "boolean"
+      suggestion:
+        type: "string"
+      depositAmount:
+        type: "string"
   appLoginInput:
     type: "object"
     properties:

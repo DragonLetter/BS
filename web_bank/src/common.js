@@ -1,13 +1,11 @@
 import 'whatwg-fetch';
 import { notification, message } from 'antd';
 
-var path = require('path');
-
 // 获取节点配置信息
-var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
-const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port.toString();
-export const clientIP = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port.toString();
-const serverCA = "http://" + nodeConf["CA"].IP + ":" + nodeConf["CA"].Port.toString();
+var nodeConf = require('../config/nodeconf.json');
+const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
+export const clientIP = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port;
+const serverCA = "http://" + nodeConf["CA"].IP + ":" + nodeConf["CA"].Port;
 
 // 向BackEnd发送get请求
 export function fetch_get(url) {

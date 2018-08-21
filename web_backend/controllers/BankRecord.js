@@ -8,12 +8,12 @@ module.exports.addBankRecord = function addBankRecord (req, res, next) {
   Bank.addBankRecord(req, res, next);
 };
 
-module.exports.deleteBankRecord = function deleteBankRecord (req, res, next) {
-  Bank.deleteBankRecord(req, res, next);
+module.exports.deleteBankRecordByLcNo = function deleteBankRecordByLcNo (req, res, next) {
+  Bank.deleteBankRecordByLcNo(req, res, next);
 };
 
-module.exports.getBankRecordByAppId = function getBankRecordByAppId (req, res, next) {
-  Bank.getBankRecordByAppId(req, res, next);
+module.exports.getBankRecordByLcNo = function getBankRecordByLcNo (req, res, next) {
+  Bank.getBankRecordByLcNo(req, res, next);
 };
 
 module.exports.updateBankRecord = function updateBankRecord (req, res, next) {

@@ -173,7 +173,6 @@ class Users extends React.Component {
 
     }
     componentDidMount = () => {
-        return this.handleCreateUser();
         if( sessionStorage.getItem('userType') != 10 )
             return message.error("当前用户没权限！");
         fetch_get("/api/user/um/"+sessionStorage.getItem("domain"))

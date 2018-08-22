@@ -45,7 +45,23 @@ exports.updateSignedBank = function (req, res, next) { var args=req.swagger.para
    **/
   res.end();
 }
-
+function dbCorp2ViewCorp(corp){
+    return {
+    "id": corp.id,
+    "name": corp.name,
+    "domain": corp.domain,
+    "nation": corp.nation,
+    "contact": corp.contact,
+    "email":corp.email,
+    "account": corp.account,
+    "depositBank": corp.depositBank,
+    "address": corp.address,
+    "postcode": corp.postcode,
+    "telephone": corp.telephone,
+    "telefax": corp.telefax,
+    "creationTime": corp.creationTime}
+  }
+  
 exports.getCorpsByBankId = function (req, res, next) { 
     var args=req.swagger.params, bankId=args.bankId.value;
     models.SignedBank.findAll({
@@ -56,8 +72,15 @@ exports.getCorpsByBankId = function (req, res, next) {
             {model: models.Corporation, as: 'Corporation'}
         ]
     }).then(function(corps){
-        var results = corps.map(corp => corp.Corporation)
+        console.log(JSON.stringify(corps));
+        var results = corps.map(corp => corp.Corporation);
+        var result=[];
+        for(var i=0;i<results.length;i++){
+          var corp=dbCorp2ViewCorp(results[i]);
+          corp.signState = corps[i].state;
+          result.push(corp);
+        }
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(results));
+        res.end(JSON.stringify(result));
     });
 }

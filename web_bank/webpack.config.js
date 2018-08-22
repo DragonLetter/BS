@@ -1,6 +1,6 @@
 var webpack = require('webpack');
-var UglifyJsPlugin=require('uglifyjs-webpack-plugin');
 var path = require("path")
+
 var nodeConf = require(path.resolve(__dirname, './config/nodeconf.json'));
 
 module.exports = {
@@ -15,10 +15,10 @@ module.exports = {
     },
 
     devServer: {
-      inline: true,
-      disableHostCheck: true,
-      port: nodeConf["Bank"].Port
-   },
+        inline: true,
+        disableHostCheck: true,
+        port: nodeConf["Bank"].Port
+    },
 
     module: {
         rules: [
@@ -32,15 +32,17 @@ module.exports = {
                 // excluding some local linked packages.
                 // for normal use cases only node_modules is needed.
                 exclude: /node_modules|vue\/dist|vue-router\/|vue-loader\/|vue-hot-reload-api\//,
-                //loader: 'babel'
-                loader: 'babel-loader',
-                query: {
-                    presets: ['env', 'es2015', 'react', 'stage-2'],
-                    plugins: [ 'transform-decorators-legacy' ]
-                    //presets:['es2015']
-                }
+                use: [{
+                    loader: 'babel-loader',
+                    query: {
+                        cacheDirectory: true,
+                        presets: ['es2015', 'stage-0', 'react'],
+                        plugins: ['transform-runtime', ["antd", { "style": "css" }]]
+                    }
+                }]
             },
-            {   test: /\.css$/,
+            {
+                test: /\.css$/,
                 loader: 'style-loader!css-loader?sourceMap'
             },
             {
@@ -53,32 +55,11 @@ module.exports = {
             }
         ]
     },
-    // example: if you wish to apply custom babel options
-    // instead of using vue-loader's default:
     plugins: [
-        new webpack.LoaderOptionsPlugin({
-            options: {
-                babel: {
-                    presets: ['es2015', 'stage-0', 'react'],
-                    plugins: ['transform-runtime', ["antd",  { "style": "css" }]],
-                    //plugins: ["transform-decorators-legacy","transform-class-properties"]
-                }
-            }
-        }),
-         new webpack.ProvidePlugin({
+        new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
             "window.jQuery": "jquery"
         })
-    ],
-
-    optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                uglifyOptions: {
-                    compress: false
-                }
-            })
-        ]
-    }
+    ]
 }

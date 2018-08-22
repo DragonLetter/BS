@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-  var BankRecord = sequelize.define("Bank", {
+  var BankRecord = sequelize.define("BankRecord", {
     AFNo: DataTypes.STRING,
     LcNo: DataTypes.STRING,
     step: DataTypes.STRING,

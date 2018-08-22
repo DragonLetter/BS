@@ -4,9 +4,10 @@ module.exports = function (sequelize, DataTypes) {
   var BankRecord = sequelize.define("Bank", {
     AFNo: DataTypes.STRING,
     LcNo: DataTypes.STRING,
-    step: DataTypes.INTEGER,
+    step: DataTypes.STRING,
+    userID: DataTypes.STRING,
     userName: DataTypes.STRING,
-    isAgreed: DataTypes.BOOLEAN,
+    isAgreed: DataTypes.STRING,
     suggestion: DataTypes.STRING,
     depositAmount: DataTypes.STRING
   });

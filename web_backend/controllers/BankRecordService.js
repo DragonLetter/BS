@@ -3,7 +3,7 @@
 var models = require('../models');
 var Sequelize = require("sequelize");
 
-exports.addBankRecord = function (req, res, next) {
+function addBankRecord(req, res, next) {
     var args = req.swagger.params;
     console.log("Try to save a new bank");
     console.log(args);
@@ -14,15 +14,17 @@ exports.addBankRecord = function (req, res, next) {
     models.BankRecord.create(args.body.value).then(function (data) {
         getBankRecordByLcNo(args, res, next);
     });
-}
+};
+exports.addBankRecord = addBankRecord;
 
-exports.deleteBankRecordByLcNo = function (req, res, next) {
+function deleteBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcID = args.LcNo.value;
     models.BankRecord.destroy({ where: { Id: lcID }, truncate: false });
 
     res.end();
-}
+};
+exports.deleteBankRecordByLcNo = deleteBankRecordByLcNo;
 
 function getBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
@@ -35,10 +37,10 @@ function getBankRecordByLcNo(req, res, next) {
             res.end();
         }
     });
-}
+};
 exports.getBankRecordByLcNo = getBankRecordByLcNo;
 
-exports.updateBankRecord = function (req, res, next) {
+function updateBankRecord(req, res, next) {
     var args = req.swagger.params;
 
     /**
@@ -49,4 +51,30 @@ exports.updateBankRecord = function (req, res, next) {
      * no response value expected for this operation
      **/
     res.end();
-}
+};
+exports.updateBankRecord = updateBankRecord;
+
+//以下接口为backend内部使用，不提供给上层使用
+exports.updateAFStateRecord = function (req, res, next) {
+    var args = req.swagger.params;
+    var userID = req.session.user.id;
+    var userName = req.session.user.username;
+    var values = args.body.value;
+
+    var dbVal;
+    dbVal.AFNo = values.AFNo;
+    dbVal.LcNo = values.lcNo;
+    dbVal.step = values.step;
+    dbVal.userID = userID;
+    dbVal.userName = userName;
+    dbVal.isAgreed = values.isAgreed;
+    dbVal.suggestion = values.suggestion;
+    dbVal.depositAmount = values.depositAmount;
+
+    /**
+     * Add a new operation record to the db
+     **/
+    models.BankRecord.create(dbVal).then(function (data) {
+        console.log('Add record:' + dbVal);
+    });
+};

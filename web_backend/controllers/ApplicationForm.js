@@ -3,6 +3,7 @@
 var url = require('url');
 
 var ApplicationForm = require('./ApplicationFormService');
+var BankRecordService = require('./BankRecordService');
 
 module.exports.addApplicationForm = function addApplicationForm (req, res, next) {
   ApplicationForm.addApplicationForm(req, res, next);
@@ -57,4 +58,5 @@ module.exports.getAFState = function getAFState (req, res, next) {
 };
 module.exports.updateAFState = function updateAFState (req, res, next) {
   ApplicationForm.updateAFState(req, res, next);
+  BankRecordService.updateAFStateRecord(req, res, next);
 };

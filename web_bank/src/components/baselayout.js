@@ -37,8 +37,8 @@ class BaseLayout extends React.Component {
                     sessionStorage.setItem("userType", data.userType);
                     sessionStorage.setItem("bankname", data.bank.name);
                     sessionStorage.setItem("bankno", data.bank.no);
-                    sessionStorage.setItem("bankaddr", data.bank.address);
-                    sessionStorage.setItem("bankemail", data.bank.email);
+                    sessionStorage.setItem("bankid", data.bank.id);
+                    sessionStorage.setItem("userid", data.id);
             });
         }
         if(res.status === 401){
@@ -123,7 +123,12 @@ class BaseLayout extends React.Component {
                                     <Icon type="home" />业务设置
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="5" display={sessionStorage.getItem('domain')==10?true:false}>
+                            <Menu.Item key="5">
+                                <Link to="/lcpayment/clientList">
+                                    <Icon type="user" />签约企业
+                                </Link>
+                            </Menu.Item>
+                            <Menu.Item key="6" display={sessionStorage.getItem('domain')==10?true:false}>
                                 <Link to="/lcpayment/users">
                                     <Icon type="user" />用户管理
                                 </Link>

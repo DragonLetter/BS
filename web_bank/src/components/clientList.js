@@ -13,44 +13,6 @@ const Panel = Collapse.Panel;
 const TabPane = Tabs.TabPane;
 const { MonthPicker, RangePicker } = DatePicker;
 
-const signCorporationForm = (props) => {
-    const { visible, onCancel, onPass, onReject, curCorporation } = props;
-    const formItemLayout = {
-        labelCol: { span: 7 },
-        wrapperCol: { span: 15 },
-    };
-        return (
-            <Modal
-                visible = {visible}
-//                curCorporation={curCorporation}
-                title="企业信息"
-                // footer={curCorporation.signState=='0'?
-                //     [<Button key="back" onClick={onCancel}>关闭</Button>,
-                //     <Button key="pass" onClick={onPass}>通过</Button>,
-                //     <Button key="reject" onClick={onReject}>拒绝</Button>,]  :
-                //     [<Button key="back" onClick={onCancel}>关闭</Button>]
-                // }
-                >
-                <Layout style={{ padding: '1px 1px' }}>
-                    <Content style={{ background: '#fff', padding: 0, margin: '0' }}>
-                        <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1' }}>
-                            <Row key={0}>
-                                <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>申请人信息</Col>
-                            </Row>
-                            <Row key={1}>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>申请人</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>1111</Col>
-                                <Col span={3}></Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>地址</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>22222</Col>
-                            </Row>
-                        </div>
-                    </Content>
-                </Layout>
-            </Modal>
-        );
-};
-
 class ClientList extends React.Component{
     constructor(props){
         super(props);
@@ -103,17 +65,49 @@ class ClientList extends React.Component{
             curCorporation: curCor,
             visibleSCForm: true,
         });
-        message.error(JSON.stringify(this.state.visibleSCForm));
     }
-
     handleSCCancel = () =>{
-
+        this.setState({
+            visibleSCForm: false,
+        })
     }
     handleSCPass = () => {
-
+        let vals = {};
+        vals.NO = this.state.curCorporation.key;
+        vals.isAudit = "true";
+        fetch_post("/api/SignedBank/signAudit/",vals)
+        .then((res) => {
+            if (res.status >= 200 && res.status < 300) {
+                res.json().then((data) => {
+                    message.success("审核完成, 通过企业签约。");
+                    this.setState({
+                        visibleSCForm: false,
+                    })
+                });
+            } else {
+                message.error(CONSTANTS.ERROR_SIGNED_FORM_AUDIT);
+            }
+        });
     }
     handleSCReject = () => {
-
+        let vals = {};
+        vals.NO = this.state.curCorporation.key;
+        vals.bankid = sessionStorage.getItem("bankid");
+        vals.userid = sessionStorage.getItem("userid");
+        vals.isAudit = "true";
+        fetch_post("/api/SignedBank/signAudit/",vals)
+        .then((res) => {
+            if (res.status >= 200 && res.status < 300) {
+                res.json().then((data) => {
+                    message.error("审核完成, 拒绝企业签约。");
+                    this.setState({
+                        visibleSCForm: false,
+                    })
+                });
+            } else {
+                message.error(CONSTANTS.ERROR_SIGNED_FORM_AUDIT);
+            }
+        });
     }
     render(){
         const columns = [
@@ -126,7 +120,7 @@ class ClientList extends React.Component{
             {title: '签约状态',key: 'signState',render:(text,record,index) => <div>{record.signState=='1'?'通过':(record.signState=='0'?'待审':'拒绝')}</div>},
             {title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.corporationDetail(index)}>详情</a></span>,}
         ];
-        
+        let curCor = this.state.curCorporation;
         return (
             <Layout style={{ padding: '0 1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', height:'42px', background:'#F3F1EF' }}>
@@ -141,13 +135,47 @@ class ClientList extends React.Component{
                         />
                     </div>
                 </Content>
-                <signCorporationForm
-                    visible={this.state.visibleSCForm}
-                    // onCancel={this.handleSCCancel}
-                    // onPass={this.handleSCPass}
-                    // onReject={this.handleSCReject}
-                    // curCorporation={this.state.curCorporation}
-                />
+                <Modal
+                  width = "768"
+                  title="签约申请"
+                  onCancel = {this.handleSCCancel}
+                  visible={this.state.visibleSCForm}
+                  footer={this.state.curCorporation.signState=='0'?
+                    [<Button key="back" onClick={this.handleSCCancel}>关闭</Button>,
+                    <Button key="pass" onClick={this.handleSCPass}>通过</Button>,
+                    <Button key="reject" onClick={this.handleSCReject}>拒绝</Button>,]  :
+                    [<Button key="back" onClick={this.handleSCCancel}>关闭</Button>]
+                  }
+                >
+                    <Layout style={{ padding: '1px 1px' }}>
+                        <div>
+                            <Row key={0}>
+                                <Col style={{ marginTop: '1px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>企业信息</Col>
+                            </Row>
+                            <Row>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业名称</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.name}</Col>
+                                <Col span={3}></Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>联系人</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.contact}</Col>
+                            </Row>
+                            <Row>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业账户</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.account}</Col>
+                                <Col span={3}></Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>国家</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.nation}</Col>
+                            </Row>
+                            <Row>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业邮箱</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.email}</Col>
+                                <Col span={3}></Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业地址</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.address}</Col>
+                            </Row>
+                        </div>
+                    </Layout>
+                </Modal> 
             </Layout>
         )
     }

@@ -72,7 +72,6 @@ exports.getCorpsByBankId = function (req, res, next) {
             {model: models.Corporation, as: 'Corporation'}
         ]
     }).then(function(corps){
-        console.log(JSON.stringify(corps));
         var results = corps.map(corp => corp.Corporation);
         var result=[];
         for(var i=0;i<results.length;i++){
@@ -84,3 +83,16 @@ exports.getCorpsByBankId = function (req, res, next) {
         res.end(JSON.stringify(result));
     });
 }
+exports.signBCAppAudit = function (req, res, next) { 
+    var args=req.swagger.params;
+    let value = args.body.value, no = value.NO, isAudit = value.isAudit;
+    return res.end(JSON.stringify("审核通过"));
+
+    fabric.invoke(req,"bankConfirmApplication", [no, isAudit], function(err, resp) {
+        if(!err) {
+            res.end(JSON.stringify("审核通过"));
+        } else{
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+};

@@ -1,30 +1,33 @@
 'use strict';
 
+// 引用依赖模块
 var fs = require('fs');
-
 var express = require("express");
 var session = require('express-session')
 var compression = require('compression');
-// var serve_static = require('serve-static');
 var cookieParser = require('cookie-parser');
 var path = require('path');
-var app = express();
-var http = require('http').Server(app);
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
+const log4js = require('./utils/log4js');
+const logger = log4js.getLogger('req');
+
+var app = express();
+log4js.useLogger(app, logger);
+var http = require('http').Server(app);
 
 // 获取backend服务端口，银行端地址和端口，企业端地址和端口等配置
-var nodeConf  = require(path.join(__dirname, './config/nodeconf.json'));
-var serverPort = nodeConf["BackEnd"].ServicePort;
+var nodeConf = require(path.join(__dirname, './config/nodeconf.json'));
+var serverPort = nodeConf["BackEnd"].Port;
 var enterpriseClientIp = "http://" + nodeConf["Enterprise"].IP + nodeConf["Enterprise"].Port;
 var bankClientIp = "http://" + nodeConf["Bank"].IP + nodeConf["Enterprise"].Port;
 
+app.use(express.static(path.join(__dirname,'pdf')));
 app.use(compression());
 app.use(cookieParser());
 app.use(session({ secret: 'Plume@Fabric', resave: true, saveUninitialized: true }));
 app.all('*', function (req, res, next) {
-    if (req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp) 
-    {
+    if (req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp) {
         res.header("Access-Control-Allow-Origin", req.headers.origin);
         res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
         res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");

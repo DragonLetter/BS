@@ -11,8 +11,16 @@
         "IP": "39.104.175.115",
         "Port": 8000
     },
+    "CA": {
+        "IP": "39.104.175.115",
+        "Port": 7054
+    },
     "Bclc": {
-        "IP": "127.0.0.1",
+        "IP": "localhost",
         "Port": 7111
+    },
+    "Log4js": {
+        "level": "debug",
+        "appendersType": "file"
     }
 }

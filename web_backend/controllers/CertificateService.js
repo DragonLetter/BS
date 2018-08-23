@@ -9,6 +9,8 @@ var Client = require('fabric-client');
 var path      = require("path");
 var env       = process.env.NODE_ENV || "development";
 var config    = require(path.join(__dirname, '..', 'config', 'dbconfig.json'))[env];
+var nodeConf  = require(path.join(__dirname, '../config/nodeconf.json'));
+
 if (process.env.DATABASE_URL) {
   var sequelize = new Sequelize(process.env.DATABASE_URL,config);
 } else {
@@ -283,7 +285,7 @@ exports.enrollCertificate = function (req, res, next) { var args=req.swagger.par
         res.end("enrollSerialNumber:"+crt.enrollSerialNumber);
         var csrStr = "-----BEGIN CERTIFICATE REQUEST-----\nMIHNMHICAQAwEDEOMAwGA1UEAwwFYWRtaW4wWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAATSs3cUksdTkUmk1zCgE0HpVIlZq4plNINYUJmpR7ji6/45Mrzn3oUXVJfU\nr7bY9dvsjgY7SX0h0AAOihBXPmt3oAAwDAYIKoZIzj0EAwIFAANJADBGAiEAwHyZ\nJqjEeK7DgYKvwqqq1Y81+sGZCTJhywZh1fspOe0CIQDTqbL5Y5LBj8gjHnhojfsl\nTZ6Tvbp5DwiArSCzu9zgjw==\n-----END CERTIFICATE REQUEST-----\n";
         var enrollRequest = {
-          caUrl: "http://localhost:7054",
+          caUrl: "http://"+ nodeConf.CA.IP + ":" + nodeConf.CA.Port,
           enrollmentID: "admin",
           enrollmentSecret: "adminpw",
           caName: "ca-org",

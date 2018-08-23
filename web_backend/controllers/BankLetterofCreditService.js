@@ -111,6 +111,7 @@ exports.acceptancePayment = function (req, res, next) { var args=req.swagger.par
 
     fabric.invoke(req,"lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function(err, resp){
         if(!err) {
+            writeAcceptanceHtml(req, no)
             res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -491,7 +492,104 @@ function writeHtml(req, id) {
         "</body>" +
             "</html>"
         // console.log(htmlStr);
-        createHtml(htmlStr, id, resultObj.lcNo);
+        createHtml(htmlStr, '/zb_' + id + resultObj.lcNo + '.pdf');
+
+    });
+}
+
+/**
+ * 生成承兑HTML文件所需要的数据
+ *
+ * Params：id:lcNo
+ * return: 
+ **/
+function writeAcceptanceHtml(req, id) {
+    console.log("----writeAcceptanceHtml id:%s\n",id);
+    fabric.query(req, "getLcByNo", [id], function (error, resp) {
+        var resultObj = JSON.parse(resp.result).LetterOfCredit;
+        //  console.log(resultObj.Applicant.Name);
+        var issuingBank = resultObj.IssuingBank.Name;
+        var lcNo = resultObj.LCNo;
+        var applicantName = resultObj.Applicant.Name;
+        var applicantAccount = resultObj.Applicant.Account; 
+        var applicantAccountNo = resultObj.IssuingBank.AccountNo;
+        var applicantAccountName = resultObj.IssuingBank.Name;
+        var beneficiaryName = resultObj.Beneficiary.Name;
+        var beneficiaryAccount = resultObj.Beneficiary.Account; 
+        var beneficiaryAccountNo = resultObj.AdvisingBank.AccountNo;
+        var beneficiaryAccountName = resultObj.AdvisingBank.Name;
+           
+
+        var htmlStr = '<html>' +
+            '<head>' +
+            '<meta http-equiv=Content-Type content="text/html; charset=utf-8">' +
+            '<meta name=Generator content="pdf">' +
+            '<title></title>' +
+            '</head>' +
+            '<body lang=ZH-CN style="text-justify-trim:punctuation;margin-left:30pt; margin-right:30pt"">' +
+            "<div class=WordSection1 style='layout-grid:15.6pt' marg>" +
+            "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<p class=MsoNormal align=center style='font-size:14.0pt;text-align:center;line-height:150%'><b>承付/拒付通知书—支付凭证</span></b></p>"+
+            "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<p class=MsoNormal style='line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>通知日期: "+
+            ""+ "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"+
+            "编号："+ "" +"</span></p>"+
+            "<p class=MsoNormal style='line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            "致："+ issuingBank +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>信用证号："+
+            lcNo + "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>来单编号："+ "" +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>到单日期："+
+            "" +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>合同号："+ "" +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>到单金额："+
+            "" +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>承付到期日："+ "" +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>单据清单："+
+            "" +"</span></p>"+
+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>"+
+            
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>付款人名称："+
+            "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>收款人名称：</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            applicantName +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>"+ beneficiaryName +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>付款人账号："+
+            applicantAccount +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>收款人账号："+ beneficiaryAccount +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>付款人账户开户行："+
+            "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>收款人账户开户行：</span></p>"+
+            
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            applicantAccountNo +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>"+ applicantAccountName +"</span></p>"+
+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            beneficiaryAccountNo +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
+            "</span>"+ beneficiaryAccountName +"</span></p>"+
+                        
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>"+
+
+            "<p class=MsoNormal style='line-height:150%'><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp; </span><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>上述信用证项下来单通知书业已收悉，我司</span></p>"+
+            "<p class=MsoNormal style='text-indent:14.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            "（<span lang=EN-US>&nbsp;</span>）同意承付，并在此确认已收到上述信用证项下全套单据。</span></p>"+
+            "<p class=MsoNormal style='text-indent:14.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>"+
+            "<p class=MsoNormal style='text-indent:14.0pt;line-height:150%'><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            "不符点：</span></p>"+
+
+            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>"+
+
+            "<p class=MsoNormal style='margin-left:343.05pt;text-indent:-224.0pt;line-height:150%'><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
+            "申请人预留印鉴章及公章</span></p>"+
+            "</div>"
+        "</body>" +
+            "</html>"
+        // console.log(htmlStr);
+        createHtml(htmlStr, '/cd_' + id + resultObj.lcNo + '.pdf');
 
     });
 }
@@ -502,33 +600,13 @@ function writeHtml(req, id) {
  * Params：
  * return: 
  **/
-function createHtml(htmlStr, id, lcno) {
+function createHtml(htmlStr, filename) {
     var path = require('path');
 
     var filePath = path.resolve(__dirname, '../pdf/');
-    html2Pdf(htmlStr, filePath + '/zb_' + id + '_' + lcno + ".pdf");
+    html2Pdf(htmlStr, filePath + filename);
 
-    // console.log(filePath + '/test1.htm')
-    // fs.writeFile(filePath + '/' + id + '.htm', htmlStr, 'utf8', function (err) {
-    //     if (err) return console.log(err);
-    //     fs.readFile(filePath + '/' + id + '.htm', 'utf8', function (err, files) {
-    //         // console.log(files)             
-    //         html2Pdf(files.toString(), filePath + '/' + id + ".pdf");
-    //     });
-    // });
-
-
-
-    // fs.readFile(filePath + '/test1.htm', 'utf8', function (err, files) {
-    //     console.log(files)
-    //     // var result = files.replace('银行国内信用证', '苏宁银行国内信用证');
-    //     var result = files.replace('xx', '苏宁');
-    //     fs.writeFile(filePath + '/test1.htm', result, 'utf8', function (err) {
-    //         if (err) return console.log(err);
-    //     });
-
-    // })
-
+    
     //readdir方法读取文件名
     //readFile方法读取文件内容
     //writeFile改写文件内容

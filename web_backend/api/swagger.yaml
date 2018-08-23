@@ -1224,7 +1224,31 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/User"        
+              $ref: "#/definitions/SignedBank"        
+      x-swagger-router-controller: "SignedBank"
+  /SignedBank/signAudit:
+    post:
+      tags:
+      - "SignedBank"
+      summary: "bank audit the application from corporation"
+      description: ""
+      operationId: "signBCAppAudit"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "签约审核通过"
+        required: false
+        schema:
+            $ref: "#/definitions/SignAudit"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/SignedBank"        
       x-swagger-router-controller: "SignedBank"
 
 # 企业信息
@@ -3197,6 +3221,15 @@ definitions:
       suggestion:
         type: "string"
       isAgreed:
+        type: "string"
+  SignAudit:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAudit:
         type: "string"
   DepositConfirmed:
     type: "object"

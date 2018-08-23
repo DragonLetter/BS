@@ -26,34 +26,34 @@ var logPath = path.join(__dirname, '../logs/');
 log4js.configure({
     replaceConsole: true,
     appenders: {
-	stdout: {
-	    type: 'stdout'
-	},
-	req: {
-	    type: 'dateFile',
-	    filename: logPath + 'req',
-	    pattern: "-yyyyMMdd.log",
-	    alwaysIncludePattern: true
-	},
+        stdout: {
+            type: 'stdout'
+        },
+        req: {
+            type: 'dateFile',
+            filename: logPath + 'req',
+            pattern: "-yyyyMMdd.log",
+            alwaysIncludePattern: true
+        },
         be: {
             type: 'dateFile',
             filename: logPath + 'be',
             pattern: "-yyyyMMdd.log",
-	    alwaysIncludePattern: true
+            alwaysIncludePattern: true
         },
-	err: {
-	    type: 'dateFile',
+        err: {
+            type: 'dateFile',
             filename: logPath + 'err',
             pattern: '-yyyyMMdd.log',
             alwaysIncludePattern: true
-	}
+        }
     },
     categories: {
         default: { appenders: ['stdout'], level: 'debug' },
-	be: { appenders: ['be'], level: logConf.Log4js.level },
-	req: { appenders: ['req'], level: logConf.Log4js.level },
-	err: { appenders: ['err'], level: 'error'}
-      }
+        be: { appenders: ['be'], level: logConf.Log4js.level },
+        req: { appenders: ['req'], level: logConf.Log4js.level },
+        err: { appenders: ['err'], level: 'error' }
+    }
 });
 
 exports.getLogger = function (name) {
@@ -61,7 +61,7 @@ exports.getLogger = function (name) {
 }
 
 exports.useLogger = function (app, logger) {
-  app.use(log4js.connectLogger(logger || log4js.getLogger('default'), {
+    app.use(log4js.connectLogger(logger || log4js.getLogger('default'), {
         format: '[:remote-addr :method :url :status :response-timems][:referrer HTTP/:http-version :user-agent]'//自定义输出格式
     }))
 }

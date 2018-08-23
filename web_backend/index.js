@@ -19,24 +19,25 @@ var http = require('http').Server(app);
 // 获取backend服务端口，银行端地址和端口，企业端地址和端口等配置
 var nodeConf = require(path.join(__dirname, './config/nodeconf.json'));
 var serverPort = nodeConf["BackEnd"].Port;
-var enterpriseClientIp = "http://" + nodeConf["Enterprise"].IP + nodeConf["Enterprise"].Port;
-var bankClientIp = "http://" + nodeConf["Bank"].IP + nodeConf["Enterprise"].Port;
+// var enterpriseClientIp = "http://" + nodeConf["Enterprise"].IP + ":" + nodeConf["Enterprise"].Port;
+// var bankClientIp = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port;
 
-app.use(express.static(path.join(__dirname,'pdf')));
+app.use(express.static(path.join(__dirname, 'pdf')));
 app.use(compression());
 app.use(cookieParser());
 app.use(session({ secret: 'Plume@Fabric', resave: true, saveUninitialized: true }));
 app.all('*', function (req, res, next) {
-    if (req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp) {
-        res.header("Access-Control-Allow-Origin", req.headers.origin);
-        res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
-        res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-        res.header('Access-Control-Allow-Credentials', true);
-        res.header("X-Powered-By", ' 3.2.1');
-    }
+    //    if (req.headers.origin == enterpriseClientIp || req.headers.origin == bankClientIp) {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header("X-Powered-By", ' 3.2.1');
+    //    }
+
     // res.header("Content-Type", "application/json;charset=utf-8");  
     if (req.method == 'OPTIONS') {
-        res.send(200);
+        res.sendStatus(200);
     }
     else {
         next();

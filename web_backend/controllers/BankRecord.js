@@ -8,20 +8,20 @@ var belogger = log4js.getLogger('be');
 
 module.exports.addBankRecord = function addBankRecord (req, res, next) {
   belogger.info("operation for addBankRecord");
-  Bank.addBankRecord(req, res, next);
+  BankRecord.addBankRecord(req, res, next);
 };
 
 module.exports.deleteBankRecordByLcNo = function deleteBankRecordByLcNo (req, res, next) {
   belogger.info("operation for deleteBankRecordByLcNo");
-  Bank.deleteBankRecordByLcNo(req, res, next);
+  BankRecord.deleteBankRecordByLcNo(req, res, next);
 };
 
 module.exports.getBankRecordByLcNo = function getBankRecordByLcNo (req, res, next) {
   belogger.info("operation for getBankRecordByLcNo");
-  Bank.getBankRecordByLcNo(req, res, next);
+  BankRecord.getBankRecordByLcNo(req, res, next);
 };
 
 module.exports.updateBankRecord = function updateBankRecord (req, res, next) {
   belogger.info("operation updateBankRecord");
-  Bank.updateBankRecord(req, res, next);
+  BankRecord.updateBankRecord(req, res, next);
 };

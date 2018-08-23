@@ -5,14 +5,14 @@ var Sequelize = require("sequelize");
 
 function addBankRecord(req, res, next) {
     var args = req.swagger.params;
-    console.log("Try to save a new bank");
+    console.log("Try to save a new bank record");
     console.log(args);
 
     /**
      * Add a new operation record to the db
      **/
     models.BankRecord.create(args.body.value).then(function (data) {
-        getBankRecordByLcNo(args, res, next);
+        getBankRecordByLcNo(req, res, next);
     });
 };
 exports.addBankRecord = addBankRecord;
@@ -28,11 +28,15 @@ exports.deleteBankRecordByLcNo = deleteBankRecordByLcNo;
 
 function getBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
-    var lcID = args.LcNo.value;
-    models.BankRecord.findById(lcID).then(function (bank) {
-        if (Object.keys(bank).length > 0) {
+    var lcNo = args.LcNo.value;
+    models.BankRecord.findAll({
+        'where': {
+            'LcNo': lcNo,
+        }
+    }).then(function (bankRecords) {
+        if (Object.keys(bankRecords).length > 0) {
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(bank));
+            res.end(JSON.stringify(bankRecords));
         } else {
             res.end();
         }

@@ -2845,12 +2845,13 @@ definitions:
       LcNo:
         type: "string"
       step:
-        type: "integer"
-        format: "int64"
+        type: "string"
+      userID:
+        type: "string"
       userName:
         type: string
       isAgreed:
-        type: "boolean"
+        type: "string"
       suggestion:
         type: "string"
       depositAmount:

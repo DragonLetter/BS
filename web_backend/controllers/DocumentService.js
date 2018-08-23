@@ -104,28 +104,44 @@ exports.transHtml2Pdf = function (req, res, next) {
     res.end(JSON.stringify(vals));
   }); 
 };
-exports.TransFData = function(req, res, next){
-  var args=req.swagger.params;
+
+exports.TransFData = function (req, res, next) {
+  var args = req.swagger.params;
+  var options = { format: true };
   var content = args.body.data;
-  var options = {format:true};
-  pdf.create(content,options).toBuffer(function(err, buffer){
-    if(err) return console.log(err);
+  pdf.create(content, options).toBuffer(function (err, buffer) {
+    if (err) return console.log(err);
     res.setHeader('Content-Type', 'application/json');
     var vals = {"data":buffer};
     res.end(JSON.stringify(vals));
-  }); 
-  return;
-  var examples = {};
-  examples['application/json'] = [{
-    "fileName": "string",
-    "fileHash": "string",
-    "length": 0,
-    "mime": "string"
-  }];
-  if (Object.keys(examples).length > 0) {
+  });
+};
+
+exports.getTransFData = function (req, res, next) {
+  var path = require('path');
+  var args = req.swagger.params;
+  var filename = args.FileName.value;
+  // var content = args.body.data;
+  var options = { format: true };
+  var filePath = path.resolve(__dirname, '../pdf/');
+  fs.readFile(filePath + '/' + filename, 'utf8', function (err, files) {
+    console.log(filePath + '/' + filename);
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
+    var vals = { "data": files };
+    // console.log(filePath + '/' + filename);
+    // console.log(JSON.stringify(vals));
+    res.end(JSON.stringify(vals));
+    // console.log(files);
+    // pdf.create(files, options).toBuffer(function (err, buffer) {
+    //   if (err) return console.log(err);
+    //   // console.log(files);
+    //   res.setHeader('Content-Type', 'application/json');
+    //   var vals = { "data": buffer };
+    //   console.log(filePath + '/' + filename);
+    //   // console.log(JSON.stringify(vals));
+    //   res.end(JSON.stringify(vals));
+    // });
+  });
+
+
 };

@@ -721,16 +721,43 @@ paths:
       x-swagger-router-controller: "LetterofCredit"                               
 
 # 文档操作
-  /Document/TransFData:
+  /Document/TransFData/{FileName}:
+    get:
+      tags:
+      - "Document"
+      summary: "传入文件名，返回PDF buffer "
+      description: "Returns pdf buffer"
+      operationId: "getTransFData"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "FileName"
+        in: "path"
+        description: "the PDF of the Document"
+        required: true
+        type: "string"
+
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TransFData"
+      x-swagger-router-controller: "Document"
     post:
       tags:
       - "Document"
-      summary: "上传一个文档，返回文档的Hash值、长度等内容"
+      summary: "传入一个html文件，返回PDF文件流"
       description: ""
       operationId: "TransFData"
       produces:
       - "application/json"
       parameters:
+      - name: "FileName"
+        in: "path"
+        description: "the PDF of the Document"
+        required: true
+        type: "string"
       - name: "body"
         in: "body"
         description: "file data"
@@ -3028,6 +3055,8 @@ definitions:
   TransFData:
     type: "object"
     properties:
+      FileName:
+        type: "string"
       data:
         type: "string"
   LCTransDocsReceived:

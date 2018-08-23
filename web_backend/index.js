@@ -19,7 +19,7 @@ var nodeConf = require(path.join(__dirname, './config/nodeconf.json'));
 var serverPort = nodeConf["BackEnd"].Port;
 var enterpriseClientIp = "http://" + nodeConf["Enterprise"].IP + nodeConf["Enterprise"].Port.toString();
 var bankClientIp = "http://" + nodeConf["Bank"].IP + nodeConf["Enterprise"].Port.toString();
-
+app.use(express.static(path.join(__dirname,'pdf')));
 app.use(compression());
 app.use(cookieParser());
 app.use(session({ secret: 'Plume@Fabric', resave: true, saveUninitialized: true }));

@@ -28,10 +28,10 @@ exports.deleteBankRecordByLcNo = deleteBankRecordByLcNo;
 
 function getBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
-    var lcNo = args.LcNo.value;
+    var lcNo = args.lcNo.value;
     models.BankRecord.findAll({
         'where': {
-            'LcNo': lcNo,
+            'lcNo': lcNo,
         }
     }).then(function (bankRecords) {
         if (Object.keys(bankRecords).length > 0) {
@@ -66,19 +66,21 @@ exports.updateAFStateRecord = function (req, res, next) {
     var values = args.body.value;
 
     var dbVal;
-    dbVal.AFNo = values.AFNo;
-    dbVal.LcNo = values.lcNo;
-    dbVal.step = values.step;
-    dbVal.userID = userID;
-    dbVal.userName = userName;
-    dbVal.isAgreed = values.isAgreed;
-    dbVal.suggestion = values.suggestion;
-    dbVal.depositAmount = values.depositAmount;
+    dbVal = {
+        "AFNo": values.AFNo,
+        "lcNo": values.lcNo,
+        "step": values.step,
+        "userID": userID,
+        "userName": userName,
+        "isAgreed": values.isAgreed,
+        "suggestion": values.suggestion,
+        "depositAmount": values.depositAmount
+    };
 
     /**
      * Add a new operation record to the db
      **/
     models.BankRecord.create(dbVal).then(function (data) {
-        console.log('Add record:' + dbVal);
+        console.log('Add record:' + JSON.stringify(dbVal) + " resp:" + JSON.stringify(data));
     });
 };

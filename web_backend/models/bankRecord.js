@@ -3,7 +3,7 @@
 module.exports = function (sequelize, DataTypes) {
   var BankRecord = sequelize.define("BankRecord", {
     AFNo: DataTypes.STRING,
-    LcNo: DataTypes.STRING,
+    lcNo: DataTypes.STRING,
     step: DataTypes.STRING,
     userID: DataTypes.STRING,
     userName: DataTypes.STRING,

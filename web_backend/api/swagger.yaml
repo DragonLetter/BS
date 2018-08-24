@@ -1019,17 +1019,17 @@ paths:
         404:
           description: "Bank not found"
       x-swagger-router-controller: "Bank"
-  /Bank/BankRecord/{LcNo}:
+  /Bank/BankRecord/{lcNo}:
     get:
       tags:
       - "BankRecord"
-      summary: "Get bank operation records by LcNo."
-      description: "Returns Bank operation records of LcNo."
+      summary: "Get bank operation records by lcNo."
+      description: "Returns Bank operation records of lcNo."
       operationId: "getBankRecordByLcNo"
       produces:
       - "application/json"
       parameters:
-      - name: "LcNo"
+      - name: "lcNo"
         in: "path"
         description: "LcNo of operation records"
         required: true
@@ -1053,7 +1053,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "LcNo"
+      - name: "lcNo"
         in: "path"
         description: "LcNo of operation records"
         required: true
@@ -1081,7 +1081,7 @@ paths:
       
       - "application/json"
       parameters:
-      - name: "LcNo"
+      - name: "lcNo"
         in: "path"
         description: "LcNo of operation records"
         required: true
@@ -2842,7 +2842,7 @@ definitions:
     properties:
       AFNo:
         type: "string"
-      LcNo:
+      lcNo:
         type: "string"
       step:
         type: "string"

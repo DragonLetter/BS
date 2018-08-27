@@ -1,6 +1,11 @@
 #设置基础镜像,如果本地没有该镜像，会从Docker.io服务器pull镜像
 FROM node
 
+#支持中文乱码
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+#RUN yum install cjkuni-ukai-fonts
+
 #创建app目录,保存我们的代码
 RUN mkdir -p /usr/src/node
 #设置工作目录

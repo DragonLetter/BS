@@ -430,9 +430,11 @@ class LetterDraft extends React.Component {
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
             attachments = data.Attachments ? data.Attachments : [];
         let boldata = [];
-        boldata[0] = this.state.depositDoc;
+        if( this.state.depositDoc )
+            boldata[0] = this.state.depositDoc;
         let lcdata = [];
-        lcdata[0] = data.Contract;
+        if( data.Contract )
+            lcdata[0] = data.Contract;
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (

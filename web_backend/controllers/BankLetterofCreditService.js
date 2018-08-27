@@ -21,8 +21,8 @@ exports.bankIssuing = function (req, res, next) { var args=req.swagger.params;
 
     fabric.invoke(req,"issueLetterOfCredit", [no, suggestion, isAgreed, JSON.stringify(docArg)], function(err, resp){
         if(!err) {
-            writeHtml(req, no);
-            res.end(JSON.stringify("审核通过"));
+            writePdf(req, no, res);
+            // res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
         }
@@ -111,8 +111,8 @@ exports.acceptancePayment = function (req, res, next) { var args=req.swagger.par
 
     fabric.invoke(req,"lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function(err, resp){
         if(!err) {
-            writeAcceptanceHtml(req, no)
-            res.end(JSON.stringify("审核通过"));
+            writeAcceptancePdf(req, no, res)
+            // res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
         }
@@ -157,13 +157,13 @@ exports.issuingBankReviseRetire = function (req, res, next) {
 
 
 /**
- * 生成HTML文件所需要的数据
+ * 生成pdf文件所需要的数据
  *
  * Params：id:lcNo
  * return: 
  **/
-function writeHtml(req, id) {
-    console.log("----writeHtml id:%s\n",id);
+function writePdf(req, id, res) {
+    // console.log("----writeHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         var resultObj = JSON.parse(resp.result);
 
@@ -492,7 +492,12 @@ function writeHtml(req, id) {
         "</body>" +
             "</html>"
         // console.log(htmlStr);
-        createHtml(htmlStr, '/zb_' + id + resultObj.lcNo + '.pdf');
+        var path = require('path');
+
+        var filePath = path.resolve(__dirname, '../pdf/');
+        // html2Pdf(htmlStr, filePath + filename);
+
+        createPdf(htmlStr, filePath + '/zb_' + id + "_"+ resultObj.lcNo + '.pdf', res);
 
     });
 }
@@ -503,8 +508,8 @@ function writeHtml(req, id) {
  * Params：id:lcNo
  * return: 
  **/
-function writeAcceptanceHtml(req, id) {
-    console.log("----writeAcceptanceHtml id:%s\n",id);
+function writeAcceptancePdf(req, id, res) {
+    // console.log("----writeAcceptanceHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
         //  console.log(resultObj.Applicant.Name);
@@ -589,7 +594,10 @@ function writeAcceptanceHtml(req, id) {
         "</body>" +
             "</html>"
         // console.log(htmlStr);
-        createHtml(htmlStr, '/cd_' + id + resultObj.lcNo + '.pdf');
+        var path = require('path');
+
+        var filePath = path.resolve(__dirname, '../pdf/');
+        createPdf(htmlStr, filePath + '/cd_' + id + "_"+  resultObj.lcNo + '.pdf', res);
 
     });
 }
@@ -600,11 +608,11 @@ function writeAcceptanceHtml(req, id) {
  * Params：
  * return: 
  **/
-function createHtml(htmlStr, filename) {
-    var path = require('path');
+// function createHtml(htmlStr, filename) {
+//     var path = require('path');
 
-    var filePath = path.resolve(__dirname, '../pdf/');
-    html2Pdf(htmlStr, filePath + filename);
+//     var filePath = path.resolve(__dirname, '../pdf/');
+//     html2Pdf(htmlStr, filePath + filename);
 
     
     //readdir方法读取文件名
@@ -626,13 +634,18 @@ function createHtml(htmlStr, filename) {
     //     });
 
     // });
-}
+// }
 
-function html2Pdf(html, pdfName) {
+function createPdf(html, pdfName, res) {
     // console.log(html);
     var options = { format: true };
     pdf.create(html, options).toFile(pdfName, function (err, res) {
-        if (err) return console.log(err);
+        if (err)
+        {
+         res.end(JSON.stringify("审核通过"));
+         return console.log(err);
+        }
         console.log(res);
+        res.end(JSON.stringify("审核通过"));
     });
 };

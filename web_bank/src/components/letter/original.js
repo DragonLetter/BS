@@ -341,6 +341,7 @@ class LetterDraft extends React.Component {
                 var afstate = this.state.afstate;
                 afstate.state = '13';
                 afstate.suggestion = values.comment;
+                afstate.isAgreed = "true";
                 fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {

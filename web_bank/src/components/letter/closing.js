@@ -4,7 +4,7 @@ import { Link, hashHistory } from 'react-router';
 import '../../main.css'
 import { fetch_get, fetch_post } from '../../common'
 import * as CONSTANTS from '../../constants'
-
+import PDF from 'react-pdf-js'
 import { Upload, Alert, Timeline, Tag, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
 const Step = Steps.Step;
 const TabPane = Tabs.TabPane;
@@ -269,6 +269,16 @@ class LetterCLosing extends React.Component {
         this.getDepositData();
     }
 
+    printPdf = () => {
+        window.open("http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+
+    }
+
+    printAcceptancePdf = () => {
+        window.open("http://39.104.175.115:8080/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+
+    }
+
     render() {
         let data = this.state.letters ? this.state.letters : [],
             applicant = data.Applicant ? data.Applicant : [],
@@ -279,6 +289,8 @@ class LetterCLosing extends React.Component {
         let lcdata = [];
         lcdata[0] = data.Contract;
         let btnDivHtml;
+        let pdfPath = "http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfAcceptance = "http://39.104.175.115:8080/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
@@ -420,6 +432,29 @@ class LetterCLosing extends React.Component {
                                     </Timeline>
                                 </Row>
                             </div>
+                        </TabPane>
+
+                        <TabPane tab="面函(正本)" key="4" >
+                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+
+                            <div>
+                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
+                                <PDF
+                                    file={pdfPath}
+                                />
+                            </div>
+
+                        </TabPane>
+                        <TabPane tab="面函(承兑)" key="5" >
+                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printAcceptancePdf()}>打印</Button>
+
+                            <div>
+                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
+                                <PDF
+                                    file={pdfAcceptance}
+                                />
+                            </div>
+
                         </TabPane>
                     </Tabs>
 

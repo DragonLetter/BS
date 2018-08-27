@@ -4,6 +4,7 @@ import { Link, hashHistory } from 'react-router';
 import '../../main.css'
 import { fetch_get, fetch_post } from '../../common'
 import * as CONSTANTS from '../../constants'
+import PDF from 'react-pdf-js'
 
 import { Upload, Alert, Timeline, Tag, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
 const Step = Steps.Step;
@@ -75,7 +76,7 @@ const RejectDialog = Form.create()(
         return (
             <Modal
                 visible={visible}
-                title="不符点驳回"
+                title="不符合驳回"
                 okText="提交"
                 cancelText="取消"
                 onCancel={onCancel}
@@ -83,7 +84,7 @@ const RejectDialog = Form.create()(
                 width='800'
             >
                 <Form>
-                    <FormItem {...formItemLayout} label="不符点说明">
+                    <FormItem {...formItemLayout} label="不符合说明">
                         {
                             getFieldDecorator('comment', {
                                 initialValue: dataform ? dataform.suggestion : "",
@@ -422,6 +423,11 @@ class LetterDraft extends React.Component {
         this.getDepositData();
     }
 
+    printPdf = () => {
+        // alert(this.state.printpdf);
+        window.open("http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    }
+
     render() {
         let data = this.state.letters ? this.state.letters : [],
             applicant = data.Applicant ? data.Applicant : [],
@@ -434,6 +440,7 @@ class LetterDraft extends React.Component {
         let lcdata = [];
         lcdata[0] = data.Contract;
         let btnDivHtml;
+        let pdfPath = "http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
@@ -606,6 +613,17 @@ class LetterDraft extends React.Component {
                                     </Timeline>
                                 </Row>
                             </div>
+                        </TabPane>
+                        <TabPane tab="面函" key="4" >
+                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+
+                            <div>
+                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
+                                <PDF
+                                    file={pdfPath}
+                               />
+                            </div>
+
                         </TabPane>
                     </Tabs>
 

@@ -305,7 +305,7 @@ class LetterDraft extends React.Component {
         afstate.state = '11';//初始化身份--经办
         afstate.step = 'BankIssueLCStep' //流程到银行发证
         afstate.suggestion = "";
-        appdata.depositAmount = "";
+        afstate.depositAmount = "";
         fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {

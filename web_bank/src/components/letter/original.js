@@ -15,7 +15,7 @@ const { Header, Content, Sider } = Layout;
 let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "", "uploader": "" };
 let isFileUploaded = false;
 
-var nodeConf = require('../config/nodeconf.json');
+var nodeConf = require('../../../config/nodeconf.json');
 const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 
 const ApproveDialog = Form.create()(

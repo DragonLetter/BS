@@ -16,7 +16,7 @@ const { Header, Content, Sider } = Layout;
 let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "", "uploader": "" };
 let isFileUploaded = false;
 
-var nodeConf = require('../config/nodeconf.json');
+var nodeConf = require('../../../config/nodeconf.json');
 const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 
 const ApproveDialog = Form.create()(
@@ -439,10 +439,10 @@ class LetterDraft extends React.Component {
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
             attachments = data.Attachments ? data.Attachments : [];
         let boldata = [];
-        if( this.state.depositDoc )
+        if (this.state.depositDoc)
             boldata[0] = this.state.depositDoc;
         let lcdata = [];
-        if( data.Contract )
+        if (data.Contract)
             lcdata[0] = data.Contract;
         let btnDivHtml;
         let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
@@ -627,7 +627,7 @@ class LetterDraft extends React.Component {
                                 {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
                                 <PDF
                                     file={pdfPath}
-                               />
+                                />
                             </div>
 
                         </TabPane>

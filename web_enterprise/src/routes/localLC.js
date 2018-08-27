@@ -657,7 +657,6 @@ class LocalLC extends React.Component {
             values.AfterSight = parseInt(values.AfterSight);
             values.DocDelay = parseInt(values.DocDelay);
             formValues = values;
-            message.error(JSON.stringify(formValues));
             request('/api/applicationform', {
                 method: "POST",
                 body: values,

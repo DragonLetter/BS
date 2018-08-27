@@ -85,7 +85,8 @@ exports.getCorpsByBankId = function (req, res, next) {
 }
 exports.signBCAppAudit = function (req, res, next) { 
     var args=req.swagger.params;
-    let value = args.body.value, no = value.NO, isAudit = value.isAudit;
+//    let value = args.body.value, no = value.no, isAudit = value.isAudit;
+    res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify("审核通过"));
 
     fabric.invoke(req,"bankConfirmApplication", [no, isAudit], function(err, resp) {

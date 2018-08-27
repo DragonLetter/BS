@@ -73,16 +73,16 @@ class ClientList extends React.Component{
     }
     handleSCPass = () => {
         let vals = {};
-        vals.NO = this.state.curCorporation.key;
+        vals.aid = this.state.curCorporation.key.toString();
+        vals.suggestion = "pass";
         vals.isAudit = "true";
-        fetch_post("/api/SignedBank/signAudit/",vals)
+        message.error(JSON.stringify(vals));
+        fetch_post("/api/SignedBank/signAudit",vals)
         .then((res) => {
             if (res.status >= 200 && res.status < 300) {
-                res.json().then((data) => {
-                    message.success("审核完成, 通过企业签约。");
-                    this.setState({
-                        visibleSCForm: false,
-                    })
+                message.success("审核完成, 通过企业签约。");
+                this.setState({
+                    visibleSCForm: false,
                 });
             } else {
                 message.error(CONSTANTS.ERROR_SIGNED_FORM_AUDIT);
@@ -91,18 +91,15 @@ class ClientList extends React.Component{
     }
     handleSCReject = () => {
         let vals = {};
-        vals.NO = this.state.curCorporation.key;
-        vals.bankid = sessionStorage.getItem("bankid");
-        vals.userid = sessionStorage.getItem("userid");
-        vals.isAudit = "true";
-        fetch_post("/api/SignedBank/signAudit/",vals)
+        vals.aid = this.state.curCorporation.key.toString();
+        vals.suggestion = "reject";
+        vals.isAudit = "false";
+        fetch_post("/api/SignedBank/signAudit",vals)
         .then((res) => {
             if (res.status >= 200 && res.status < 300) {
-                res.json().then((data) => {
-                    message.error("审核完成, 拒绝企业签约。");
-                    this.setState({
-                        visibleSCForm: false,
-                    })
+                message.error("审核完成, 拒绝企业签约。");
+                this.setState({
+                    visibleSCForm: false,
                 });
             } else {
                 message.error(CONSTANTS.ERROR_SIGNED_FORM_AUDIT);
@@ -136,7 +133,7 @@ class ClientList extends React.Component{
                     </div>
                 </Content>
                 <Modal
-                  width = "768"
+                  width = "768px"
                   title="签约申请"
                   onCancel = {this.handleSCCancel}
                   visible={this.state.visibleSCForm}

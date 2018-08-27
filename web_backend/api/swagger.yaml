@@ -1239,16 +1239,18 @@ paths:
       - in: "body"
         name: "body"
         description: "签约审核通过"
-        required: false
+        required: true
         schema:
             $ref: "#/definitions/SignAudit"
       responses:
         200:
           description: "successful operation"
           schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/SignedBank"        
+            $ref: "#/definitions/SignedBank"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "SignedBank not found"
       x-swagger-router-controller: "SignedBank"
 
 # 企业信息
@@ -3226,7 +3228,7 @@ definitions:
   SignAudit:
     type: "object"
     properties:
-      no:
+      aid:
         type: "string"
       suggestion:
         type: "string"

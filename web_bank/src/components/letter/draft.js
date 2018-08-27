@@ -120,11 +120,15 @@ class LetterDraft extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
+            lcNo: string,
             afstate: {},
             letter: {}
         }
     }
-
+    //获得LC的内部编号，并且将序列+1,并作为transactionId
+    getLCNumber = () => {
+        var lcno = sessionStorage.getItem("bankno")+time.Now().Format("20060102");
+    }
     componentDidMount = () => {
         this.getLCApplyDetail();
         this.getLCProcessFlows();

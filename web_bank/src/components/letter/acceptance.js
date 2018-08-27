@@ -16,6 +16,9 @@ const { Header, Content, Sider } = Layout;
 let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "", "uploader": "" };
 let isFileUploaded = false;
 
+var nodeConf = require('../config/nodeconf.json');
+const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
+
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
@@ -425,7 +428,7 @@ class LetterDraft extends React.Component {
 
     printPdf = () => {
         // alert(this.state.printpdf);
-        window.open("http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+        window.open(serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
     }
 
     render() {
@@ -442,7 +445,8 @@ class LetterDraft extends React.Component {
         if( data.Contract )
             lcdata[0] = data.Contract;
         let btnDivHtml;
-        let pdfPath = "http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>

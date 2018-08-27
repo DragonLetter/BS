@@ -15,6 +15,9 @@ const { Header, Content, Sider } = Layout;
 let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "", "uploader": "" };
 let isFileUploaded = false;
 
+var nodeConf = require('../config/nodeconf.json');
+const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
+
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
@@ -87,7 +90,7 @@ const RejectDialog = Form.create()(
 
 const fileUploadOptions = {
     name: 'file',
-    action: 'http://39.104.175.115:8080' + '/api/document/upload',
+    action: serverBackEnd + '/api/document/upload',
     withCredentials: true,
     onChange(info) {
         if (info.file.status !== 'uploading') {

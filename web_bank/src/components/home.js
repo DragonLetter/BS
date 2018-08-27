@@ -10,9 +10,6 @@ const Step = Steps.Step;
 const { Header, Content, Sider } = Layout;
 const { MonthPicker, RangePicker } = DatePicker;
 
-const serverAddr = "http://39.104.175.115:8080/api"
-const bankId = 1;
-
 class Home extends React.Component{
     constructor(props){
         super(props);

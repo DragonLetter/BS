@@ -15,6 +15,9 @@ const { Header, Content, Sider } = Layout;
 let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "", "uploader": "" };
 let isFileUploaded = false;
 
+var nodeConf = require('../config/nodeconf.json');
+const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
+
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
@@ -395,12 +398,12 @@ class LetterRedemption extends React.Component {
     }
 
     printPdf = () => {
-        window.open("http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+        window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
     }
 
     printAcceptancePdf = () => {
-        window.open("http://39.104.175.115:8080/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+        window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
     }
 
@@ -434,8 +437,8 @@ class LetterRedemption extends React.Component {
             btnDivHtml = (<div></div>);
         }
 
-        let pdfPath = "http://39.104.175.115:8080/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-        let pdfAcceptancePath = "http://39.104.175.115:8080/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfAcceptancePath = serverBackEnd +"/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         return (
             <Layout style={{ padding: '1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', fontSize: 13, fontWeight: 800, background: '#F3F1EF' }}>

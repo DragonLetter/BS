@@ -441,6 +441,7 @@ class LetterDraft extends React.Component {
 
     render() {
         let data = this.state.letters ? this.state.letters : [],
+            // applicationForm = data.ApplicationForm ? data.ApplicationForm : [],
             applicant = data.Applicant ? data.Applicant : [],
             beneficiary = data.Beneficiary ? data.Beneficiary : [],
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
@@ -448,13 +449,13 @@ class LetterDraft extends React.Component {
             goodsInfo = data.GoodsInfo ? data.GoodsInfo : [],
             isAtSight = data.isAtSight === "true" ? "即期" : ("发运/服务交付" + data.afterSight + "日后"),
             attachments = data.Attachments ? data.Attachments : [],
-            chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
-            chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
-            docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
-            Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
-            Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
-            Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
-            OverLow = "短装:"+applicationForm.Lowfill+"    溢装:"+applicationForm.Overfill;
+            chargeInIssueBank = "在开证行产生的费用，由" + (data.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
+            chargeOutIssueBank = "在开证行外产生的费用，由" + (data.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
+            docDelay = "单据必须自运输单据签发日" + data.docDelay + "日内提交，且不能低于信用证有效期。",
+            Negotiate = data.Negotiate==="1"?"以下银行可议付":(data.Negotiate==="2"?"任意银行可议付":"不可议付"),
+            Transfer = data.Transfer==="1"?"可转让":"不可转让",
+            Confirmed = data.Confirmed==="1"?"可保兑":"不可保兑",
+            OverLow = "短装:"+data.Lowfill+"    溢装:"+data.Overfill;
 
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
@@ -593,7 +594,7 @@ class LetterDraft extends React.Component {
                                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{data.Currency}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>金额</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>信用证:{applicationForm.amount}  保证金:{applicationForm.EnsureAmount}</Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>信用证:{data.amount}  保证金:{data.EnsureAmount}</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日</Col>

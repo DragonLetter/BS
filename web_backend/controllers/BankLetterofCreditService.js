@@ -289,7 +289,7 @@ function writePdf(req, id, resw) {
             "<u><span lang=EN-US>&nbsp;" + applyTime_month + "&nbsp;</span></u>月" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_day + "&nbsp;</span></u>日" +
             "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" +
-            "信用证编号：<u><span lang=EN-US>&nbsp;&nbsp;" + resultObj.lcNo + "&nbsp;&nbsp;</span></u></span></p>" +
+            "信用证编号：<u><span lang=EN-US>&nbsp;&nbsp;" + resultObj.LCNo + "&nbsp;&nbsp;</span></u></span></p>" +
             "<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 style='border-collapse:collapse'>" +
             "<tr style='page-break-inside:avoid;height:15.0pt'>" +
             "<td width=26 rowspan=3 valign=top style='width:19.5pt;border:solid windowtext 1.0pt; border-bottom:none;padding:0cm 1.5pt 0cm 1.5pt;layout-flow:vertical-ideographic; height:15.0pt'>" +

@@ -599,7 +599,7 @@ class AcceptanceByAdvisingBank extends React.Component {
                             </div>
                         </TabPane>
 
-                        <TabPane tab="面函(正本)" key="4" >
+                        <TabPane tab="面函" key="4" >
                             <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
 
                             <div>
@@ -610,17 +610,7 @@ class AcceptanceByAdvisingBank extends React.Component {
                             </div>
 
                         </TabPane>
-                        <TabPane tab="面函(承兑)" key="5" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printAcceptancePdf()}>打印</Button>
-
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfAcceptancePath}
-                                />
-                            </div>
-
-                        </TabPane>
+                        
                     </Tabs>
 
                 </Content>

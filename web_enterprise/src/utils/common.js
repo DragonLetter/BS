@@ -1,10 +1,7 @@
 import fetch from 'dva/fetch';
 import { notification, message } from 'antd';
 
-const path = require('path');
-const nodeConf = require(path.join(__dirname, '../../config/nodeconf.json'));
-//export const clientIP = "http://39.104.175.115:8000"
-//export const serverIP = "http://39.104.175.115:8080"
+const nodeConf = require('../../config/nodeconf.json');
 export const clientIP = "http://" + nodeConf["Enterprise"].IP + ":" + nodeConf["Enterprise"].Port;
 export const serverIP = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 

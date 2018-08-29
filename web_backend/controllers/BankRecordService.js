@@ -1,12 +1,14 @@
 'use strict';
 
+const log4js = require('../utils/log4js');
+const belogger = log4js.getLogger('be');
+
 var models = require('../models');
 var Sequelize = require("sequelize");
 
 function addBankRecord(req, res, next) {
     var args = req.swagger.params;
-    console.log("Try to save a new bank record");
-    console.log(args);
+    belogger.debug("Add a new bank record:" + args);
 
     /**
      * Add a new operation record to the db
@@ -20,6 +22,9 @@ exports.addBankRecord = addBankRecord;
 function deleteBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcID = args.LcNo.value;
+
+    belogger.debug("Delete a bank record:" + args);
+
     models.BankRecord.destroy({ where: { Id: lcID }, truncate: false });
 
     res.end();
@@ -29,6 +34,9 @@ exports.deleteBankRecordByLcNo = deleteBankRecordByLcNo;
 function getBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcNo = args.lcNo.value;
+
+    belogger.debug("Get a bank record:" + args);
+
     models.BankRecord.findAll({
         'where': {
             'lcNo': lcNo,
@@ -46,6 +54,7 @@ exports.getBankRecordByLcNo = getBankRecordByLcNo;
 
 function updateBankRecord(req, res, next) {
     var args = req.swagger.params;
+    belogger.debug("Update a bank record:" + args);
 
     /**
      * Update an existing Bank
@@ -65,6 +74,8 @@ exports.updateAFStateRecord = function (req, res, next) {
     var userName = req.session.user.username;
     var values = args.body.value;
 
+    belogger.debug("updateAFStateRecord:" + JSON.stringify(args));
+
     var dbVal;
     dbVal = {
         "AFNo": values.AFNo,
@@ -77,10 +88,12 @@ exports.updateAFStateRecord = function (req, res, next) {
         "depositAmount": values.depositAmount
     };
 
+    belogger.debug("updateAFStateRecord: Add record:" + JSON.stringify(dbVal));
+
     /**
      * Add a new operation record to the db
      **/
     models.BankRecord.create(dbVal).then(function (data) {
-        console.log('Add record:' + JSON.stringify(dbVal) + " resp:" + JSON.stringify(data));
+        belogger.debug("updateAFStateRecord: resp:" + JSON.stringify(data));
     });
 };

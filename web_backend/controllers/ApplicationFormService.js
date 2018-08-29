@@ -4,9 +4,13 @@ var models = require('../models');
 var sequenceHelper = require("./SequenceHelper");
 var constants = require("./Constants");
 var moment = require("moment");
+const log4js = require('../utils/log4js');
+const belogger = log4js.getLogger('be');
 
 exports.addApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * 新建申请表
    * 
@@ -33,9 +37,9 @@ exports.addApplicationForm = function (req, res, next) {
     }),
     lcId = sequenceHelper.GenerateNewId("LC"),
     applyId = sequenceHelper.GenerateNewId("LCApplication"), corpNo;
+
   Promise.all([p1, p2, p3, p4, p5, p6, lcId, applyId]).then(
     function ([applicant, beneficiary, issueBank, advisingBank, applicantSign, beneficiarySign, lcIdNumber, applyIdNumber]) {
-      console.log(applicant, beneficiary, issueBank, advisingBank, applicantSign, beneficiarySign, lcIdNumber);
       var fabricArg1 = values.No ? values.No.toString() : lcIdNumber.toString();
       corpNo = applicant.id.toString();
       var fabricArg2 = {
@@ -114,13 +118,13 @@ exports.addApplicationForm = function (req, res, next) {
             }
           }).then(function (data) {
             if (data == null) {
-              console.log("query afstates:%s\n", fabricArg1);
+              belogger.debug("query afstates:" + fabricArg1);
               models.Afstate.create({
                 'AFNo': fabricArg1,
                 'step': 'BankConfirmApplyFormStep',
                 'state': '11',
               }).then(function (data) {
-                console.log("insert afstates");
+                belogger.debug("insert afstates");
               }).catch(function (e) {
               });
             }
@@ -128,7 +132,7 @@ exports.addApplicationForm = function (req, res, next) {
           submitApplicationFormByCorp(req, corpNo, fabricArg1, res, next);
         }
         else {
-          console.log(err);
+          belogger.error("error info:" + err);
         }
       });
     });
@@ -136,29 +140,33 @@ exports.addApplicationForm = function (req, res, next) {
 
 exports.updateAFState = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   models.Afstate.update(args.body.value,
     {
       'where': { 'AFNo': args.AFNo.value }
     }
   ).then(function (data) {
-    console.log(data);
+    belogger.debug("update resp:" + data);
     if (data[0] == 0) {
-      console.log('unknown applicationform');
+      belogger.debug("unknown applicationform");
       res.end(JSON.stringify("unknown applicationform"));
     } else if (data[0] == 1) {
-      console.log('true');
+      belogger.debug("true");
       res.end(JSON.stringify("true"));
     } else {
-      console.log('false');
+      belogger.debug("false");
       res.end(JSON.stringify("false"));
     }
   }).catch(function (e) {
-    console.log(e);
+    belogger.error("Exception:" + e);
   })
 };
 
 exports.getAFState = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   models.Afstate.findOne({
     'where': {
       'AFNo': args.AFNo.value,
@@ -173,21 +181,22 @@ exports.getAFState = function (req, res, next) {
 
 function submitApplicationFormByCorp(req, corpNo, key, res, next) {
   var id = key;
-  // console.log("----No:%s-----\n",id);
+  belogger.debug("No:" + key + " corpNo:" + corpNo);
   fabric.invoke(req, "submitLCApplication", [id], function (err, resp) {
     if (!err) {
-      //console.log("----corpId:%s-----\n",corpNo);
       var corpId = corpNo;
       getApplicationFormByCorp(req, corpId, res, next);
     }
     else {
-      console.log(err);
+      belogger.error("error info:" + err);
     }
   });
 }
 
 exports.addFile = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * add file to application
    * 
@@ -200,6 +209,8 @@ exports.addFile = function (req, res, next) {
 
 exports.deleteApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * Deletes a ApplicationForm
    * 
@@ -212,6 +223,8 @@ exports.deleteApplicationForm = function (req, res, next) {
 
 exports.findApplicationFormsByBank = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * 根据开证行的编号获得信用证申请单
    *
@@ -255,12 +268,12 @@ function getApplicationFormByCorp(req, corpNo, res, next) {
               res.end(JSON.stringify(lcs));
             }
             else {
-              console.log(err);
+              belogger.error("error info:" + err);
             }
           });
         }
         else {
-          console.log(err);
+          belogger.error("error info:" + err);
         }
       });
 
@@ -281,7 +294,7 @@ function getApplicationFormByIssuingBank(bankId, res, next) {
       res.end(JSON.stringify(lcs));
     }
     else {
-      console.log(err);
+      belogger.error("error info:" + err);
       res.end();
     }
   });
@@ -289,6 +302,8 @@ function getApplicationFormByIssuingBank(bankId, res, next) {
 
 exports.findApplicationFormsByCorp = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * 根据企业号获得企业的申请单
    *
@@ -301,6 +316,8 @@ exports.findApplicationFormsByCorp = function (req, res, next) {
 
 exports.findApplicationFormsByMyBank = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * 银行端根据当前用户的银行编号获得信用证申请单
    *
@@ -341,6 +358,8 @@ exports.findApplicationFormsByMyBank = function (req, res, next) {
 
 exports.findApplicationFormsByMyCorp = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * 企业端根据当前用户的企业号获得企业的申请单
    *
@@ -381,6 +400,8 @@ exports.findApplicationFormsByMyCorp = function (req, res, next) {
 
 exports.getApplicationFormById = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * Find ApplicationForm by ID
    * Returns a single ApplicationForm
@@ -397,6 +418,8 @@ exports.getApplicationFormById = function (req, res, next) {
 
 exports.getApplicationForms = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * Get all ApplicationForms
    * Returns ApplicationForm list
@@ -438,6 +461,8 @@ exports.getApplicationForms = function (req, res, next) {
 
 exports.updateApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   /**
    * Update an existing ApplicationForm
    * 
@@ -450,6 +475,8 @@ exports.updateApplicationForm = function (req, res, next) {
 
 exports.submitApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   var id = args.id.value.toString();
   fabric.invoke(req, "submitLCApplication", [id], function (err, resp) {
     if (!err) {
@@ -457,19 +484,21 @@ exports.submitApplicationForm = function (req, res, next) {
       getApplicationFormByCorp(req, corpId, res, next);
     }
     else {
-      console.log(err);
+      belogger.error("error info:" + err);
     }
   });
 };
 
 exports.confirmApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
+  belogger.debug("args:" + args);
+
   let value = args.body.value, no = value.no, depositAmount = value.depositAmount, lcNo = value.lcNo, suggestion = value.suggestion, isAgreed = value.isAgreed;
   fabric.invoke(req, "bankConfirmApplication", [no, lcNo, depositAmount, suggestion, isAgreed], function (err, resp) {
     if (!err) {
       res.end();
     } else {
-      console.log(err);
+      belogger.error("error info:" + err);
     }
   });
 };

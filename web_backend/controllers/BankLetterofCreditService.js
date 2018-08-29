@@ -162,36 +162,35 @@ exports.issuingBankReviseRetire = function (req, res, next) {
  * Params：id:lcNo
  * return: 
  **/
-function writePdf(req, id, res) {
+function writePdf(req, id, resw) {
     // console.log("----writeHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
-        var resultObj = JSON.parse(resp.result);
+        var resultObj = JSON.parse(resp.result).LetterOfCredit;
 
-
-        var afterSight = resultObj.ApplicationForm.afterSight === undefined || resultObj.ApplicationForm.afterSight === "" ? "________" : resultObj.ApplicationForm.afterSight;
-        var datetmp = new Date(resultObj.ApplicationForm.applyTime.substr(0, (resultObj.ApplicationForm.applyTime).indexOf('T')));
+        var afterSight = resultObj.afterSight === undefined || resultObj.afterSight === "" ? "________" : resultObj.afterSight;
+        var datetmp = new Date(resultObj.applyTime.substr(0, (resultObj.applyTime).indexOf('T')));
         var applyTime_year = datetmp.getFullYear();
         var applyTime_month = datetmp.getMonth() + 1 < 10 ? '0' + (datetmp.getMonth() + 1) : datetmp.getMonth() + 1;
         var applyTime_day = datetmp.getDate() < 10 ? '0' + datetmp.getDate() : datetmp.getDate();
 
-        var latestShipmentDate_tmp = new Date(resultObj.ApplicationForm.GoodsInfo.latestShipmentDate.substr(0, (resultObj.ApplicationForm.GoodsInfo.latestShipmentDate).indexOf('T')));
+        var latestShipmentDate_tmp = new Date(resultObj.GoodsInfo.latestShipmentDate.substr(0, (resultObj.GoodsInfo.latestShipmentDate).indexOf('T')));
         var latestShipmentDate_year = latestShipmentDate_tmp.getFullYear();
         var latestShipmentDate_month = latestShipmentDate_tmp.getMonth() + 1 < 10 ? '0' + (latestShipmentDate_tmp.getMonth() + 1) : latestShipmentDate_tmp.getMonth() + 1;
         var latestShipmentDate_day = latestShipmentDate_tmp.getDate() < 10 ? '0' + latestShipmentDate_tmp.getDate() : latestShipmentDate_tmp.getDate();
-        var overLow = "短装:" + resultObj.ApplicationForm.Lowfill + "    溢装:" + resultObj.ApplicationForm.Overfill;
-        var chargeInIssueBank = "在开证行产生的费用，由" + (resultObj.ApplicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。";
-        var chargeOutIssueBank = "在开证行外产生的费用，由" + (resultObj.ApplicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。";
-        var docDelay = "单据必须自运输单据签发日" + resultObj.ApplicationForm.docDelay + "日内提交，且不能低于信用证有效期。";
+        var overLow = "短装:" + resultObj.Lowfill + "    溢装:" + resultObj.Overfill;
+        var chargeInIssueBank = "在开证行产生的费用，由" + (resultObj.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。";
+        var chargeOutIssueBank = "在开证行外产生的费用，由" + (resultObj.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。";
+        var docDelay = "单据必须自运输单据签发日" + resultObj.docDelay + "日内提交，且不能低于信用证有效期。";
 
         // console.log(chargeInIssueBank);
 
         var checkNegotiateHtml;
-        if (resultObj.ApplicationForm.Negotiate === "1") {
+        if (resultObj.Negotiate === "1") {
             checkNegotiateHtml = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 以下银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 任意银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可议付</span>"
             );
         }
-        else if (resultObj.ApplicationForm.Negotiate === "2") {
+        else if (resultObj.Negotiate === "2") {
             checkNegotiateHtml = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 以下银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked  disabled='true'/> 任意银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可议付</span>"
             );
@@ -203,7 +202,7 @@ function writePdf(req, id, res) {
         }
 
         var checkTransferHtml;
-        if (resultObj.ApplicationForm.Transfer === "1") {
+        if (resultObj.Transfer === "1") {
             checkTransferHtml = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 可转让<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可转让</span>"
             );
@@ -215,7 +214,7 @@ function writePdf(req, id, res) {
         }
 
         var checkConfirmedHtml;
-        if (resultObj.ApplicationForm.Confirmed === "1") {
+        if (resultObj.Confirmed === "1") {
             checkConfirmedHtml = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 可保兑<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可保兑</span>"
             );
@@ -227,7 +226,7 @@ function writePdf(req, id, res) {
         }
 
         let checkIsAtSightHtml;
-        if (resultObj.ApplicationForm.isAtSight) {
+        if (resultObj.isAtSight) {
             checkIsAtSightHtml = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 即期</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>远期</span></p>"
             );
@@ -239,7 +238,7 @@ function writePdf(req, id, res) {
         }
 
         var checkIsFarHtml;
-        if (resultObj.ApplicationForm.isAtSight) {
+        if (resultObj.isAtSight) {
             checkIsFarHtml = (
                 "<span><input name='subject' type='checkbox' disabled='true'/></span><span style='font-family:宋体'> 货物装运日/服务交付日后</span> <span lang=EN-US><u>&nbsp;" + afterSight + "&nbsp;</u></span> <span style='font-family:宋体'>天</span> <span lang=EN-US style='font-family:宋体'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 见单后<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>天<span lang=EN-US> </span></span>"
             );
@@ -251,7 +250,7 @@ function writePdf(req, id, res) {
         }
 
         var checkallowPartialShipmentHtml;
-        if (resultObj.ApplicationForm.GoodsInfo.allowPartialShipment) {
+        if (resultObj.GoodsInfo.allowPartialShipment) {
             checkallowPartialShipmentHtml = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>不允许</span></p>"
             );
@@ -263,7 +262,7 @@ function writePdf(req, id, res) {
         }
 
         var checkallowPartialShipment;
-        if (resultObj.ApplicationForm.GoodsInfo.allowPartialShipment) {
+        if (resultObj.GoodsInfo.allowPartialShipment) {
             checkallowPartialShipment = (
                 "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>不允许</span></p>"
             );
@@ -290,7 +289,7 @@ function writePdf(req, id, res) {
             "<u><span lang=EN-US>&nbsp;" + applyTime_month + "&nbsp;</span></u>月" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_day + "&nbsp;</span></u>日" +
             "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" +
-            "信用证编号：<u><span lang=EN-US>&nbsp;&nbsp;" + resultObj.lcNo + "&nbsp;&nbsp;</span></u></span></p>" +
+            "信用证编号：<u><span lang=EN-US>&nbsp;&nbsp;" + resultObj.LCNo + "&nbsp;&nbsp;</span></u></span></p>" +
             "<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 style='border-collapse:collapse'>" +
             "<tr style='page-break-inside:avoid;height:15.0pt'>" +
             "<td width=26 rowspan=3 valign=top style='width:19.5pt;border:solid windowtext 1.0pt; border-bottom:none;padding:0cm 1.5pt 0cm 1.5pt;layout-flow:vertical-ideographic; height:15.0pt'>" +
@@ -300,7 +299,7 @@ function writePdf(req, id, res) {
             "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt; text-autospace:none'><span style='font-family:宋体;color:black'>全称</span></p></td>" +
             "<td width=238 valign=top style='width:178.5pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.Applicant.Name + "</span></p></td>" +
+            resultObj.Applicant.Name + "</span></p></td>" +
             "<td width=21 rowspan=3 valign=top style='width:15.75pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;layout-flow:vertical-ideographic;height:15.0pt'>" +
             "<p class=MsoNormal align=center style='margin-top:20pt;margin-right:5.65pt;margin-bottom:0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:center;line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>受益人</span></b></p>" +
             "</td>" +
@@ -308,7 +307,7 @@ function writePdf(req, id, res) {
             "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>全称</span></p></td>" +
             "<td width=224 valign=top style='width:168.1pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.Beneficiary.Name + "</span></p></td>" +
+            resultObj.Beneficiary.Name + "</span></p></td>" +
             "</tr>" +
             "<tr style='page-break-inside:avoid;height:30.75pt'>" +
             "<td width=53 valign=top style='width:39.75pt;border:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
@@ -316,13 +315,13 @@ function writePdf(req, id, res) {
             "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>邮编</span></p></td>" +
             "<td width=238 valign=top style='width:178.5pt;border:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.Applicant.Address + "</span></p></td>" +
+            resultObj.Applicant.Address + "</span></p></td>" +
             "<td width=56 valign=top style='width:42.0pt;border:none;border-right:solid windowtext 1.0pt; padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
             "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>地址</span></p>" +
             "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>邮编</span></p></td>" +
             "<td width=224 valign=top style='width:168.1pt;border:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.Beneficiary.Address + "</span></p></td></tr>" +
+            resultObj.Beneficiary.Address + "</span></p></td></tr>" +
             "<tr style='page-break-inside:avoid;height:48.75pt'>" +
             "<td width=53 valign=top style='width:39.75pt;border-top:solid windowtext 1.0pt; border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;  padding:0cm 1.5pt 0cm 1.5pt;height:48.75pt'>" +
             "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>电话</span></p></td>" +
@@ -339,26 +338,26 @@ function writePdf(req, id, res) {
             "<td width=539 colspan=4 valign=top style='width:404.35pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
             "<p class=MsoNormal align=left style='text-align:left;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>人民币（大小写）</span></p>" +
             "<p class=MsoNormal align=left style='text-align:left;line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.amount + "</span></p></td>" +
+            resultObj.amount + "</span></p></td>" +
             "</tr>" +
             "<tr style='page-break-inside:avoid;height:20.0pt'>" +
             "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>通知行名称、行号、地址及邮编</span></b></p></td>" +
             "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.AdvisingBank.Name + "</span></p>" +
+            resultObj.AdvisingBank.Name + "</span></p>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.AdvisingBank.AccountNo + "</span></p>" +
+            resultObj.AdvisingBank.AccountNo + "</span></p>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.ApplicationForm.AdvisingBank.Address + "</span></p>" +
+            resultObj.AdvisingBank.Address + "</span></p>" +
             "</td>" +
             "</tr>" +
             "<tr style='page-break-inside:avoid;height:20.0pt'>" +
             "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
             "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>有效期及有效地点</span></b></p></td>" +
             "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.ApplicationForm.expiryDate.substr(0, (resultObj.ApplicationForm.expiryDate).indexOf('T')) + "</span></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.ApplicationForm.ExpiryPlace + "</span></p></td>" +
+            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.expiryDate.substr(0, (resultObj.expiryDate).indexOf('T')) + "</span></p>" +
+            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.ExpiryPlace + "</span></p></td>" +
             "</tr>" +
             "<tr style='page-break-inside:avoid;height:15.5pt'>" +
             "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
@@ -405,14 +404,14 @@ function writePdf(req, id, res) {
             "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>转&nbsp;&nbsp;运: </span></b>" +
             checkallowPartialShipmentHtml +
             "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>货物运输或交货方式/服务方式：</span></b>" +
-            "<u><span lang=EN-US>&nbsp;" + resultObj.ApplicationForm.GoodsInfo.ShippingWay + "&nbsp;</span></u></p>" +
+            "<u><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingWay + "&nbsp;</span></u></p>" +
             "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>分批装运货物/分次提供服务: </span></b>" +
             checkallowPartialShipment +
             "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>货物装运地（港）：</span></b>" +
-            "<span lang=EN-US>&nbsp;" + resultObj.ApplicationForm.GoodsInfo.ShippingPlace + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" +
-            "<b><span style='font-family:宋体'>货物目的地、交货地（港）：</span></b>" + resultObj.ApplicationForm.GoodsInfo.ShippingDestination + "</p>" +
+            "<span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingPlace + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" +
+            "<b><span style='font-family:宋体'>货物目的地、交货地（港）：</span></b>" + resultObj.GoodsInfo.ShippingDestination + "</p>" +
             "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>服务提供地点：</span></b>" +
-            "<u><span lang=EN-US>&nbsp;" + resultObj.ApplicationForm.GoodsInfo.ShippingDestination + "&nbsp;</span></u></p>" +
+            "<u><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingDestination + "&nbsp;</span></u></p>" +
             "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>最迟装运货物/服务提供日期：</span></b>" +
             "<u><span lang=EN-US>&nbsp;" + latestShipmentDate_year + "&nbsp;</span></u><span style='font-family:宋体'>年</span>" +
             "<u><span lang=EN-US>&nbsp;" + latestShipmentDate_month + "&nbsp;</span></u><span style='font-family:宋体'>月</span>" +
@@ -424,7 +423,7 @@ function writePdf(req, id, res) {
             // "<div class=WordSection2 style='layout-grid:15.6pt'>" +
             "<p class=MsoNormal><span>&nbsp;</span></p>" +
             "<p><b><span style='font-family:宋体'>货物/服务描述：</span></b>" +
-            "<p><span lang=EN-US>&nbsp;" + resultObj.ApplicationForm.GoodsInfo.GoodsDescription + "</span></p>" +
+            "<p><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.GoodsDescription + "</span></p>" +
             "<p class=MsoNormal><b><span style='font-family:宋体'>受益人应提交的单据</span></b><span style='font-family:宋体'>：</span></p>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>" +
             "<p class=MsoNormal><b><span style='font-family:宋体'>其他条款:</span></b></p>" +
@@ -436,8 +435,8 @@ function writePdf(req, id, res) {
             "<p><span>6. </span><span>发起日期不能早于开证日期。</span></p>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>" +
             "<p class=MsoNormal style='text-indent:21.0pt'><span style='font-family:宋体'>本信用证依据《国内信用证结算办法》开立。本信用证为不可撤销信用证。我行保证在收到相符单据后，履行付款的责任。如信用证为远期信用证，我行将在收到相符单据次日起五个营业日内确认付款，并在到期日付款；如信用证为即期信用证，我行将在收到相符单据次日起五个营业日内付款。议付行或交单行应将每次提交单据情况背书记录在正本信用证背面，并在交单面函中说明。</span></p>" +
-            "<p><span >开证行全称：" + resultObj.ApplicationForm.IssuingBank.Name + "</span></p>" +
-            "<p><span >地址及邮编：" + resultObj.ApplicationForm.IssuingBank.Address + "</span></p>" +
+            "<p><span >开证行全称：" + resultObj.IssuingBank.Name + "</span></p>" +
+            "<p><span >地址及邮编：" + resultObj.IssuingBank.Address + "</span></p>" +
             "<p><span >电话：</span></p>" +
             "<p><span >传真：</span></p>" +
             "<p style='text-indent:350pt' >开证行签章：</p>" +
@@ -497,7 +496,7 @@ function writePdf(req, id, res) {
         var filePath = path.resolve(__dirname, '../pdf/');
         // html2Pdf(htmlStr, filePath + filename);
 
-        createPdf(htmlStr, filePath + '/zb_' + id + "_"+ resultObj.lcNo + '.pdf', res);
+        createPdf(htmlStr, filePath + '/zb_' + id + "_"+ resultObj.LCNo + '.pdf', resw);
 
     });
 }
@@ -508,7 +507,7 @@ function writePdf(req, id, res) {
  * Params：id:lcNo
  * return: 
  **/
-function writeAcceptancePdf(req, id, res) {
+function writeAcceptancePdf(req, id, resw) {
     // console.log("----writeAcceptanceHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
@@ -597,7 +596,7 @@ function writeAcceptancePdf(req, id, res) {
         var path = require('path');
 
         var filePath = path.resolve(__dirname, '../pdf/');
-        createPdf(htmlStr, filePath + '/cd_' + id + "_"+  resultObj.lcNo + '.pdf', res);
+        createPdf(htmlStr, filePath + '/cd_' + id + "_"+  resultObj.LCNo + '.pdf', resw);
 
     });
 }
@@ -636,16 +635,16 @@ function writeAcceptancePdf(req, id, res) {
     // });
 // }
 
-function createPdf(html, pdfName, res) {
+function createPdf(html, pdfName, resw) {
     // console.log(html);
     var options = { format: true };
     pdf.create(html, options).toFile(pdfName, function (err, res) {
         if (err)
         {
-         res.end(JSON.stringify("审核通过"));
+         resw.end(JSON.stringify("审核通过"));
          return console.log(err);
         }
         console.log(res);
-        res.end(JSON.stringify("审核通过"));
+        resw.end(JSON.stringify("审核通过"));
     });
 };

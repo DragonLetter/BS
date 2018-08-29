@@ -165,6 +165,11 @@ exports.issuingBankReviseRetire = function (req, res, next) {
 function writePdf(req, id, resw) {
     // console.log("----writeHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
+        if (resp == null || resp.result == null){
+            console.log("1-----resp result is null!!!!");
+            res.end();
+            return;
+        }
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
 
         var afterSight = resultObj.afterSight === undefined || resultObj.afterSight === "" ? "________" : resultObj.afterSight;
@@ -510,6 +515,11 @@ function writePdf(req, id, resw) {
 function writeAcceptancePdf(req, id, resw) {
     // console.log("----writeAcceptanceHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
+        if (resp == null || resp.result == null){
+            res.end();
+            return;
+        }
+
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
         //  console.log(resultObj.Applicant.Name);
         var issuingBank = resultObj.IssuingBank.Name;
@@ -636,9 +646,19 @@ function writeAcceptancePdf(req, id, resw) {
 // }
 
 function createPdf(html, pdfName, resw) {
+    var path = require('path');
+    var filePath = path.resolve(__dirname, '../node_modules/phantomjs-prebuilt/bin/phantomjs');
     // console.log(html);
-    var options = { format: true };
-    pdf.create(html, options).toFile(pdfName, function (err, res) {
+    // var options = { format: true };
+    var options = {
+        phantomPath: filePath,
+        filename: pdfName,
+        format: 'A4',
+        orientation: 'portrait',
+        type: "pdf",
+        timeout: 30000
+    };
+    pdf.create(html, options).toFile(function (err, res) {
         if (err)
         {
          resw.end(JSON.stringify("审核通过"));

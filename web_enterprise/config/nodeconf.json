@@ -1,0 +1,10 @@
+{
+    "BackEnd": {
+        "IP": "39.104.175.115",
+        "Port": 8080
+    },
+    "Enterprise": {
+        "IP": "localhost",
+        "Port": 8000
+    }
+}

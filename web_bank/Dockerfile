@@ -3,6 +3,7 @@ FROM node
 
 #创建app目录,保存我们的代码
 RUN mkdir -p /usr/src/node
+
 #设置工作目录
 WORKDIR /usr/src/node
 
@@ -14,8 +15,10 @@ COPY . /usr/src/node
 #RUN npm install --registry=https://registry.npm.taobao.org
 RUN npm install -g cnpm --registry=http://registry.npm.taobao.org
 RUN cnpm install
+RUN npm run build
 #RUN npm install yarn -g
 #RUN yarn
+
 #暴露container的端口
 EXPOSE 9000
 

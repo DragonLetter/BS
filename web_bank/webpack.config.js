@@ -5,17 +5,18 @@ var nodeConf = require(path.resolve(__dirname, './config/nodeconf.json'));
 
 module.exports = {
     entry: {
-        main: './src/main.js'
-        //vendors: ['react','jquery']
+        main: __dirname + '/src/main.js'
+        // vendors: ['react','jquery']
     },
     output: {
-        publicPath: 'build/',
-        path: path.resolve(__dirname, './build'),
+        // publicPath: 'build/',
+        path: __dirname + '/build',
         filename: 'build.js'
     },
 
     devServer: {
         inline: true,
+        contentBase: "./",
         disableHostCheck: true,
         port: nodeConf["Bank"].Port
     },

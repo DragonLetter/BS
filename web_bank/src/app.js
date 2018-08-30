@@ -17,7 +17,7 @@ console.log(path.join(__dirname, "../build"));
 app.use('/build', express.static(path.join(__dirname, "../build")));
 
 var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
-var server = app.listen(nodeCond["Bank"].Port, function () {
+var server = app.listen(nodeConf["Bank"].Port, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Listening at http://%s:%s', host, port);

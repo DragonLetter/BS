@@ -199,7 +199,7 @@ const AddDraftForm = Form.create()(
                                                 parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="信用证金额" style={{ width: "32%" }}/>
                                         )}
                                 </FormItem>
-                                <div style={{ marginTop: -60, marginRight: 180, float: 'right' }} >
+                                <div style={{ marginTop: -60, marginRight: 160, float: 'right' }} >
                                     <InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                                 parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }}/>
                                 </div>
@@ -656,6 +656,8 @@ class LocalLC extends React.Component {
             values.AdvisingBankId = parseInt(values.AdvisingBankId);
             values.AfterSight = parseInt(values.AfterSight);
             values.DocDelay = parseInt(values.DocDelay);
+            if(values.Amount < values.EnsureAmount )
+                return alert("输入正确的信用证金额及保证金金额！");
             formValues = values;
             request('/api/applicationform', {
                 method: "POST",

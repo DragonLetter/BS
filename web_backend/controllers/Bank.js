@@ -8,7 +8,8 @@ const belogger = log4js.getLogger('be');
 
 module.exports.addBank = function addBank(req, res, next) {
   belogger.info("addBank");
-  Bank.addBank(req, res, next);
+//  Bank.addBank(req, res, next);
+  Bank.addBank2cc(req, res, next);
 };
 
 module.exports.deleteBank = function deleteBank(req, res, next) {

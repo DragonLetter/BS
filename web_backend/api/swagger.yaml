@@ -1111,15 +1111,13 @@ paths:
       operationId: "addSignedBank"
       consumes:
       - "application/json"
-      
       produces:
-      
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
         description: "SignedBank object that needs to be added to the store"
-        required: true
+        required: false
         schema:
           $ref: "#/definitions/SignedBank"
       responses:
@@ -1134,9 +1132,7 @@ paths:
       operationId: "updateSignedBank"
       consumes:
       - "application/json"
-      
       produces:
-      
       - "application/json"
       parameters:
       - in: "body"
@@ -2938,18 +2934,16 @@ definitions:
   SignedBank:
     type: "object"
     properties:
-      corporationId:
+      No:
+        type: "string"
+      Type:
+        type: "string"
+      bank:
+        $ref: "#/definitions/Bank"
+      corp:
+        $ref: "#/definitions/Corporation"
+      StateSign:
         type: "integer"
-      bankId:
-        type: "integer"
-      address:
-        type: string
-      accountNo:
-        type: string
-      accountName:
-        type: string
-      remark:  
-        type: string
   CorpPartnership:
     type: "object"
     properties:

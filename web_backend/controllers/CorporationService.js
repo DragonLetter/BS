@@ -1,4 +1,5 @@
 'use strict';
+var fabric = require("../fabric");
 var models  = require('../models');
 var Sequelize=require("sequelize");
 
@@ -100,3 +101,38 @@ exports.updateCorporation = function (req, res, next) { var args=req.swagger.par
   res.end();
 }
 
+exports.addCorporation2cc = function (req, res, next) { 
+  var args=req.swagger.params;
+  /**
+   * Add a new bank to the store
+   * body Bank Bank object that needs to be added to the store
+   * no response value expected for this operation
+   **/
+  var vals = args.body.value;
+  var bcsNo = "C"+vals.no;
+  var corpvals = {
+    "No" : bcsNo,
+    "Type": "Corp",
+    "DataCorp":{
+      "No": vals.no,
+      "Name": vals.name,
+      "Domain": vals.domain,
+      "Address": vals.address,
+      "PostCode": vals.postcode,
+      "Telephone": vals.telephone,
+      "Telefax": vals.telefax
+    }
+  };
+  
+  fabric.invoke2cc(req, "saveBCSInfo",[bcsNo, JSON.stringify(corpvals)], function(err, resp) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(resp.result);
+  });
+}
+function getCorporations2cc(args, res, next) {
+  var Type = "Corp";//args.Type.value;
+  fabric.invoke2cc(req, "getBCSList",[Type], function(err, resp){
+    res.setHeader('Content-Type', 'application/json');
+    res.end(resp.result);
+  });
+}

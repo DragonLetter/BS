@@ -7,7 +7,8 @@ const belogger = log4js.getLogger('be');
 
 module.exports.addSignedBank = function addSignedBank(req, res, next) {
   belogger.info("addSignedBank");
-  SignedBank.addSignedBank(req, res, next);
+  SignedBank.addSignedBank2cc(req, res, next);
+  //SignedBank.addSignedBank(req, res, next);
 };
 
 module.exports.deleteSignedBank = function deleteSignedBank(req, res, next) {

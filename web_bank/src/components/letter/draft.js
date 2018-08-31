@@ -120,7 +120,7 @@ class LetterDraft extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
-            lcNo: string,
+            lcNo: "",
             afstate: {},
             letter: {}
         }
@@ -149,6 +149,8 @@ class LetterDraft extends React.Component {
                             afdata.suggestion = data.suggestion;
                         if (data.depositAmount != null && data.depositAmount.length > 0)
                             afdata.depositAmount = data.depositAmount;
+                        else
+                            afdata.depositAmount = this.state.letter.ApplicationForm.EnsureAmount;
                         if (data.isAgreed != null && data.isAgreed.length > 0)
                             afdata.isAgreed = data.isAgreed;
                         if (data.backup != null && data.backup.length > 0)

@@ -1,8 +1,10 @@
 'use strict';
+var fabric = require("../fabric");
 var models  = require('../models');
 var Sequelize=require("sequelize");
 
-exports.addSignedBank = function (req, res, next) { var args=req.swagger.params;
+exports.addSignedBank = function (req, res, next) { 
+    var args=req.swagger.params;
     var corpId = args.body.value.corporationId;
     models.SignedBank.create(args.body.value).then(function(data){
         getSignedBankById(corpId, res);
@@ -97,3 +99,49 @@ exports.signBCAppAudit = function (req, res, next) {
         }
     });
 };
+
+exports.addSignedBank2cc = function (req, res, next) { 
+    var args=req.swagger.params;
+    var vals = args.body.value;
+    var bcsNo = "S"+vals.No;
+    var signvals = {
+      "No" : bcsNo,
+      "Type": "Sign",
+      "DataBank":{
+        "No": vals.bank.no,
+        "Name": vals.bank.name,
+        "Domain": vals.bank.domain,
+        "Address": vals.bank.address,
+        "PostCode": vals.bank.postcode,
+        "Telephone": vals.bank.telephone,
+        "Telefax": vals.bank.telefax,
+        "Remark": vals.bank.remark
+      },
+      "DataCorp":{
+        "No": vals.corp.no,
+        "Name": vals.corp.name,
+        "Account": vals.corp.account,
+        "Domain": vals.corp.domain,
+        "Address": vals.corp.address,
+        "PostCode": vals.corp.postcode,
+        "Telephone": vals.corp.telephone,
+        "Telefax": vals.corp.telefax
+      },
+      "StateSign": 0
+    };
+    
+    fabric.invoke2cc(req, "saveBCSInfo",[bcsNo, JSON.stringify(signvals)], function(err, resp) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(resp.result);
+    });
+}
+
+exports.getSignedBankById2cc = function (req, res, next) { 
+    var args=req.swagger.params;
+    var bcNo = args.No.value;
+    var type = "Sign";
+    fabric.invoke2cc(req, "getBCSsByBCID", [bcNo,type], function(err, resp){
+        res.setHeader('Content-Type', 'application/json');
+        res.end(resp.result);
+    });
+}

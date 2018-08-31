@@ -23,7 +23,7 @@ fabric.invoke = function (req, functionName, args, callback) {
     var targets = [];
     var tx_id = null;
 
-    belogger.debug("req:" + JSON.stringify(req));
+    belogger.debug("req:" + req);
 
     Promise.resolve().then(() => {
         belogger.debug("Load privateKey and signedCert");

@@ -401,6 +401,76 @@ fabric.query = function (req, functionName, args, callback) {
         callback(err, null);
     });
 }
+fabric.query2cc = function (req, functionName, args, callback) {
+    var session = req.session;
+    var username = session.username;
+    var option = options[username];
+    if (option == undefined) { option = options["B1Admin"]; }
+    var chaincodeid = "bcs";
+    var channel = {};
+    var client = null;
+    var channel_id = option.channel_id;
+    Promise.resolve().then(() => {
+        belogger.debug("Load privateKey and signedCert");
+        client = new hfc();
+        // var pkFolder= path.join(__dirname, '..', 'config/crypto', option.privateKeyFolder)
+        // var certPath= path.join(__dirname, '..', 'config/crypto', option.signedCert)
+        var createUserOpt = {
+            username: option.user_id,
+            mspid: option.msp_id,
+            //cryptoContent: { privateKey: getKeyFilesInDir(pkFolder)[0], signedCert: certPath }
+            cryptoContent: { privateKeyPEM: option.privateKey, signedCertPEM: option.cert }
+        }
+        //以上代码指定了当前用户的私钥，证书等基本信息 
+        return sdkUtils.newKeyValueStore({
+            path: "/tmp/fabric-client-stateStore/"
+        }).then((store) => {
+            client.setStateStore(store)
+            return client.createUser(createUserOpt)
+        })
+    }).then((user) => {
+        channel = client.newChannel(channel_id);
+        let tlsCertPath = path.join(__dirname, '..', 'config/crypto', option.peer_tls_cacerts)
+        let data = fs.readFileSync(tlsCertPath);
+        let peer = client.newPeer(option.peer_url,
+            {
+                pem: Buffer.from(data).toString(),
+                'ssl-target-name-override': option.server_hostname
+            }
+        );
+        peer.setName("peer0");
+        //因为启用了TLS，所以上面的代码就是指定TLS的CA证书 
+        channel.addPeer(peer);
+        return;
+    }).then(() => {
+        belogger.debug("Make query");
+        var transaction_id = client.newTransactionID();
+        belogger.debug("Assigning transaction_id: " + transaction_id._transaction_id);
+        //构造查询request参数 
+        const request = {
+            chaincodeId: chaincodeid,
+            txId: transaction_id,
+            fcn: functionName,
+            args: args
+        };
+        return channel.queryByChaincode(request);
+    }).then((query_responses) => {
+        belogger.debug("returned from query");
+        if (!query_responses.length) {
+            belogger.debug("No payloads were returned from query");
+        } else {
+            belogger.debug("Query result count = " + query_responses.length)
+        }
+        if (query_responses[0] instanceof Error) {
+            belogger.error("error from query = " + query_responses[0]);
+        }
+        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        callback(null, { "result": query_responses[0].toString() });
+    }).catch((err) => {
+        belogger.error("Caught Error" + err);
+        callback(err, null);
+    });
+}
 
 fabric.queryHeight = function (req, channel, callback) {
     var session = req.session;

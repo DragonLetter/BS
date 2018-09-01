@@ -1124,53 +1124,28 @@ paths:
         405:
           description: "Invalid input"
       x-swagger-router-controller: "SignedBank"
-    put:
-      tags:
-      - "SignedBank"
-      summary: "Update an existing SignedBank"
-      description: ""
-      operationId: "updateSignedBank"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "SignedBank object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/SignedBank"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "SignedBank not found"
-        405:
-          description: "Validation exception"
-      x-swagger-router-controller: "SignedBank"
   /SignedBank/{corpId}:
     get:
       tags:
       - "SignedBank"
       summary: "Find SignedBank by ID"
-      description: "Returns a single SignedBank"
+      description: "Returns single SignedBanks"
       operationId: "getSignedBankById"
       produces:
-      
       - "application/json"
       parameters:
       - name: "corpId"
         in: "path"
         description: "ID of SignedBank to return"
         required: true
-        type: "integer"
-        format: "int64"
+        type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: OK
           schema:
-            $ref: "#/definitions/SignedBank"
+            type: "array"
+            items:
+              $ref: "#/definitions/SignedBank"
         400:
           description: "Invalid ID supplied"
         404:
@@ -1206,7 +1181,6 @@ paths:
       description: "获得所有签约企业列表"
       operationId: "getCorpsByBankId"
       produces:
-      
       - "application/json"
       parameters:
       - name: "bankId"
@@ -1237,7 +1211,7 @@ paths:
         description: "签约审核通过"
         required: true
         schema:
-            $ref: "#/definitions/SignAudit"
+            $ref: "#/definitions/SignedBank"
       responses:
         200:
           description: "successful operation"

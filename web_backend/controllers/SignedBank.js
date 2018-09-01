@@ -18,7 +18,7 @@ module.exports.deleteSignedBank = function deleteSignedBank(req, res, next) {
 
 module.exports.getSignedBankById = function getSignedBankById(req, res, next) {
   belogger.info("getSignedBankById");
-  SignedBank.getSignedBankById(req, res, next);
+  SignedBank.getSignedBankById2cc(req, res, next);
 };
 
 module.exports.getSignedBanks = function getSignedBanks(req, res, next) {
@@ -33,7 +33,7 @@ module.exports.updateSignedBank = function updateSignedBank(req, res, next) {
 
 module.exports.getCorpsByBankId = function getCorpsByBankId(req, res, next) {
   belogger.info("getCorpsByBankId");
-  SignedBank.getCorpsByBankId(req, res, next);
+  SignedBank.getCorpsByBankId2cc(req, res, next);
 };
 module.exports.signBCAppAudit = function signBCAppAudit(req, res, next) {
   belogger.info("signBCAppAudit");

@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { routerRedux, Link } from 'dva/router';
 import { Form, Input, Tabs, Button, Icon, Checkbox, Row, Col, Alert } from 'antd';
 import styles from './Login.less';
-import { fetch_get, fetch_post, request, clientIP} from '../../utils/common';
+import { fetch_get, fetch_post, request } from '../../utils/common';
 
 const FormItem = Form.Item;
 const { TabPane } = Tabs;
@@ -67,7 +67,7 @@ export default class Login extends Component {
         fetch_post('/api/user/login', values)
         .then((res) => {
             if (res.status >= 200 && res.status < 300) {
-                window.location.href= clientIP + "/#/";
+                window.location.href= "/#/";
             } else {
               this.setState({
                   status: "error",

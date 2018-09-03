@@ -2,7 +2,6 @@ import fetch from 'dva/fetch';
 import { notification, message } from 'antd';
 
 const nodeConf = require('../../config/nodeconf.json');
-export const clientIP = "http://" + nodeConf["Enterprise"].IP + ":" + nodeConf["Enterprise"].Port;
 export const serverIP = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 
 export function fetch_get(url){
@@ -29,7 +28,7 @@ function checkStatus(response){
     if (response.status >= 200 && response.status < 300) {
         return response;
     } else if (response.status === 401) {
-        window.location.href = clientIP + "/#/user/login";
+        window.location.href = "/#/user/login";
     }
     notification.error({
         message: `请求错误 ${response.status}: ${response.url}`,

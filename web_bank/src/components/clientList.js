@@ -34,7 +34,7 @@ class ClientList extends React.Component{
                 No: data[i].No,
                 Type: data[i].Type,
                 bank:{
-                    no: data[i].bank.no,
+                    id: data[i].bank.id,
                     name: data[i].bank.name,
                     domain: data[i].bank.domain,
                     address: data[i].bank.address,
@@ -44,7 +44,7 @@ class ClientList extends React.Component{
                     remark: data[i].bank.remark,
                 },
                 corp:{
-                    no: data[i].corp.no,
+                    id: data[i].corp.id,
                     name: data[i].corp.name,
                     domain: data[i].corp.domain,
                     address: data[i].corp.address,

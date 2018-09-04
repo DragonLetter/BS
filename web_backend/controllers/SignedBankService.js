@@ -94,7 +94,7 @@ exports.addSignedBank2cc = function (req, res, next) {
       "No" : bcsNo,
       "Type": "Sign",
       "DataBank":{
-        "No": vals.bank.no,
+        "No": vals.bank.id,
         "Name": vals.bank.name,
         "Domain": vals.bank.domain,
         "Address": vals.bank.address,
@@ -104,9 +104,10 @@ exports.addSignedBank2cc = function (req, res, next) {
         "Remark": vals.bank.remark
       },
       "DataCorp":{
-        "No": vals.corp.no,
+        "No": vals.corp.id,
         "Name": vals.corp.name,
         "Account": vals.corp.account,
+        "DepositBank": vals.corp.depositBank,
         "Domain": vals.corp.domain,
         "Address": vals.corp.address,
         "PostCode": vals.corp.postcode,
@@ -129,7 +130,7 @@ exports.signBCAppAudit = function (req, res, next) {
       "No" : bcsNo,
       "Type": vals.Type,
       "DataBank":{
-        "No": vals.bank.no,
+        "No": vals.bank.id,
         "Name": vals.bank.name,
         "Domain": vals.bank.domain,
         "Address": vals.bank.address,
@@ -139,9 +140,10 @@ exports.signBCAppAudit = function (req, res, next) {
         "Remark": vals.bank.remark
       },
       "DataCorp":{
-        "No": vals.corp.no,
+        "No": vals.corp.id,
         "Name": vals.corp.name,
         "Account": vals.corp.account,
+        "DepositBank": vals.corp.depositBank,
         "Domain": vals.corp.domain,
         "Address": vals.corp.address,
         "PostCode": vals.corp.postcode,
@@ -171,7 +173,7 @@ function chaincodeSignBank(cctx){
         "No": cctx.Record.No,
         "Type":cctx.Record.Type,
         "bank":{
-            "no":cctx.Record.DataBank.No,
+            "id":cctx.Record.DataBank.No,
             "name":cctx.Record.DataBank.Name,
             "domain":cctx.Record.DataBank.Domain,
             "address":cctx.Record.DataBank.Address,
@@ -182,11 +184,12 @@ function chaincodeSignBank(cctx){
     
         },
         "corp":{
-            "no":cctx.Record.DataCorp.No,
+            "id":cctx.Record.DataCorp.No,
             "name":cctx.Record.DataCorp.Name,
             "domain":cctx.Record.DataCorp.Domain,
             "address":cctx.Record.DataCorp.Address,
             "account":cctx.Record.DataCorp.Account,
+            "depositBank":cctx.Record.DataCorp.DepositBank,
             "postcode":cctx.Record.DataCorp.PostCode,
             "telephone":cctx.Record.DataCorp.Telephone,
             "telefax":cctx.Record.DataCorp.Telefax,

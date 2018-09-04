@@ -2765,6 +2765,8 @@ definitions:
   Corporation:
     type: "object"
     properties:
+      id:
+        type: "string"
       name:
         type: "string"
       domain:
@@ -2793,6 +2795,8 @@ definitions:
   Bank:
     type: "object"
     properties:
+      id:
+        type: "string"
       no:
         type: "string"
       name:

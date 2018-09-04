@@ -20,6 +20,7 @@ class ClientList extends React.Component{
             visible: false,
             visibleSCForm: false,
             curCorporation: Object,
+            curSignCorp: Object,
             pagination: true,
             showHeader: true,
             display: false,
@@ -30,17 +31,31 @@ class ClientList extends React.Component{
         const signCorporation = [];
         for (let i = 0; i < data.length; i++) {
             signCorporation.push({
-                key: data[i].id,
-                name: data[i].name,
-                domain: data[i].domain,
-                nation: data[i].nation,
-                contact: data[i].contact,
-                email: data[i].email,
-                account: data[i].account,
-                depositBank: data[i].depositBank,
-                address: data[i].address,
-                creationTime: data[i].creationTime,
-                signState:data[i].signState,
+                No: data[i].No,
+                Type: data[i].Type,
+                bank:{
+                    no: data[i].bank.no,
+                    name: data[i].bank.name,
+                    domain: data[i].bank.domain,
+                    address: data[i].bank.address,
+                    postcode: data[i].bank.postcode,
+                    telephone: data[i].bank.telephone,
+                    telefax: data[i].bank.telefax,
+                    remark: data[i].bank.remark,
+                },
+                corp:{
+                    no: data[i].corp.no,
+                    name: data[i].corp.name,
+                    domain: data[i].corp.domain,
+                    address: data[i].corp.address,
+                    account: data[i].corp.account,
+                    depositBank: data[i].corp.depositBank,
+                    postcode: data[i].corp.postcode,
+                    telephone: data[i].corp.telephone,
+                    telefax: data[i].corp.telefax,
+                    creationTime: data[i].corp.creationTime,
+                },
+                StateSign: data[i].StateSign,
             });
         }
         this.setState({
@@ -62,7 +77,8 @@ class ClientList extends React.Component{
         const curCors = this.state.signCorporations;
         const curCor = curCors[idx];// curCorporations.find(item=>item.id==key);
         this.setState({
-            curCorporation: curCor,
+            curCorporation: curCor.corp,
+            curSignCorp: curCor,
             visibleSCForm: true,
         });
     }
@@ -72,10 +88,8 @@ class ClientList extends React.Component{
         })
     }
     handleSCPass = () => {
-        let vals = {};
-        vals.aid = this.state.curCorporation.key.toString();
-        vals.suggestion = "pass";
-        vals.isAudit = "true";
+        let vals = this.state.curSignCorp;
+        vals.StateSign = 1;
         message.error(JSON.stringify(vals));
         fetch_post("/api/SignedBank/signAudit",vals)
         .then((res) => {
@@ -90,10 +104,9 @@ class ClientList extends React.Component{
         });
     }
     handleSCReject = () => {
-        let vals = {};
-        vals.aid = this.state.curCorporation.key.toString();
-        vals.suggestion = "reject";
-        vals.isAudit = "false";
+        let vals = this.state.curSignCorp;
+        vals.StateSign = -1;
+        message.error(JSON.stringify(vals));
         fetch_post("/api/SignedBank/signAudit",vals)
         .then((res) => {
             if (res.status >= 200 && res.status < 300) {
@@ -108,13 +121,11 @@ class ClientList extends React.Component{
     }
     render(){
         const columns = [
-            {title: '企业名称', dataIndex: 'name', key: 'name',}, 
-            {title: '国家', dataIndex: 'nation', key: 'nation',},
-            {title: '联系人', dataIndex: 'contact', key: 'contact',},
-            {title: '账户', dataIndex: 'account', key: 'account',},
-            {title: '企业地址', key: 'address', dataIndex: 'address',},
-            {title: '创建时间', key: 'creationTime', dataIndex: 'creationTime',},
-            {title: '签约状态',key: 'signState',render:(text,record,index) => <div>{record.signState=='1'?'通过':(record.signState=='0'?'待审':'拒绝')}</div>},
+            {title: '企业名称', key: 'name', render:(text,record,index)=><div>{record.corp.name}</div>}, 
+            {title: '账户', key: 'account',render:(text,record,index)=><div>{record.corp.account}</div>},
+            {title: '联系电话', key: 'telephone',render:(text,record,index)=><div>{record.corp.telephone}</div>},
+            {title: '企业地址', key: 'address', render:(text,record,index)=><div>{record.corp.address}</div>,},
+            {title: '签约状态',key: 'signState',render:(text,record,index) => <div>{record.StateSign=='1'?'通过':(record.StateSign=='0'?'待审':'拒绝')}</div>},
             {title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.corporationDetail(index)}>详情</a></span>,}
         ];
         let curCor = this.state.curCorporation;
@@ -137,7 +148,7 @@ class ClientList extends React.Component{
                   title="签约申请"
                   onCancel = {this.handleSCCancel}
                   visible={this.state.visibleSCForm}
-                  footer={this.state.curCorporation.signState=='0'?
+                  footer={this.state.curSignCorp.StateSign=='0'?
                     [<Button key="back" onClick={this.handleSCCancel}>关闭</Button>,
                     <Button key="pass" onClick={this.handleSCPass}>通过</Button>,
                     <Button key="reject" onClick={this.handleSCReject}>拒绝</Button>,]  :
@@ -153,22 +164,19 @@ class ClientList extends React.Component{
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业名称</Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.name}</Col>
                                 <Col span={3}></Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>联系人</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.contact}</Col>
-                            </Row>
-                            <Row>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业账户</Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.account}</Col>
-                                <Col span={3}></Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>国家</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.nation}</Col>
                             </Row>
                             <Row>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业邮箱</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.email}</Col>
-                                <Col span={3}></Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业地址</Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.address}</Col>
+                            </Row>
+                            <Row>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>联系电话</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.telephone}</Col>
+                                <Col span={3}></Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>企业传真</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{curCor.telefax}</Col>
                             </Row>
                         </div>
                     </Layout>

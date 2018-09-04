@@ -1,9 +1,14 @@
 'use strict';
 var fabric = require("../fabric");
-var models  = require('../models');
-var Sequelize=require("sequelize");
+var models = require('../models');
+const log4js = require('../utils/log4js');
+const Logger = log4js.getLogger('be');
 
-exports.addCorporation = function (req, res, next) { var args=req.swagger.params;
+exports.addCorporation = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * Add a new bank to the store
    * 
@@ -11,12 +16,16 @@ exports.addCorporation = function (req, res, next) { var args=req.swagger.params
    * body Corporation Corporation object that needs to be added to the store
    * no response value expected for this operation
    **/
-    models.Corporation.create(args.body.value).then(function(data){
-        getCorporations(args, res, next);
-    });
+  models.Corporation.create(args.body.value).then(function (data) {
+    getCorporations(args, res, next);
+  });
 }
 
-exports.deleteCorporation = function (req, res, next) { var args=req.swagger.params;
+exports.deleteCorporation = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * Deletes a Corporation
    * 
@@ -27,7 +36,11 @@ exports.deleteCorporation = function (req, res, next) { var args=req.swagger.par
   res.end();
 }
 
-exports.findCorporationsByName = function (req, res, next) { var args=req.swagger.params;
+exports.findCorporationsByName = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * Finds Corporations by name
    * Multiple status values can be provided with comma separated strings
@@ -36,11 +49,11 @@ exports.findCorporationsByName = function (req, res, next) { var args=req.swagge
    * returns List
    **/
   var examples = {};
-  examples['application/json'] = [ {
-  "no" : "aeiou",
-  "domain" : "aeiou",
-  "name" : "aeiou"
-} ];
+  examples['application/json'] = [{
+    "no": "aeiou",
+    "domain": "aeiou",
+    "name": "aeiou"
+  }];
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -49,7 +62,11 @@ exports.findCorporationsByName = function (req, res, next) { var args=req.swagge
   }
 }
 
-exports.getCorporationById = function (req, res, next) { var args=req.swagger.params;
+exports.getCorporationById = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * Find Corporation by ID
    * Returns a single Corporation
@@ -58,16 +75,16 @@ exports.getCorporationById = function (req, res, next) { var args=req.swagger.pa
    * returns Corporation
    **/
   models.Corporation.findOne({
-      'where': {
-          'id': args.CorporationId.value,
-      }
-  }).then(function(corporation){
-      if (Object.keys(corporation).length > 0) {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(corporation));
-      } else {
-        res.end();
-      }
+    'where': {
+      'id': args.CorporationId.value,
+    }
+  }).then(function (corporation) {
+    if (Object.keys(corporation).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(corporation));
+    } else {
+      res.end();
+    }
   })
 }
 
@@ -78,19 +95,23 @@ function getCorporations(args, res, next) {
    *
    * returns List
    **/
-    models.Corporation.findAll().then(function(corporations) {
-        if (Object.keys(corporations).length > 0) {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(corporations));
-        } else {
-          res.end();
-        }
-    });
+  models.Corporation.findAll().then(function (corporations) {
+    if (Object.keys(corporations).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(corporations));
+    } else {
+      res.end();
+    }
+  });
 }
 
 exports.getCorporations = getCorporations;
 
-exports.updateCorporation = function (req, res, next) { var args=req.swagger.params;
+exports.updateCorporation = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * Update an existing Corporation
    * 
@@ -101,19 +122,22 @@ exports.updateCorporation = function (req, res, next) { var args=req.swagger.par
   res.end();
 }
 
-exports.addCorporation2cc = function (req, res, next) { 
-  var args=req.swagger.params;
+exports.addCorporation2cc = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * Add a new bank to the store
    * body Bank Bank object that needs to be added to the store
    * no response value expected for this operation
    **/
   var vals = args.body.value;
-  var bcsNo = "C"+vals.no;
+  var bcsNo = "C" + vals.no;
   var corpvals = {
-    "No" : bcsNo,
+    "No": bcsNo,
     "Type": "Corp",
-    "DataCorp":{
+    "DataCorp": {
       "No": vals.no,
       "Name": vals.name,
       "Domain": vals.domain,
@@ -123,15 +147,16 @@ exports.addCorporation2cc = function (req, res, next) {
       "Telefax": vals.telefax
     }
   };
-  
-  fabric.invoke2cc(req, "saveBCSInfo",[bcsNo, JSON.stringify(corpvals)], function(err, resp) {
+
+  fabric.invoke2cc(req, "saveBCSInfo", [bcsNo, JSON.stringify(corpvals)], function (err, resp) {
     res.setHeader('Content-Type', 'application/json');
     res.end(resp.result);
   });
 }
+
 function getCorporations2cc(args, res, next) {
   var Type = "Corp";//args.Type.value;
-  fabric.invoke2cc(req, "getBCSList",[Type], function(err, resp){
+  fabric.invoke2cc(req, "getBCSList", [Type], function (err, resp) {
     res.setHeader('Content-Type', 'application/json');
     res.end(resp.result);
   });

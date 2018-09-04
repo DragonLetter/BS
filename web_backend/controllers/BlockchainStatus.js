@@ -3,24 +3,24 @@
 var url = require('url');
 var BlockchainStatus = require('./BlockchainStatusService');
 const log4js = require('../utils/log4js');
-const belogger = log4js.getLogger('be');
+const Logger = log4js.getLogger('be');
 
 module.exports.getLatestBlock = function getLatestBlock(req, res, next) {
-    belogger.info("getLatestBlock");
+    Logger.info("getLatestBlock");
     BlockchainStatus.getLatestBlock(req, res, next);
 };
 
 module.exports.getBlocks = function getBlocks(req, res, next) {
-    belogger.info("getBlocks");
+    Logger.info("getBlocks");
     BlockchainStatus.getBlocks(req, res, next);
 };
 
 module.exports.getTransactions = function getTransactions(req, res, next) {
-    belogger.info("getTransactions");
+    Logger.info("getTransactions");
     BlockchainStatus.getTransactions(req, res, next);
 };
 
 module.exports.getAllChannels = function getAllChannels(req, res, next) {
-    belogger.info("getAllChannels");
+    Logger.info("getAllChannels");
     BlockchainStatus.getAllChannels(req, res, next);
 };

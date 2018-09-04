@@ -3,39 +3,39 @@
 var url = require('url');
 var SignedBank = require('./SignedBankService');
 const log4js = require('../utils/log4js');
-const belogger = log4js.getLogger('be');
+const Logger = log4js.getLogger('be');
 
 module.exports.addSignedBank = function addSignedBank(req, res, next) {
-  belogger.info("addSignedBank");
+  Logger.info("addSignedBank");
   SignedBank.addSignedBank2cc(req, res, next);
   //SignedBank.addSignedBank(req, res, next);
 };
 
 module.exports.deleteSignedBank = function deleteSignedBank(req, res, next) {
-  belogger.info("deleteSignedBank");
+  Logger.info("deleteSignedBank");
   SignedBank.deleteSignedBank(req, res, next);
 };
 
 module.exports.getSignedBankById = function getSignedBankById(req, res, next) {
-  belogger.info("getSignedBankById");
+  Logger.info("getSignedBankById");
   SignedBank.getSignedBankById2cc(req, res, next);
 };
 
 module.exports.getSignedBanks = function getSignedBanks(req, res, next) {
-  belogger.info("getSignedBanks");
+  Logger.info("getSignedBanks");
   SignedBank.getSignedBanks(req, res, next);
 };
 
 module.exports.updateSignedBank = function updateSignedBank(req, res, next) {
-  belogger.info("updateSignedBank");
+  Logger.info("updateSignedBank");
   SignedBank.updateSignedBank(req, res, next);
 };
 
 module.exports.getCorpsByBankId = function getCorpsByBankId(req, res, next) {
-  belogger.info("getCorpsByBankId");
+  Logger.info("getCorpsByBankId");
   SignedBank.getCorpsByBankId2cc(req, res, next);
 };
 module.exports.signBCAppAudit = function signBCAppAudit(req, res, next) {
-  belogger.info("signBCAppAudit");
+  Logger.info("signBCAppAudit");
   SignedBank.signBCAppAudit(req, res, next);
 };

@@ -1,10 +1,10 @@
 'use strict';
 var models = require('../models');
 const log4js = require('../utils/log4js');
-const belogger = log4js.getLogger('be');
+const Logger = log4js.getLogger('be');
 
 exports.GenerateNewId = function (entityName) {
-  belogger.info("GenerateNewId");
+  Logger.info("GenerateNewId");
 
   var promise = models.EntitySequence.findOne({ where: { entityName: entityName } })
     .then(result => {

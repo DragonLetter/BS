@@ -195,7 +195,7 @@ class LetterCLosing extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                this.closeApproveDialog();                               
+                                this.closeApproveDialog();
                                 message.success("经办审核完成, 等待复核确认.");
                             });
                         } else {
@@ -213,7 +213,7 @@ class LetterCLosing extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                this.closeApproveDialog();                              
+                                this.closeApproveDialog();
                                 message.success("复核审核完成, 等待授权确认.");
                             });
                         } else {
@@ -272,15 +272,15 @@ class LetterCLosing extends React.Component {
         this.getDepositData();
     }
 
-    printPdf = () => {
-        window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // printPdf = () => {
+    //     window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
-    }
+    // }
 
-    printAcceptancePdf = () => {
-        window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // printAcceptancePdf = () => {
+    //     window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
-    }
+    // }
 
     render() {
         let data = this.state.letters ? this.state.letters : [],
@@ -290,11 +290,11 @@ class LetterCLosing extends React.Component {
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
             attachments = data.Attachments ? data.Attachments : [];
         let lcdata = [];
-        if( data.Contract )
+        if (data.Contract)
             lcdata[0] = data.Contract;
         let btnDivHtml;
-        let pdfPath = "serverBackEnd/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-        let pdfAcceptance = "serverBackEnd/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfAcceptance = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
@@ -340,7 +340,7 @@ class LetterCLosing extends React.Component {
                         </TabPane>
 
                         <TabPane tab="信用证正本" key="2">
-                        <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
+                            <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
                                 <div>
                                     <Row>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>申请人信息</Col>
@@ -439,25 +439,15 @@ class LetterCLosing extends React.Component {
                         </TabPane>
 
                         <TabPane tab="面函(正本)" key="4" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+                            <iframe src={pdfPath} width="100%" height="400">
 
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfPath}
-                                />
-                            </div>
+                            </iframe>
 
                         </TabPane>
                         <TabPane tab="面函(承兑)" key="5" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printAcceptancePdf()}>打印</Button>
+                            <iframe src={pdfAcceptance} width="100%" height="400">
 
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfAcceptance}
-                                />
-                            </div>
+                            </iframe>
 
                         </TabPane>
                     </Tabs>

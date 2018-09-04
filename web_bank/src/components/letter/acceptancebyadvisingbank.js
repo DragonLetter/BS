@@ -399,15 +399,15 @@ class AcceptanceByAdvisingBank extends React.Component {
         this.getDepositData();
     }
 
-    printPdf = () => {
-        window.open(serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // printPdf = () => {
+    //     window.open(serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
-    }
+    // }
 
-    printAcceptancePdf = () => {
-        window.open(serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // printAcceptancePdf = () => {
+    //     window.open(serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
-    }
+    // }
 
     render() {
         let data = this.state.letters ? this.state.letters : [],
@@ -438,7 +438,7 @@ class AcceptanceByAdvisingBank extends React.Component {
             btnDivHtml = (<div></div>);
         }
 
-        let pdfPath = serverBackEnd + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         let pdfAcceptancePath = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         return (
             <Layout style={{ padding: '1px 1px' }}>
@@ -600,17 +600,18 @@ class AcceptanceByAdvisingBank extends React.Component {
                         </TabPane>
 
                         <TabPane tab="面函" key="4" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+                            <iframe src={pdfPath} width="100%" height="400">
 
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfPath}
-                                />
-                            </div>
+                            </iframe>
+                            {/* <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+                                <div>                                
+                                    <PDF
+                                        file={pdfPath}
+                                    />
+                                </div> */}
 
                         </TabPane>
-                        
+
                     </Tabs>
 
                 </Content>

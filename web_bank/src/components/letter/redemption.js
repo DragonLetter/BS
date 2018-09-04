@@ -129,7 +129,7 @@ class LetterRedemption extends React.Component {
                         if (data.lcNo != null && data.lcNo.length > 0)
                             afdata.lcNo = data.lcNo;
                         if (data.suggestion != null && data.suggestion.length > 0)
-                            afdata.suggestion = data.suggestion;                       
+                            afdata.suggestion = data.suggestion;
                         this.setState({
                             afstate: afdata,
                         });
@@ -397,15 +397,15 @@ class LetterRedemption extends React.Component {
         this.getDepositData();
     }
 
-    printPdf = () => {
-        window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // printPdf = () => {
+    //     window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
-    }
+    // }
 
-    printAcceptancePdf = () => {
-        window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // printAcceptancePdf = () => {
+    //     window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
 
-    }
+    // }
 
     render() {
         let data = this.state.letters ? this.state.letters : [],
@@ -415,30 +415,30 @@ class LetterRedemption extends React.Component {
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
             attachments = data.Attachments ? data.Attachments : [];
         let boldata = [];
-        if( this.state.depositDoc )
+        if (this.state.depositDoc)
             boldata[0] = this.state.depositDoc;
         let lcdata = [];
-        if( data.Contract )
+        if (data.Contract)
             lcdata[0] = data.Contract;
-                        
+
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
-                                <Row>
-                                    <Col style={{ fontSize: '13px' }} span={24} offset={0}>
-                                        <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />审核通过</Button>
-                                        <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝赎单</Button>
-                                    </Col>
-                                </Row>
-                            </div>
+                    <Row>
+                        <Col style={{ fontSize: '13px' }} span={24} offset={0}>
+                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />审核通过</Button>
+                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝赎单</Button>
+                        </Col>
+                    </Row>
+                </div>
             );
         } else {
             btnDivHtml = (<div></div>);
         }
 
-        let pdfPath = serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-        let pdfAcceptancePath = serverBackEnd +"/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfAcceptancePath = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
         return (
             <Layout style={{ padding: '1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', fontSize: 13, fontWeight: 800, background: '#F3F1EF' }}>
@@ -573,25 +573,15 @@ class LetterRedemption extends React.Component {
                         </TabPane>
 
                         <TabPane tab="面函(正本)" key="4" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+                            <iframe src={pdfPath} width="100%" height="400">
 
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfPath}
-                                />
-                            </div>
+                            </iframe>
 
                         </TabPane>
                         <TabPane tab="面函(承兑)" key="5" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printAcceptancePdf()}>打印</Button>
+                            <iframe src={pdfAcceptancePath} width="100%" height="400">
 
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfAcceptancePath}
-                                />
-                            </div>
+                            </iframe>
 
                         </TabPane>
                     </Tabs>

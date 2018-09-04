@@ -398,10 +398,10 @@ class LetterDraft extends React.Component {
         this.getDepositData();
     }
 
-    printPdf = () => {
-        // alert(this.state.printpdf);
-        window.open(serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
-    }
+    // printPdf = () => {
+    //     // alert(this.state.printpdf);
+    //     window.open(serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    // }
 
     render() {
         let data = this.state.letters ? this.state.letters : [],
@@ -537,14 +537,9 @@ class LetterDraft extends React.Component {
                             </div>
                         </TabPane>
                         <TabPane tab="面函" key="3" >
-                            <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>
+                            <iframe src={pdfPath} width="100%" height="400">
 
-                            <div>
-                                {/* <PDF file="342.pdf" fillWidth fillHeight /> */}
-                                <PDF
-                                    file={pdfPath}
-                                />
-                            </div>
+                            </iframe>
 
                         </TabPane>
                     </Tabs>

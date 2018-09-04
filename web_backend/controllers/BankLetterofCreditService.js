@@ -9,8 +9,9 @@ var pdf = require('html-pdf');
  * Params：body
  * return: nil
  **/
-exports.bankIssuing = function (req, res, next) { var args=req.swagger.params;
-    let value = args.body.value, no = value.no, suggestion = value.suggestion, isAgreed = value.isAgreed, 
+exports.bankIssuing = function (req, res, next) {
+    var args = req.swagger.params;
+    let value = args.body.value, no = value.no, suggestion = value.suggestion, isAgreed = value.isAgreed,
         file = value.depositDoc, docArg = {
             "FileName": file.name,
             "FileUri": file.uri,
@@ -19,8 +20,8 @@ exports.bankIssuing = function (req, res, next) { var args=req.swagger.params;
             "Uploader": file.uploader,
         };
 
-    fabric.invoke(req,"issueLetterOfCredit", [no, suggestion, isAgreed, JSON.stringify(docArg)], function(err, resp){
-        if(!err) {
+    fabric.invoke(req, "issueLetterOfCredit", [no, suggestion, isAgreed, JSON.stringify(docArg)], function (err, resp) {
+        if (!err) {
             writePdf(req, no, res);
             // res.end(JSON.stringify("审核通过"));
         } else {
@@ -36,10 +37,11 @@ exports.bankIssuing = function (req, res, next) { var args=req.swagger.params;
  * Params：body
  * return: nil
  **/
-exports.advisingBankAudit = function (req, res, next) { var args=req.swagger.params;
+exports.advisingBankAudit = function (req, res, next) {
+    var args = req.swagger.params;
     let value = args.body.value, no = value.no, suggestion = value.suggestion, isAgreed = value.isAgreed;
-    fabric.invoke(req,"advisingBankReceiveLCNotice", [no, suggestion, isAgreed], function(err, resp){
-        if(!err) {
+    fabric.invoke(req, "advisingBankReceiveLCNotice", [no, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
             res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -54,13 +56,14 @@ exports.advisingBankAudit = function (req, res, next) { var args=req.swagger.par
  * Params：body
  * return: nil
  **/
-exports.amendCountersign = function (req, res, next) { var args=req.swagger.params;
+exports.amendCountersign = function (req, res, next) {
+    var args = req.swagger.params;
     var values = args.body.value,
         p1 = values.no,
         p2 = values.opinion,
         p3 = values.isAgreed.toString();
-    fabric.invoke(req,"lcAmendConfirm", [p1, p2, p3], function(err, resp){
-        if(!err){
+    fabric.invoke(req, "lcAmendConfirm", [p1, p2, p3], function (err, resp) {
+        if (!err) {
             res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -75,12 +78,13 @@ exports.amendCountersign = function (req, res, next) { var args=req.swagger.para
  * Params：body
  * return: nil
  **/
-exports.advisingBankDocsReceivedAudit = function (req, res, next) { var args=req.swagger.params;
+exports.advisingBankDocsReceivedAudit = function (req, res, next) {
+    var args = req.swagger.params;
     var values = args.body.value, no = values.no,
         suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
 
-    fabric.invoke(req,"reviewBills", [no, suggestion, isAgreed], function(err, resp){
-        if(!err) {
+    fabric.invoke(req, "reviewBills", [no, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
             res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -95,8 +99,9 @@ exports.advisingBankDocsReceivedAudit = function (req, res, next) { var args=req
  * Params：body
  * return: nil
  **/
-exports.issuingBankDocsReceivedAudit = function (req, res, next) { var args=req.swagger.params;
-    res.end();    
+exports.issuingBankDocsReceivedAudit = function (req, res, next) {
+    var args = req.swagger.params;
+    res.end();
 };
 
 /**
@@ -105,12 +110,13 @@ exports.issuingBankDocsReceivedAudit = function (req, res, next) { var args=req.
  * Params：body
  * return: nil
  **/
-exports.acceptancePayment = function (req, res, next) { var args=req.swagger.params;
-    var values = args.body.value, no = values.no, amount = values.amount.toString(), dismatchPoints = values.dismatchPoints, 
+exports.acceptancePayment = function (req, res, next) {
+    var args = req.swagger.params;
+    var values = args.body.value, no = values.no, amount = values.amount.toString(), dismatchPoints = values.dismatchPoints,
         suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
 
-    fabric.invoke(req,"lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function(err, resp){
-        if(!err) {
+    fabric.invoke(req, "lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
             writeAcceptancePdf(req, no, res)
             // res.end(JSON.stringify("审核通过"));
         } else {
@@ -125,13 +131,14 @@ exports.acceptancePayment = function (req, res, next) { var args=req.swagger.par
  * Params：body
  * return: nil
  **/
-exports.LCClosing = function (req, res, next) { var args=req.swagger.params;
+exports.LCClosing = function (req, res, next) {
+    var args = req.swagger.params;
     var values = args.body.value,
         p1 = values.no,
         p2 = values.description;
 
-    fabric.invoke(req,"lcClose", [p1, p2], function(err, resp){
-        if(!err) {
+    fabric.invoke(req, "lcClose", [p1, p2], function (err, resp) {
+        if (!err) {
             res.end(JSON.stringify("恭喜，信用证闭卷完成！"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -145,9 +152,9 @@ exports.issuingBankReviseRetire = function (req, res, next) {
         no = values.no,
         suggestion = values.no,
         isAgreed = values.isAgreed;
-    
-    fabric.invoke(req, "reviewRetireBills", [no, suggestion, isAgreed], function(err, resp){
-        if(!err) {
+
+    fabric.invoke(req, "reviewRetireBills", [no, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
             res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -165,7 +172,7 @@ exports.issuingBankReviseRetire = function (req, res, next) {
 function writePdf(req, id, resw) {
     // console.log("----writeHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
-        if (resp == null || resp.result == null){
+        if (resp == null || resp.result == null) {
             console.log("1-----resp result is null!!!!");
             res.end();
             return;
@@ -192,89 +199,89 @@ function writePdf(req, id, resw) {
         var checkNegotiateHtml;
         if (resultObj.Negotiate === "1") {
             checkNegotiateHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 以下银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 任意银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可议付</span>"
+                "<span><input name='subject' type='checkbox' checked /> 以下银行可议付<span >&nbsp;&nbsp;</span>□ 任意银行可议付<span >&nbsp;&nbsp;</span>□ 不可议付</span>"
             );
         }
         else if (resultObj.Negotiate === "2") {
             checkNegotiateHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 以下银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked  disabled='true'/> 任意银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可议付</span>"
+                "<span style='font-family:宋体'>□ 以下银行可议付<span >&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked /> 任意银行可议付<span >&nbsp;&nbsp;</span>□ 不可议付</span>"
             );
         }
         else {
             checkNegotiateHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 以下银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 任意银行可议付<span >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked disabled='true'/> 不可议付</span>"
+                "<span style='font-family:宋体'>□ 以下银行可议付<span >&nbsp;&nbsp; </span>□ 任意银行可议付<span >&nbsp;&nbsp;</span><input name='subject' type='checkbox' checked /> 不可议付</span>"
             )
         }
 
         var checkTransferHtml;
         if (resultObj.Transfer === "1") {
             checkTransferHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 可转让<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可转让</span>"
+                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked /> 可转让<span >&nbsp;&nbsp;&nbsp;&nbsp; </span>□ 不可转让</span>"
             );
         }
         else {
             checkTransferHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 可转让<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked disabled='true'/> 不可转让</span>"
+                "<span style='font-family:宋体'>□ 可转让<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked /> 不可转让</span>"
             )
         }
 
         var checkConfirmedHtml;
         if (resultObj.Confirmed === "1") {
             checkConfirmedHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 可保兑<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' disabled='true'/> 不可保兑</span>"
+                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked /> 可保兑<span >&nbsp;&nbsp;&nbsp;&nbsp; </span>□ 不可保兑</span>"
             );
         }
         else {
             checkConfirmedHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 可保兑<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked disabled='true'/> 不可保兑</span>"
+                "<span style='font-family:宋体'>□ 可保兑<span >&nbsp;&nbsp;&nbsp;&nbsp; </span><input name='subject' type='checkbox' checked /> 不可保兑</span>"
             )
         }
 
         let checkIsAtSightHtml;
         if (resultObj.isAtSight) {
             checkIsAtSightHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 即期</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>远期</span></p>"
+                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked /> 即期</span><span lang=EN-US>&nbsp;</span><span style='font-family:宋体'>□ 远期</span>"
             );
         }
         else {
             checkIsAtSightHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox'  disabled='true'/> 即期</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/>远期</span></p>"
+                "<span style='font-family:宋体'>□ 即期</span><span lang=EN-US>&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' checked /> 远期</span>"
             );
         }
 
         var checkIsFarHtml;
         if (resultObj.isAtSight) {
             checkIsFarHtml = (
-                "<span><input name='subject' type='checkbox' disabled='true'/></span><span style='font-family:宋体'> 货物装运日/服务交付日后</span> <span lang=EN-US><u>&nbsp;" + afterSight + "&nbsp;</u></span> <span style='font-family:宋体'>天</span> <span lang=EN-US style='font-family:宋体'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 见单后<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>天<span lang=EN-US> </span></span>"
+                "<span style='font-family:宋体; '>□ 货物装运日/服务交付日后</span> <span lang=EN-US><u>" + afterSight + "</u></span> <span style='font-family:宋体'>天</span> <span >&nbsp;<input name='subject' type='checkbox' checked /> 见单后<u><span lang=EN-US>&nbsp;&nbsp;</span></u>天<span lang=EN-US> </span></span>"
             );
         }
         else {
             checkIsFarHtml = (
-                "<span><input name='subject' type='checkbox' checked disabled='true'/></span><span style='font-family:宋体'> 货物装运日/服务交付日后</span> <span lang=EN-US><u>&nbsp;" + afterSight + "&nbsp;</u></span> <span style='font-family:宋体'>天</span> <span lang=EN-US style='font-family:宋体'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 见单后<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>天<span lang=EN-US> </span></span>"
+                "<span style='font-family:宋体';><input name='subject' type='checkbox' checked /> 货物装运日/服务交付日后</span> <span lang=EN-US><u>&nbsp;" + afterSight + "&nbsp;</u></span> <span style='font-family:宋体'>天</span> <span>&nbsp; □ 见单后<u><span lang=EN-US>&nbsp;&nbsp;</span></u>天<span lang=EN-US> </span></span>"
             );
         }
 
         var checkallowPartialShipmentHtml;
         if (resultObj.GoodsInfo.allowPartialShipment) {
             checkallowPartialShipmentHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>不允许</span></p>"
+                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked /> 允许</span><span lang=EN-US>&nbsp;&nbsp;</span><span style='font-family:宋体'>□ 不允许</span>"
             );
         }
         else {
             checkallowPartialShipmentHtml = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>不允许</span></p>"
+                "<span><input name='subject' type='checkbox' checked /> 允许</span><span lang=EN-US>&nbsp;&nbsp;</span><span style='font-family:宋体'>□ 不允许</span>"
             );
         }
 
         var checkallowPartialShipment;
         if (resultObj.GoodsInfo.allowPartialShipment) {
             checkallowPartialShipment = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>不允许</span></p>"
+                "<span> <input name='subject' type='checkbox' checked /> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'>□ 不允许</span>"
             );
         }
         else {
             checkallowPartialShipment = (
-                "<span style='font-family:宋体'><input name='subject' type='checkbox' checked disabled='true'/> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/>不允许</span></p>"
+                "<span> <input name='subject' type='checkbox' checked /> 允许</span><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-family:宋体'>□ 不允许</span>"
             );
         }
 
@@ -284,212 +291,208 @@ function writePdf(req, id, resw) {
             '<meta name=Generator content="pdf">' +
             '<title></title>' +
             '</head>' +
-            '<body bgcolor=white lang=ZH-CN style="text-justify-trim:punctuation; margin-left:30pt; margin-right:30pt">' +
-            '<div class=WordSection1 style="layout-grid:15.6pt">' +
+            '<body bgcolor=white lang=ZH-CN style=" margin-left:30pt; margin-right:30pt; font-size:10pt;">' +
+            '<div style="layout-grid:15.6pt">' +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt'><b><span lang=EN-US style='font-size:16.0pt;font-family:宋体'>XX</span></b><b><span style='font-size:16.0pt;font-family:宋体'>银行国内信用证</span></b></p>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt'><span lang=EN-US style='font-family:宋体'>&nbsp;</span></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><span style='font-family:宋体'>开证日期：" +
+            "<p class=MsoNormal align=center style='text-align:center;'><b><span lang=EN-US style='font-size:16.0pt;font-family:宋体'>XX</span></b><b><span style='font-size:16.0pt;font-family:宋体'>银行国内信用证</span></b></p>" +
+            "<span style='font-family:宋体'>开证日期：" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_year + "&nbsp;</span></u>年" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_month + "&nbsp;</span></u>月" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_day + "&nbsp;</span></u>日" +
-            "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" +
-            "信用证编号：<u><span lang=EN-US>&nbsp;&nbsp;" + resultObj.LCNo + "&nbsp;&nbsp;</span></u></span></p>" +
-            "<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 style='border-collapse:collapse'>" +
-            "<tr style='page-break-inside:avoid;height:15.0pt'>" +
-            "<td width=26 rowspan=3 valign=top style='width:19.5pt;border:solid windowtext 1.0pt; border-bottom:none;padding:0cm 1.5pt 0cm 1.5pt;layout-flow:vertical-ideographic; height:15.0pt'>" +
-            "<p class=MsoNormal align=center style='margin-top:20pt;margin-right:5.65pt;margin-bottom:0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:center;line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>开证申请人</span></b></p>" +
+            "<span lang=EN-US style='text-align:right; float:right; align:right'>" +
+            "信用证编号：<u><span lang=EN-US>&nbsp;" + resultObj.LCNo + "&nbsp;&nbsp;</span></u></span></br>" +
+            "<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 style='border-collapse:collapse;font-size:10pt;margin-top:2pt'>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=26 rowspan=3 valign=top style='width:19.5pt;border:solid windowtext 1.0pt; border-bottom:none;padding:0cm 1.5pt 0cm 1.5pt;layout-flow:vertical-ideographic;'>" +
+            "<p class=MsoNormal align=center style='margin-top:10pt;margin-right:5.65pt;margin-bottom:0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:center;;text-autospace:none'><b><span style='font-family:宋体;color:black'>开证申请人</span></b></p>" +
             "</td>" +
-            "<td width=53 valign=top style='width:39.75pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt; text-autospace:none'><span style='font-family:宋体;color:black'>全称</span></p></td>" +
-            "<td width=238 valign=top style='width:178.5pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
+            "<td width=53 valign=top style='width:39.75pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>全称</span></p></td>" +
+            "<td width=238 valign=top style='width:178.5pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
             resultObj.Applicant.Name + "</span></p></td>" +
             "<td width=21 rowspan=3 valign=top style='width:15.75pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;layout-flow:vertical-ideographic;height:15.0pt'>" +
-            "<p class=MsoNormal align=center style='margin-top:20pt;margin-right:5.65pt;margin-bottom:0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:center;line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>受益人</span></b></p>" +
+            "<p class=MsoNormal align=center style='margin-top:20pt;margin-right:5.65pt;margin-bottom:0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:center;text-autospace:none'><b><span style='font-family:宋体;color:black'>受益人</span></b></p>" +
             "</td>" +
-            "<td width=56 valign=top style='width:42.0pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>全称</span></p></td>" +
-            "<td width=224 valign=top style='width:168.1pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
+            "<td width=56 valign=top style='width:42.0pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>全称</span></p></td>" +
+            "<td width=224 valign=top style='width:168.1pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
             resultObj.Beneficiary.Name + "</span></p></td>" +
             "</tr>" +
             "<tr style='page-break-inside:avoid;height:30.75pt'>" +
             "<td width=53 valign=top style='width:39.75pt;border:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt; text-autospace:none'><span style='font-family:宋体;color:black'>地址</span></p>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>邮编</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>地址</span></p>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>邮编</span></p></td>" +
             "<td width=238 valign=top style='width:178.5pt;border:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
             resultObj.Applicant.Address + "</span></p></td>" +
             "<td width=56 valign=top style='width:42.0pt;border:none;border-right:solid windowtext 1.0pt; padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>地址</span></p>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>邮编</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>地址</span></p>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>邮编</span></p></td>" +
             "<td width=224 valign=top style='width:168.1pt;border:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:30.75pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
             resultObj.Beneficiary.Address + "</span></p></td></tr>" +
-            "<tr style='page-break-inside:avoid;height:48.75pt'>" +
-            "<td width=53 valign=top style='width:39.75pt;border-top:solid windowtext 1.0pt; border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;  padding:0cm 1.5pt 0cm 1.5pt;height:48.75pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>电话</span></p></td>" +
-            "<td width=238 valign=top style='width:178.5pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt; padding:0cm 1.5pt 0cm 1.5pt;height:48.75pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black;'>&nbsp;</span></p></td>" +
-            "<td width=56 valign=top style='width:42.0pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:48.75pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>电话</span></p></td>" +
-            "<td width=224 valign=top style='width:168.1pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:48.75pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black;'>&nbsp;</span></p></td>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=53 valign=top style='width:39.75pt;border-top:solid windowtext 1.0pt; border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;  padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:centertext-autospace:none'><span style='font-family:宋体;color:black'>电话</span></p></td>" +
+            "<td width=238 valign=top style='width:178.5pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt; padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black;'>&nbsp;</span></p></td>" +
+            "<td width=56 valign=top style='width:42.0pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span style='font-family:宋体;color:black'>电话</span></p></td>" +
+            "<td width=224 valign=top style='width:168.1pt;border-top:solid windowtext 1.0pt;border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black;'>&nbsp;</span></p></td>" +
             "</tr>" +
-            "<tr style='page-break-inside:avoid;height:15.0pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>信用证金额</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.0pt'>" +
-            "<p class=MsoNormal align=left style='text-align:left;line-height:15.0pt;text-autospace:none'><span style='font-family:宋体;color:black'>人民币（大小写）</span></p>" +
-            "<p class=MsoNormal align=left style='text-align:left;line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.amount + "</span></p></td>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;;text-autospace:none'><b><span style='font-family:宋体;color:black;'>信用证金额</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=left style='text-align:left;'><span style='font-family:宋体;color:black'>人民币（大小写）</span>" +
+            "</br>" +
+            resultObj.amount + "元</span></p></td>" +
             "</tr>" +
             "<tr style='page-break-inside:avoid;height:20.0pt'>" +
             "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>通知行名称、行号、地址及邮编</span></b></p></td>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>通知行名称、行号、地址及邮编</span></b></p></td>" +
             "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.AdvisingBank.Name + "</span></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
-            resultObj.AdvisingBank.AccountNo + "</span></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" +
+            resultObj.AdvisingBank.Name + "</span></br>" +
+            resultObj.AdvisingBank.AccountNo + "</span></br>" +
             resultObj.AdvisingBank.Address + "</span></p>" +
             "</td>" +
             "</tr>" +
-            "<tr style='page-break-inside:avoid;height:20.0pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>有效期及有效地点</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.expiryDate.substr(0, (resultObj.expiryDate).indexOf('T')) + "</span></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.ExpiryPlace + "</span></p></td>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>有效期及有效地点</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>" + resultObj.expiryDate.substr(0, (resultObj.expiryDate).indexOf('T')) + "</span></br>" +
+            "<span>" + resultObj.ExpiryPlace + "</span></p></td>" +
             "</tr>" +
-            "<tr style='page-break-inside:avoid;height:15.5pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>是否可议付</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'>" + checkNegotiateHtml + "</p></td>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>是否可议付</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'>" + checkNegotiateHtml + "</p></td>" +
             "</tr>" +
-            "<tr style='page-break-inside:avoid;height:20.0pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>议付行名称及行号</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>&nbsp;</span></p></td></tr>" +
-            "<tr style='page-break-inside:avoid;height:15.5pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>是否可转让</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'>" + checkTransferHtml + "</p></td>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>议付行名称及行号</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>&nbsp;</span></p></td></tr>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>是否可转让</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'>" + checkTransferHtml + "</p></td>" +
             "</tr>" +
-            "<tr style='page-break-inside:avoid;height:20.0pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>转让行名称及行号</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>&nbsp;</span></p></td></tr>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>转让行名称及行号</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>&nbsp;</span></p></td></tr>" +
 
-            "<tr style='page-break-inside:avoid;height:15.5pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>是否可保兑</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:15.5pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'>" + checkConfirmedHtml + "</p></td>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>是否可保兑</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'>" + checkConfirmedHtml + "</p></td>" +
             "</tr>" +
-            "<tr style='page-break-inside:avoid;height:20.0pt'>" +
-            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal style='line-height:15.0pt;text-autospace:none'><b><span style='font-family:宋体;color:black'>保兑行名称及行号</span></b></p></td>" +
-            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;height:20.0pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center;line-height:15.0pt;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>&nbsp;</span></p></td></tr>" +
+            "<tr style='page-break-inside:avoid;'>" +
+            "<td width=79 colspan=2 valign=top style='width:59.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal style='text-autospace:none'><b><span style='font-family:宋体;color:black'>保兑行名称及行号</span></b></p></td>" +
+            "<td width=539 colspan=4 valign=top style='width:404.35pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 1.5pt 0cm 1.5pt;'>" +
+            "<p class=MsoNormal align=center style='text-align:center;text-autospace:none'><span lang=EN-US style='font-family:宋体;color:black'>&nbsp;</span></p></td></tr>" +
             "</table>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>交单期：</span></b><u><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>付款期限: </span></b>" +
+            "<p class=MsoNormal ><b><span style='font-family:宋体'>交单期：</span></b><u><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>" +
+            "</br><span style='font-family:宋体'><b>付款期限: </span></b>" +
             checkIsAtSightHtml +
-            "<p class=MsoNormal style='text-indent:123pt;line-height:15.0pt'>" +
+            "</br><span style='text-indent:8em;'>" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
             checkIsFarHtml +
-            "</p>" +
-            "<p class=MsoNormal style='text-indent:123pt;line-height:15.0pt'><span style='font-family:宋体'><input name='subject' type='checkbox' disabled='true'/> 货物收据签发日<span lang=EN-US>/</span>服务提供日后<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;</span></u>天<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;</span><input name='subject' type='checkbox' disabled='true'/> 其他<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u></span></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>转&nbsp;&nbsp;运: </span></b>" +
+            "</span>" +
+            "</br><span style='text-indent:8em;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;□  货物收据签发日<span lang=EN-US>/</span>服务提供日后<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;</span></u>天<span> &nbsp;</span>□  其他<u><span lang=EN-US>&nbsp;&nbsp;&nbsp;</span></u></span>" +
+            "</br><b><span>转&nbsp;&nbsp;运: </span></b>" +
             checkallowPartialShipmentHtml +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>货物运输或交货方式/服务方式：</span></b>" +
-            "<u><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingWay + "&nbsp;</span></u></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>分批装运货物/分次提供服务: </span></b>" +
+            "</br><b><span style='font-family:宋体'>货物运输或交货方式/服务方式：</span></b>" +
+            "<u><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingWay + "&nbsp;</span></u>" +
+            "</br ><b><span style='font-family:宋体'>分批装运货物/分次提供服务: </span></b>" +
             checkallowPartialShipment +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>货物装运地（港）：</span></b>" +
-            "<span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingPlace + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" +
-            "<b><span style='font-family:宋体'>货物目的地、交货地（港）：</span></b>" + resultObj.GoodsInfo.ShippingDestination + "</p>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>服务提供地点：</span></b>" +
-            "<u><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingDestination + "&nbsp;</span></u></p>" +
-            "<p class=MsoNormal style='line-height:15.0pt'><b><span style='font-family:宋体'>最迟装运货物/服务提供日期：</span></b>" +
-            "<u><span lang=EN-US>&nbsp;" + latestShipmentDate_year + "&nbsp;</span></u><span style='font-family:宋体'>年</span>" +
-            "<u><span lang=EN-US>&nbsp;" + latestShipmentDate_month + "&nbsp;</span></u><span style='font-family:宋体'>月</span>" +
-            "<u><span lang=EN-US>&nbsp;" + latestShipmentDate_day + "&nbsp;</span></u><span style='font-family:宋体'>日,</span>" +
+            "</br><b><span style='font-family:宋体'>货物装运地（港）：</span></b>" +
+            "<span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingPlace + "</span>" +
+            "<span style='float:right'><b><span style='font-family:宋体;'>货物目的地、交货地（港）：</span></b>" +
+            "<span lang=EN-US>" + resultObj.GoodsInfo.ShippingDestination + "</span></span>" +
+            "</br><b><span style='font-family:宋体'>服务提供地点：</span></b>" +
+            "<u><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.ShippingDestination + "&nbsp;</span></u>" +
+            "</br><b><span style='font-family:宋体'>最迟装运货物/服务提供日期：</span></b>" +
+            "<u><span lang=EN-US>" + latestShipmentDate_year + "</span></u><span style='font-family:宋体'>年</span>" +
+            "<u><span lang=EN-US>" + latestShipmentDate_month + "</span></u><span style='font-family:宋体'>月</span>" +
+            "<u><span lang=EN-US>" + latestShipmentDate_day + "</span></u><span style='font-family:宋体'>日,</span>" +
             "<b><span style='font-family:宋体'>分期装运/提供服务: </span></b>" +
-            "<u><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u></span></p>" +
+            "<u><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u></span>" +
             // "</div>" +
-            "<b><span lang=EN-US style='font-size:10.5pt;font-family:'Times New Roman',serif'><br clear=all style='page-break-before:always'></span></b>" +
+            // "<b><span lang=EN-US style='font-size:10.5pt;font-family:'Times New Roman',serif'><br clear=all style='page-break-before:always'></span></b>" +
             // "<div class=WordSection2 style='layout-grid:15.6pt'>" +
-            "<p class=MsoNormal><span>&nbsp;</span></p>" +
-            "<p><b><span style='font-family:宋体'>货物/服务描述：</span></b>" +
-            "<p><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.GoodsDescription + "</span></p>" +
-            "<p class=MsoNormal><b><span style='font-family:宋体'>受益人应提交的单据</span></b><span style='font-family:宋体'>：</span></p>" +
+            // "<p class=MsoNormal><span>&nbsp;</span></p>" +
+            "</br><b><span style='font-family:宋体'>货物/服务描述：</span></b>" +
+            "</br><span lang=EN-US>&nbsp;" + resultObj.GoodsInfo.GoodsDescription + "</span>" +
+            "</br><b><span style='font-family:宋体'>受益人应提交的单据</span></b><span style='font-family:宋体'>：</span></p>" +
+            "</br><b><span style='font-family:宋体'>其他条款:</span></b>" +
+            "</br><span lang=EN-US>1. </span><span style='font-family:宋体'>溢短装条款比例: " + overLow + "</span>" +
+            "</br><span lang=EN-US>2.</span><span lang=EN-US style='font-family: 宋体'> </span><span style='font-family:宋体'>如果提交了单证不符的单据，我行将在付款时扣除<u><spanlang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span></u>元人民币的不符点费。</span>" +
+            "</br><span>3. </span><span>" + chargeInIssueBank + "</span>" +
+            "</br><span>4. </span><span>" + chargeOutIssueBank + "</span>" +
+            "</br><span>5. </span><span>" + docDelay + "</span>" +
+            "</br><span>6. </span><span>发起日期不能早于开证日期。</span>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>" +
-            "<p class=MsoNormal><b><span style='font-family:宋体'>其他条款:</span></b></p>" +
-            "<p class=MsoNormal><span lang=EN-US>1. </span><span style='font-family:宋体'>溢短装条款比例: " + overLow + "</span></p>" +
-            "<p class=MsoNormal><span lang=EN-US>2.</span><span lang=EN-US style='font-family: 宋体'> </span><span style='font-family:宋体'>如果提交了单证不符的单据，我行将在付款时扣除<u><spanlang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp; </span></u>元人民币的不符点费。</span></p>" +
-            "<p><span>3. </span><span>" + chargeInIssueBank + "</span></p>" +
-            "<p><span>4. </span><span>" + chargeOutIssueBank + "</span></p>" +
-            "<p><span>5. </span><span>" + docDelay + "</span></p>" +
-            "<p><span>6. </span><span>发起日期不能早于开证日期。</span></p>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>" +
-            "<p class=MsoNormal style='text-indent:21.0pt'><span style='font-family:宋体'>本信用证依据《国内信用证结算办法》开立。本信用证为不可撤销信用证。我行保证在收到相符单据后，履行付款的责任。如信用证为远期信用证，我行将在收到相符单据次日起五个营业日内确认付款，并在到期日付款；如信用证为即期信用证，我行将在收到相符单据次日起五个营业日内付款。议付行或交单行应将每次提交单据情况背书记录在正本信用证背面，并在交单面函中说明。</span></p>" +
-            "<p><span >开证行全称：" + resultObj.IssuingBank.Name + "</span></p>" +
-            "<p><span >地址及邮编：" + resultObj.IssuingBank.Address + "</span></p>" +
-            "<p><span >电话：</span></p>" +
-            "<p><span >传真：</span></p>" +
-            "<p style='text-indent:350pt' >开证行签章：</p>" +
-            "<p class=MsoNormal><span>&nbsp;</span></p>" +
-            "<p class=MsoNormal><span style='font-family:宋体'>注：信开信用证一式四联，第一联正本</span><span lang=EN-US>,</span><span style='font-family:宋体'>交受益人；第二联副本，通知行留存；第三联副本，开证行留存；第四联副本，开证申请人留存。</span></p>" +
-            "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>" +
-            "<p class=MsoNormal align=center style='text-align:center'><b><span style='font-size:12.0pt;font-family:宋体'>交单记录（正本背面）</span></b></p>" +
-            "<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 style='margin-left:-5.3pt;border-collapse:collapse;border:none'>" +
+            "<p class=MsoNormal style='text-indent:2em;'><span style='font-family:宋体'>本信用证依据《国内信用证结算办法》开立。本信用证为不可撤销信用证。我行保证在收到相符单据后，履行付款的责任。如信用证为远期信用证，我行将在收到相符单据次日起五个营业日内确认付款，并在到期日付款；如信用证为即期信用证，我行将在收到相符单据次日起五个营业日内付款。议付行或交单行应将每次提交单据情况背书记录在正本信用证背面，并在交单面函中说明。</span></p>" +
+            "<span >开证行全称：" + resultObj.IssuingBank.Name + "</span>" +
+            "</br><span >地址及邮编：" + resultObj.IssuingBank.Address + "</span>" +
+            "</br><span >电话：</span>" +
+            "</br><span >传真：</span>" +
+            "</br><span style='float:right;padding-right:80pt' >开证行签章：</span></br></br></br>" +
+            "<span style='font-family:宋体'>注：信开信用证一式四联，第一联正本</span><span lang=EN-US>,</span><span style='font-family:宋体'>交受益人；第二联副本，通知行留存；第三联副本，开证行留存；第四联副本，开证申请人留存。</span>" +
+            "<b><p style='float:center;align:center;text-align:center;font-size:10pt'>交单记录（正本背面）</span></b></p>" +
+            "<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 style='margin-left:-5.3pt;border-collapse:collapse;border:none;font-size:10pt'>" +
             "<tr>" +
             "<td width=103 style='width:77.35pt;border:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center'><span style='font-size:12.0pt;font-family:宋体'>交单日期</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>交单日期</span></p></td>" +
             "<td width=103 style='width:77.35pt;border:solid black 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center'><span style='font-size:12.0pt;font-family:宋体'>业务编号</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>业务编号</span></p></td>" +
             "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none; padding:0cm 5.4pt 0cm 5.4pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center'><span style='font-size:12.0pt;font-family:宋体'>交单金额</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>交单金额</span></p></td>" +
             "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center'><span style='font-size:12.0pt;font-family:宋体'>信用证余额</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>信用证余额</span></p></td>" +
             "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none; padding:0cm 5.4pt 0cm 5.4pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center'><span style='font-size:12.0pt;font-family:宋体'>交单行<span lang=EN-US>/</span>议付行名称</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>交单行<span lang=EN-US>/</span>议付行名称</span></p></td>" +
             "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>" +
-            "<p class=MsoNormal align=center style='text-align:center'><span style='font-size:12.0pt;font-family:宋体'>经办人签字</span></p></td>" +
+            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>经办人签字</span></p></td>" +
             "</tr>" +
-            "<tr style='height:23.2pt'>" +
-            "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'>" +
+            "<tr>" +
+            "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
             "</tr>" +
-            "<tr style='height:23.2pt'>" +
-            "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'>" +
+            "<tr >" +
+            "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;h'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
             "</tr>" +
-            "<tr style='height:23.2pt'>" +
-            "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'>" +
+            "<tr style=''>" +
+            "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:23.2pt'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
+            "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'><p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
             "</tr>" +
             "</table>" +
             "</div>"
@@ -501,7 +504,7 @@ function writePdf(req, id, resw) {
         var filePath = path.resolve(__dirname, '../pdf/');
         // html2Pdf(htmlStr, filePath + filename);
 
-        createPdf(htmlStr, filePath + '/zb_' + id + "_"+ resultObj.LCNo + '.pdf', resw);
+        createPdf(htmlStr, filePath + '/zb_' + id + "_" + resultObj.LCNo + '.pdf', resw);
 
     });
 }
@@ -515,7 +518,7 @@ function writePdf(req, id, resw) {
 function writeAcceptancePdf(req, id, resw) {
     // console.log("----writeAcceptanceHtml id:%s\n",id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
-        if (resp == null || resp.result == null){
+        if (resp == null || resp.result == null) {
             res.end();
             return;
         }
@@ -525,14 +528,14 @@ function writeAcceptancePdf(req, id, resw) {
         var issuingBank = resultObj.IssuingBank.Name;
         var lcNo = resultObj.LCNo;
         var applicantName = resultObj.Applicant.Name;
-        var applicantAccount = resultObj.Applicant.Account; 
+        var applicantAccount = resultObj.Applicant.Account;
         var applicantAccountNo = resultObj.IssuingBank.AccountNo;
         var applicantAccountName = resultObj.IssuingBank.Name;
         var beneficiaryName = resultObj.Beneficiary.Name;
-        var beneficiaryAccount = resultObj.Beneficiary.Account; 
+        var beneficiaryAccount = resultObj.Beneficiary.Account;
         var beneficiaryAccountNo = resultObj.AdvisingBank.AccountNo;
         var beneficiaryAccountName = resultObj.AdvisingBank.Name;
-           
+
 
         var htmlStr = '<html>' +
             '<head>' +
@@ -541,64 +544,58 @@ function writeAcceptancePdf(req, id, resw) {
             '<title></title>' +
             '</head>' +
             '<body lang=ZH-CN style="text-justify-trim:punctuation;margin-left:30pt; margin-right:30pt"">' +
-            "<div class=WordSection1 style='layout-grid:15.6pt' marg>" +
-            "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<p class=MsoNormal align=center style='font-size:14.0pt;text-align:center;line-height:150%'><b>承付/拒付通知书—支付凭证</span></b></p>"+
-            "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<p class=MsoNormal style='line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>通知日期: "+
-            ""+ "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"+
-            "编号："+ "" +"</span></p>"+
-            "<p class=MsoNormal style='line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            "致："+ issuingBank +"</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>信用证号："+
-            lcNo + "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>来单编号："+ "" +"</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>到单日期："+
-            "" +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>合同号："+ "" +"</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>到单金额："+
-            "" +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>承付到期日："+ "" +"</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>单据清单："+
-            "" +"</span></p>"+
+            "<div class=WordSection1 style='layout-grid:15.6pt; font-size:10pt' marg >" +
+            "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>" +
+            "<p class=MsoNormal align=center style='font-size:12.0pt;text-align:center;line-height:150%'><b>承付/拒付通知书—支付凭证</span></b></p>" +
+            "<p class=MsoNormal style='line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>通知日期: " +
+            "" + "</span>" +
+            "<span style='align:right;float:right;text-align:right;padding-right:8em'>" + "编号：" + "" + "</span></p>" +
+            "<p class=MsoNormal style='line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+            "致：" + issuingBank + "</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%;'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>信用证号：" +
+            lcNo + "</span>" + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
+            "来单编号：" + "" + "</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>到单日期：" +
+            "" + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
+            "合同号：" + "" + "</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>到单金额：" +
+            "" + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
+            "承付到期日：" + "" + "</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>单据清单：" +
+            "" + "</span></p>" +
 
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>"+
-            
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>付款人名称："+
-            "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>收款人名称：</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            applicantName +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>"+ beneficiaryName +"</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>付款人账号："+
-            applicantAccount +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>收款人账号："+ beneficiaryAccount +"</span></p>"+
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>付款人账户开户行："+
-            "<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>收款人账户开户行：</span></p>"+
-            
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            applicantAccountNo +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>"+ applicantAccountName +"</span></p>"+
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'></span></p>" +
 
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            beneficiaryAccountNo +"<span lang=EN-US>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+            
-            "</span>"+ beneficiaryAccountName +"</span></p>"+
-                        
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>"+
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>付款人名称：" +
+            applicantName + "<span style='align:right;float:right;text-align:right;'>" +
+            "收款人名称：" + beneficiaryName + " </span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>付款人账号：" +
+            applicantAccount + "<span style='align:right;float:right;text-align:right;padding-right:2em'>" +
+            "收款人账号：" + beneficiaryAccount + "</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>付款人账户开户行：" +
+            "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
+            "收款人账户开户行：</span></p>" +
 
-            "<p class=MsoNormal style='line-height:150%'><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp; </span><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>上述信用证项下来单通知书业已收悉，我司</span></p>"+
-            "<p class=MsoNormal style='text-indent:14.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            "（<span lang=EN-US>&nbsp;</span>）同意承付，并在此确认已收到上述信用证项下全套单据。</span></p>"+
-            "<p class=MsoNormal style='text-indent:14.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>"+
-            "<p class=MsoNormal style='text-indent:14.0pt;line-height:150%'><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            "不符点：</span></p>"+
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+            applicantAccountNo + "<span style='align:right;float:right;text-align:right;padding-right:6em'>" +
+            beneficiaryAccountNo + "</span></p>" +
 
-            "<p class=MsoNormal style='text-indent:28.0pt;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>"+
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+            applicantAccountName + "<span style='align:right;float:right;text-align:right;padding-right:4em'>" +
+            beneficiaryAccountName + "</span></p>" +
 
-            "<p class=MsoNormal style='margin-left:343.05pt;text-indent:-224.0pt;line-height:150%'><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'>"+
-            "申请人预留印鉴章及公章</span></p>"+
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'></span></p>" +
+
+            "<p class=MsoNormal style='line-height:150%'><span lang=EN-US style='font-size:10.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp; </span><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>上述信用证项下来单通知书业已收悉，我司</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+            "（<span lang=EN-US>&nbsp;</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
+            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+            "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>" +
+            "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
+
+            "<p class=MsoNormal style='text-indent:3em;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>" +
+
+            "<p class=MsoNormal style='line-height:150%;text-align:right;padding-right:6em'>申请人预留印鉴章及公章</p>" +
             "</div>"
         "</body>" +
             "</html>"
@@ -606,7 +603,7 @@ function writeAcceptancePdf(req, id, resw) {
         var path = require('path');
 
         var filePath = path.resolve(__dirname, '../pdf/');
-        createPdf(htmlStr, filePath + '/cd_' + id + "_"+  resultObj.LCNo + '.pdf', resw);
+        createPdf(htmlStr, filePath + '/cd_' + id + "_" + resultObj.LCNo + '.pdf', resw);
 
     });
 }
@@ -623,26 +620,26 @@ function writeAcceptancePdf(req, id, resw) {
 //     var filePath = path.resolve(__dirname, '../pdf/');
 //     html2Pdf(htmlStr, filePath + filename);
 
-    
-    //readdir方法读取文件名
-    //readFile方法读取文件内容
-    //writeFile改写文件内容
-    // fs.readdir(filePath, 'utf8', function (err, data) {
 
-    //     data.forEach(function (item, index) {
-    //         console.log(item)
-    //         fs.readFile('../pdf/' + item, 'utf8', function (err, files) {
-    //             console.log(files)
-    //             // var result = files.replace(/要替换的内容/g, '替换后的内容');
+//readdir方法读取文件名
+//readFile方法读取文件内容
+//writeFile改写文件内容
+// fs.readdir(filePath, 'utf8', function (err, data) {
 
-    //             // fs.writeFile('./js/' + item, result, 'utf8', function (err) {
-    //             //     if (err) return console.log(err);
-    //             // });
+//     data.forEach(function (item, index) {
+//         console.log(item)
+//         fs.readFile('../pdf/' + item, 'utf8', function (err, files) {
+//             console.log(files)
+//             // var result = files.replace(/要替换的内容/g, '替换后的内容');
 
-    //         })
-    //     });
+//             // fs.writeFile('./js/' + item, result, 'utf8', function (err) {
+//             //     if (err) return console.log(err);
+//             // });
 
-    // });
+//         })
+//     });
+
+// });
 // }
 
 function createPdf(html, pdfName, resw) {
@@ -659,10 +656,9 @@ function createPdf(html, pdfName, resw) {
         timeout: 30000
     };
     pdf.create(html, options).toFile(function (err, res) {
-        if (err)
-        {
-         resw.end(JSON.stringify("审核通过"));
-         return console.log(err);
+        if (err) {
+            resw.end(JSON.stringify("审核通过"));
+            return console.log(err);
         }
         console.log(res);
         resw.end(JSON.stringify("审核通过"));

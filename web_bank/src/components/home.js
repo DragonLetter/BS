@@ -48,7 +48,8 @@ class Home extends React.Component{
 
     getCurrentDate() {
         var date = new Date();
-        return date.getFullYear() + "-" + (date.getMonth() + 1 < 10 ? "0" + date.getMonth() + 1 : date.getMonth() + 1) + "-"
+        var month = date.getMonth()+1;
+        return date.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-"
           + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
     }
 

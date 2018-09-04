@@ -142,7 +142,12 @@ exports.addSignedBank2cc = function (req, res, next) {
 
     fabric.invoke2cc(req, "saveBCSInfo", [bcsNo, JSON.stringify(signvals)], function (err, resp) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(resp.result);
+        if( !err ){
+            res.end(JSON.stringify("已发送签约申请，等待银行审核！"));
+        }
+        else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
     });
 }
 exports.signBCAppAudit = function (req, res, next) {

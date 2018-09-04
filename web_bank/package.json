@@ -4,7 +4,8 @@
   "description": "react demo",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --hot --host 0.0.0.0",
+    "start": "node ./src/app.js",
+    "server": "webpack-dev-server --inline --hot --host 0.0.0.0",
     "build": "webpack",
     "watch": "webpack -w"
   },

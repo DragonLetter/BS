@@ -15,7 +15,7 @@ import GlobalFooter from '../components/GlobalFooter';
 import NotFound from '../routes/Exception/404';
 import styles from './BasicLayout.less';
 import logo from '../assets/logo.svg';
-import { fetch_get, fetch_post, request, clientIP } from '../utils/common';
+import { fetch_get, fetch_post, request } from '../utils/common';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -85,7 +85,7 @@ class BasicLayout extends React.PureComponent {
             });
         }
         if(res.status === 401){
-            window.location.href= clientIP + "/#/user/login";
+            window.location.href= "/#/user/login";
         }
     });
   }
@@ -104,7 +104,7 @@ class BasicLayout extends React.PureComponent {
         method: "POST",
       })
         .then((data) => {
-          window.location.href = clientIP + "/#/user/login";
+          window.location.href = "/#/user/login";
           message.success("登出成功！");
         })
     }

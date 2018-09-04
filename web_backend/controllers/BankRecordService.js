@@ -74,7 +74,7 @@ exports.updateAFStateRecord = function (req, res, next) {
     var userName = req.session.user.username;
     var values = args.body.value;
 
-    belogger.debug("updateAFStateRecord:" + JSON.stringify(args));
+    belogger.debug("updateAFStateRecord:" + args);
 
     var dbVal;
     dbVal = {

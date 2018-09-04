@@ -1,23 +1,27 @@
 'use strict';
-var models  = require('../models');
-var Sequelize=require("sequelize");
-var log4js = require("log4js");
-var logger = log4js.getLogger();
+var models = require('../models');
+var Sequelize = require("sequelize");
 var r = require('jsrsasign');
 var copService = require('fabric-ca-client/lib/FabricCAClientImpl.js');
 var Client = require('fabric-client');
-var path      = require("path");
-var env       = process.env.NODE_ENV || "development";
-var config    = require(path.join(__dirname, '..', 'config', 'dbconfig.json'))[env];
-var nodeConf  = require(path.join(__dirname, '../config/nodeconf.json'));
+var path = require("path");
+var env = process.env.NODE_ENV || "development";
+var config = require(path.join(__dirname, '..', 'config', 'dbconfig.json'))[env];
+var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
+const log4js = require('../utils/log4js');
+const Logger = log4js.getLogger('be');
 
 if (process.env.DATABASE_URL) {
-  var sequelize = new Sequelize(process.env.DATABASE_URL,config);
+  var sequelize = new Sequelize(process.env.DATABASE_URL, config);
 } else {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-exports.cancelCertificateApply = function (req, res, next) { var args=req.swagger.params;
+exports.cancelCertificateApply = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * applySerialNumber (String)
@@ -29,27 +33,32 @@ exports.cancelCertificateApply = function (req, res, next) { var args=req.swagge
     {
       'where': {
         'applySerialNumber': args.applySerialNumber.originalValue,
-        'applyState': {$ne: 1}
+        'applyState': { $ne: 1 }
       }
     }
-  ).then(function(data){
-    console.log(data);
-    if(data[0] == 0){
-      console.log('unknown applySerialNumber or the apply is confirmed');
+  ).then(function (data) {
+    Logger.debug("update result:" + data);
+
+    if (data[0] == 0) {
+      Logger.debug("unknown applySerialNumber or the apply is confirmed");
       res.end(JSON.stringify("unknown applySerialNumber or the apply is confirmed"));
-    }else if(data[0] == 1){
-      console.log('true');
+    } else if (data[0] == 1) {
+      Logger.debug("true");
       res.end(JSON.stringify("true"));
-    }else{
-      console.log('false');
+    } else {
+      Logger.debug("false");
       res.end(JSON.stringify("false"));
     }
-  }).catch(function(e){
-    console.log(e);
+  }).catch(function (e) {
+    Logger.error(e);
   });
 }
 
-exports.cancelCertificateEnroll = function (req, res, next) { var args=req.swagger.params;
+exports.cancelCertificateEnroll = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * enrollSerialNumber (String)
@@ -65,37 +74,41 @@ exports.cancelCertificateEnroll = function (req, res, next) { var args=req.swagg
         'enrollState': 0
       }
     }
-  ).then(function(data){
-    console.log(data);
-    if(data[0] == 0){
-      console.log('unknown enrollSerialNumber or a finished enroll item');
+  ).then(function (data) {
+    Logger.debug("update result:" + data);
+
+    if (data[0] == 0) {
+      Logger.debug("unknown enrollSerialNumber or a finished enroll item");
       res.end(JSON.stringify("unknown enrollSerialNumber or a finished enroll item"));
-    }else if(data[0] == 1){
-      console.log('true');
+    } else if (data[0] == 1) {
+      Logger.debug("true");
       res.end(JSON.stringify("true"));
-    }else{
-      console.log('false');
+    } else {
+      Logger.debug("false");
       res.end(JSON.stringify("false"));
     }
-  }).catch(function(e){
-    console.log(e);
-  }); 
+  }).catch(function (e) {
+    Logger.error(e);
+  });
 }
 
-exports.certificateApply = function (req, res, next) { var args=req.swagger.params;
+exports.certificateApply = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * body (CertificateApply)
   **/
-  
-  var mac = new r.KJUR.crypto.Mac({alg: "HmacSHA1", "pass": "pass"}); //pass设置密码
-  mac.updateString(JSON.stringify(args.body.value)+Date.now());
+
+  var mac = new r.KJUR.crypto.Mac({ alg: "HmacSHA1", "pass": "pass" }); //pass设置密码
+  mac.updateString(JSON.stringify(args.body.value) + Date.now());
   var macHex = mac.doFinal();
-  args.body.value.applySerialNumber=macHex;
-  sequelize.query("INSERT INTO `Certificates` (`companyName`,`businessLicense`,`businessEntity`,`contactNumber`,`csr`,`applySerialNumber`,`userId`) VALUES (\'"+args.body.value.companyName+"\',\'"+args.body.value.businessLicense+"\',\'"+args.body.value.businessEntity+"\',\'"+args.body.value.contactNumber+"\',\'"+args.body.value.csr+"\',\'"+args.body.value.applySerialNumber+"\',"+args.body.value.userId+")").spread(function(sql1, sql2){
-    console.log("log info");
-    res.end("applySerialNumber:"+args.body.value.applySerialNumber);
-    });
+  args.body.value.applySerialNumber = macHex;
+  sequelize.query("INSERT INTO `Certificates` (`companyName`,`businessLicense`,`businessEntity`,`contactNumber`,`csr`,`applySerialNumber`,`userId`) VALUES (\'" + args.body.value.companyName + "\',\'" + args.body.value.businessLicense + "\',\'" + args.body.value.businessEntity + "\',\'" + args.body.value.contactNumber + "\',\'" + args.body.value.csr + "\',\'" + args.body.value.applySerialNumber + "\'," + args.body.value.userId + ")").spread(function (sql1, sql2) {
+    res.end("applySerialNumber:" + args.body.value.applySerialNumber);
+  });
   /*
   models.Certificate.create(args.body.value).then(function(data){
     res.end("applySerialNumber:"+args.body.value.applySerialNumber);
@@ -108,7 +121,11 @@ exports.certificateApply = function (req, res, next) { var args=req.swagger.para
   */
 }
 
-exports.certificatePublish = function (req, res, next) { var args=req.swagger.params;
+exports.certificatePublish = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * enrollSerialNumber (String)
@@ -119,25 +136,29 @@ exports.certificatePublish = function (req, res, next) { var args=req.swagger.pa
       'enrollState': 1
     }
   }).then(
-    function(data){
-      if(data == null){
-        console.log('invaild request');
+    function (data) {
+      if (data == null) {
+        Logger.debug("invaild request.");
         res.end(JSON.stringify("invaild request"));
       }
-      else{
-        res.end("certificate:"+data.dataValues.certificate);
+      else {
+        res.end("certificate:" + data.dataValues.certificate);
       }
     }
   ).catch(
     function (e) {
-      console.error(e); 
+      Logger.error(e);
       throw e;
     }
   );
-  
+
 }
 
-exports.certificateRevoke = function (req, res, next) { var args=req.swagger.params;
+exports.certificateRevoke = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * enrollSerialNumber (String)
@@ -152,24 +173,29 @@ exports.certificateRevoke = function (req, res, next) { var args=req.swagger.par
         'certificateState': 1
       }
     }
-  ).then(function(data){
-    console.log(data);
-    if(data[0] == 0){
-      console.log('invalid request');
+  ).then(function (data) {
+    Logger.debug("update result:" + data);
+
+    if (data[0] == 0) {
+      Logger.debug("invalid request");
       res.end(JSON.stringify("invalid request"));
-    }else if(data[0] == 1){
-      console.log('true');
+    } else if (data[0] == 1) {
+      Logger.debug("true");
       res.end(JSON.stringify("true"));
-    }else{
-      console.log('false');
+    } else {
+      Logger.debug("false");
       res.end(JSON.stringify("false"));
     }
-  }).catch(function(e){
-    console.log(e);
+  }).catch(function (e) {
+    Logger.error(e);
   });
 }
 
-exports.confirmCertificateApply = function (req, res, next) { var args=req.swagger.params;
+exports.confirmCertificateApply = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * applySerialNumber (String)
@@ -181,27 +207,32 @@ exports.confirmCertificateApply = function (req, res, next) { var args=req.swagg
     {
       'where': {
         'applySerialNumber': args.applySerialNumber.originalValue,
-        'applyState': {$ne: 2}
+        'applyState': { $ne: 2 }
       }
     }
-  ).then(function(data){
-    console.log(data);
-    if(data[0] == 0){
-      console.log('unknown applySerialNumber or a cancel apply');
+  ).then(function (data) {
+    Logger.debug("update result:" + data);
+
+    if (data[0] == 0) {
+      Logger.debug("unknown applySerialNumber or a cancel apply");
       res.end(JSON.stringify("unknown applySerialNumber or a cancel apply"));
-    }else if(data[0] == 1){
-      console.log('true');
+    } else if (data[0] == 1) {
+      Logger.debug("true");
       res.end(JSON.stringify("true"));
-    }else{
-      console.log('false');
+    } else {
+      Logger.debug("false");
       res.end(JSON.stringify("false"));
     }
-  }).catch(function(e){
-    console.log(e);
+  }).catch(function (e) {
+    Logger.error(e);
   });
 }
 
-exports.confirmCertificateEnroll = function (req, res, next) { var args=req.swagger.params;
+exports.confirmCertificateEnroll = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * enrollSerialNumber (String)
@@ -218,24 +249,29 @@ exports.confirmCertificateEnroll = function (req, res, next) { var args=req.swag
         'enrollState': 0
       }
     }
-  ).then(function(data){
-    console.log(data);
-    if(data[0] == 0){
-      console.log('unknown enrollSerialNumber or a cancel enroll');
+  ).then(function (data) {
+    Logger.debug("update result:" + data);
+
+    if (data[0] == 0) {
+      Logger.debug("unknown enrollSerialNumber or a cancel enroll");
       res.end(JSON.stringify("unknown enrollSerialNumber or a cancel enroll"));
-    }else if(data[0] == 1){
-      console.log('true');
+    } else if (data[0] == 1) {
+      Logger.debug("true");
       res.end(JSON.stringify("true"));
-    }else{
-      console.log('false');
+    } else {
+      Logger.debug("false");
       res.end(JSON.stringify("false"));
     }
-  }).catch(function(e){
-    console.log(e);
+  }).catch(function (e) {
+    Logger.error(e);
   });
 }
 
-exports.enrollCertificate = function (req, res, next) { var args=req.swagger.params;
+exports.enrollCertificate = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * applySerialNumber (String)
@@ -245,25 +281,25 @@ exports.enrollCertificate = function (req, res, next) { var args=req.swagger.par
     'where': {
       'applySerialNumber': args.applySerialNumber.originalValue,
       'applyState': 1,
-      'certificateState': {$ne: 1}
+      'certificateState': { $ne: 1 }
     }
   }).then(
-    function(data){
-      if(data == null){
+    function (data) {
+      if (data == null) {
         res.end(JSON.stringify("unknown applySerialNumber or a canceled apply or have enrolled a certificate"));
       }
-      else{
+      else {
         csr = data.dataValues.csr;
-        return csr;        
+        return csr;
       }
     }
   ).then((csr) => {
     if (csr === undefined) {
-      console.error("csr cannot get");
+      Logger.error("csr cannot get");
       return;
     }
-    var mac = new r.KJUR.crypto.Mac({alg: "HmacSHA1", "pass": "pass"}); //pass设置密码
-    mac.updateString(args.applySerialNumber.originalValue+csr+Date.now());
+    var mac = new r.KJUR.crypto.Mac({ alg: "HmacSHA1", "pass": "pass" }); //pass设置密码
+    mac.updateString(args.applySerialNumber.originalValue + csr + Date.now());
     var macHex = mac.doFinal();
     var crt = {
       'enrollState': 1,
@@ -276,24 +312,25 @@ exports.enrollCertificate = function (req, res, next) { var args=req.swagger.par
           'applyState': 1
         }
       }
-    ).then(function(data){
-      console.log(data);
-      if(data[0] == 0){
-        console.log('unknown applySerialNumber or a cancel apply');
+    ).then(function (data) {
+      Logger.debug("update result:" + data);
+
+      if (data[0] == 0) {
+        Logger.debug("unknown applySerialNumber or a cancel apply");
         res.end(JSON.stringify("unknown applySerialNumber or a cancel apply"));
-      }else if(data[0] == 1){
-        res.end("enrollSerialNumber:"+crt.enrollSerialNumber);
+      } else if (data[0] == 1) {
+        res.end("enrollSerialNumber:" + crt.enrollSerialNumber);
         var csrStr = "-----BEGIN CERTIFICATE REQUEST-----\nMIHNMHICAQAwEDEOMAwGA1UEAwwFYWRtaW4wWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAATSs3cUksdTkUmk1zCgE0HpVIlZq4plNINYUJmpR7ji6/45Mrzn3oUXVJfU\nr7bY9dvsjgY7SX0h0AAOihBXPmt3oAAwDAYIKoZIzj0EAwIFAANJADBGAiEAwHyZ\nJqjEeK7DgYKvwqqq1Y81+sGZCTJhywZh1fspOe0CIQDTqbL5Y5LBj8gjHnhojfsl\nTZ6Tvbp5DwiArSCzu9zgjw==\n-----END CERTIFICATE REQUEST-----\n";
         var enrollRequest = {
-          caUrl: "http://"+ nodeConf.CA.IP + ":" + nodeConf.CA.Port,
+          caUrl: "http://" + nodeConf.CA.IP + ":" + nodeConf.CA.Port,
           enrollmentID: "admin",
           enrollmentSecret: "adminpw",
           caName: "ca-org",
           csr: csr
         };
         return enrollRequest;
-      }else{
-        console.log('false');
+      } else {
+        Logger.debug("false");
         res.end(JSON.stringify("false"));
       }
     }).then((enrollRequest) => {
@@ -304,21 +341,21 @@ exports.enrollCertificate = function (req, res, next) { var args=req.swagger.par
     });
   }).catch(
     function (e) {
-      console.error(e); 
+      Logger.error(e);
       throw e;
     }
   );
 }
 
-exports.writeCertificate = function(args){
+exports.writeCertificate = function (args) {
   var crt = {
     certificateState: 1,
     certificate: "args.certificate"
   };
 
-  sequelize.query("UPDATE `Certificates` SET `certificateState`=1,`certificate`=\'"+args.certificate+"\' WHERE `enrollSerialNumber` = \'"+args.enrollSerialNumber+"\' AND `enrollState` = 1").spread(function(sql1, sql2){
-    console.log("log info");
-    });
+  sequelize.query("UPDATE `Certificates` SET `certificateState`=1,`certificate`=\'" + args.certificate + "\' WHERE `enrollSerialNumber` = \'" + args.enrollSerialNumber + "\' AND `enrollState` = 1").spread(function (sql1, sql2) {
+    Logger.debug("log info");
+  });
   /*models.Certificate.update(crt,
     {
       'where': {
@@ -327,33 +364,29 @@ exports.writeCertificate = function(args){
       }
     }
   ).then(function(data){
-    console.log(data);
+    Logger.debug(data);
     if(data[0] == 0){
-      console.log('unknown enrollSerialNumber or a cancel enroll');
       return false;
 //      res.end(JSON.stringify("unknown enrollSerialNumber or a cancel enroll"));
     }else if(data[0] == 1){
-      console.log('true');
       return true;
 //      res.end(JSON.stringify("true"));
     }else{
-      console.log('false');
       return false;
 //      res.end(JSON.stringify("false"));
     }
   }).catch(function(e){
-    console.log(e);
   });*/
 }
 
-exports.enroll = function(args){
+exports.enroll = function (args) {
   return new Promise(function (resolve, reject) {
     var client = new Client();
     var cryptoSuite = client.getCryptoSuite();
     if (!cryptoSuite) {
       cryptoSuite = Client.newCryptoSuite();
     }
-    var	tlsOptions = {
+    var tlsOptions = {
       trustedRoots: [],
       verify: false
     };
@@ -366,85 +399,97 @@ exports.enroll = function(args){
       port: endpoint.port,
       tlsOptions: tlsOptions
     }, this.getCryptoSuite());*/
-  
+
     cop._fabricCAClient.enroll(args.enrollmentID, args.enrollmentSecret, args.csr)
-    .then(
-    function (enrollResponse) {
-      return resolve({
-//        key: privateKey,
-        certificate: enrollResponse.enrollmentCert,
-        rootCertificate: enrollResponse.caCertChain
-      });
-    },
-    function (err) {
-      return reject(err);
-    }
-    );
+      .then(
+        function (enrollResponse) {
+          return resolve({
+            //        key: privateKey,
+            certificate: enrollResponse.enrollmentCert,
+            rootCertificate: enrollResponse.caCertChain
+          });
+        },
+        function (err) {
+          return reject(err);
+        }
+      );
   });
 }
 
-exports.queryCertificateApplyState = function (req, res, next) { var args=req.swagger.params;
+exports.queryCertificateApplyState = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * applySerialNumber (String)
   **/
   models.Certificate.findOne({
-    'where': {'applySerialNumber': args.applySerialNumber.originalValue}
+    'where': { 'applySerialNumber': args.applySerialNumber.originalValue }
   }).then(
-    function(data){
-      if(data == null){
-        console.log('unknown applySerialNumber');
+    function (data) {
+      if (data == null) {
+        Logger.debug("unknown applySerialNumber");
         res.end(JSON.stringify("unknown applySerialNumber"));
       }
-      else{
+      else {
         res.end(JSON.stringify(data.dataValues.applyState));
       }
     }
   ).catch(
     function (e) {
-      console.error(e); 
+      Logger.error(e);
       throw e;
     }
   );
 }
 
-exports.queryCertificateEnrollState = function (req, res, next) { var args=req.swagger.params;
+exports.queryCertificateEnrollState = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * enrollSerialNumber (String)
   **/
-    var examples = {};
+  var examples = {};
   examples['application/json'] = "aeiou";
-  if(Object.keys(examples).length > 0) {
+  if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
   }
   else {
     res.end();
   }
-  
+
 }
 
-exports.getCertificateState = function (req, res, next) { var args=req.swagger.params;
+exports.getCertificateState = function (req, res, next) {
+  var args = req.swagger.params;
+
+  Logger.debug("args:" + args);
+
   /**
    * parameters expected in the args:
   * applySerialNumber (String)
   **/
   models.Certificate.findOne({
-    'where': {'applySerialNumber': args.applySerialNumber.originalValue}
+    'where': { 'applySerialNumber': args.applySerialNumber.originalValue }
   }).then(
-    function(data){
-      if(data == null){
-        console.log('unknown applySerialNumber');
+    function (data) {
+      if (data == null) {
+        Logger.debug("unknown applySerialNumber");
         res.end(JSON.stringify("unknown applySerialNumber"));
       }
-      else{
-        res.end(JSON.stringify(data.dataValues.applyState)+"-"+JSON.stringify(data.dataValues.enrollState)+"-"+JSON.stringify(data.dataValues.certificateState));
+      else {
+        res.end(JSON.stringify(data.dataValues.applyState) + "-" + JSON.stringify(data.dataValues.enrollState) + "-" + JSON.stringify(data.dataValues.certificateState));
       }
     }
   ).catch(
     function (e) {
-      console.error(e); 
+      Logger.error(e);
       throw e;
     }
   );

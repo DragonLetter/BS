@@ -1,45 +1,38 @@
-import React from 'react'
-import { request } from '../utils/common'
+import React from 'react';
+import { request } from '../utils/common';
 import { Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd'
-import { Link, hashHistory } from 'react-router';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
+
 const { Header, Content, Sider } = Layout;
-const Step = Steps.Step;
-const Panel = Collapse.Panel;
+const FormItem = Form.Item;
+const Option = Select.Option;
 
-const FormItem = Form.Item
-const Option = Select.Option
-const RadioGroup = Radio.Group
-const CheckboxGroup = Checkbox.Group
-const { TextArea } = Input;
 
-const columns = [{
-    title: '银行编号',
-    dataIndex: 'bankNo',
-    key: 'bankNo',
-}, {
-    title: '名称',
-    dataIndex: 'bankName',
-    key: 'bankName',
-}, {
-    title: '地址',
-    dataIndex: 'address',
-    key: 'address',
-}, {
-    title: '账户名称',
-    key: 'accountName',
-    dataIndex: 'accountName',
-}, {
-    title: '账号',
-    key: 'accountNo',
-    dataIndex: 'accountNo',
-}];
+const columns = [
+    {
+        title: '银行名称',
+        key: 'bankName',
+        dataIndex: 'bankName'
+    },
+    {
+        title: '银行地址',
+        key: 'address',
+        dataIndex: 'address'
+    },
+    {
+        title: '企业账号',
+        key: 'accountNo',
+        dataIndex: 'accountNo'
+    },
+    {
+        title: '签约状态',
+        key: 'status',
+        dataIndex: 'status'
+    }
+];
 
 const AddDraftForm = Form.create()(
     (props) => {
-        const options = [
-            { label: '', value: '' },
-        ];
         const { visible, onCancel, onCreate, data, form, selectOptions } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = {
@@ -61,16 +54,16 @@ const AddDraftForm = Form.create()(
                             rules: [{ required: true, message: '请选择签约银行!' }],
                         })(
                             <Select placeholder="银行名称" maxLength="40">{selectOptions}</Select>
-                            )}
+                        )}
                     </FormItem>
-                    <FormItem {...formItemLayout} label="开户行地址">
+                    {/* <FormItem {...formItemLayout} label="开户行地址">
                         {getFieldDecorator('address', {
                             rules: [{ required: true, message: '请输入开户行地址!' }],
                         })(
                             <Input placeholder="开户行地址" maxLength="40" />
-                            )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="账户名称">
+                        )}
+                    </FormItem> */}
+                    {/* <FormItem {...formItemLayout} label="账户名称">
                         {getFieldDecorator('accountName', {
                             rules: [{ required: true, message: '请输入账户名称!' }],
                         })(
@@ -90,7 +83,7 @@ const AddDraftForm = Form.create()(
                         })(
                             <TextArea rows={4} placeholder="备注" />
                             )}
-                    </FormItem>
+                    </FormItem> */}
                 </Form>
             </Modal>
         );
@@ -108,35 +101,57 @@ class Bank extends React.Component {
             display: false,
             creaeDraftFromVisible: false,
             banks: [],
+            corp: Object,
             signedbanks: [],
             loading: true,
         }
     }
 
-    handleBankInfo = (data) => {
-        const banks = [];
-        for (let i = 0; i < data.length; i++) {
-            banks.push({
-                key: i,
-                bankNo: data[i].Bank.no,
-                bankName: data[i].Bank.name,
-                address: data[i].address,
-                accountName: data[i].accountName,
-                accountNo: data[i].accountNo,
-            })
-        }
+    componentDidMount = () => {
+        // 获取签约银行信息
+        this.getSignedBankList();
 
-        this.setState({
-            signedbanks: banks,
-        });
+        // 获取当前用户的企业信息
+        this.getCurrentCorpInfo();
     }
 
-    componentDidMount = () => {
+    // 请求backend获取签约银行信息
+    getSignedBankList = () => {
         request("/api/signedbank/" + sessionStorage.getItem("userId"))
             .then((data) => {
-                this.handleBankInfo(data);
+                const signedbanks = [];
+                for (let i = 0; i < data.length; i++) {
+                    var applyStatus;
+                    if (data[i].StateSign == 0) {
+                        applyStatus = "请求签约";
+                    } else if (data[i].StateSign == 1) {
+                        applyStatus = "签约成功";
+                    } else {
+                        applyStatus = "签约失败";
+                    }
+                    signedbanks.push({
+                        key: i,
+                        bankName: data[i].bank.name,
+                        address: data[i].bank.address,
+                        accountNo: data[i].corp.account,
+                        status: applyStatus,
+                        info: data[i] //原始数据
+                    })
+                }
+
                 this.setState({
-                    loading: false,
+                    signedbanks: signedbanks,
+                    loading: false
+                });
+            });
+    }
+
+    // 请求backend获取当前用户企业相关信息
+    getCurrentCorpInfo = () => {
+        request("/api/user/current")
+            .then((data) => {
+                this.setState({
+                    corp: data.corp,
                 });
             });
     }
@@ -151,19 +166,76 @@ class Bank extends React.Component {
             if (err) {
                 return;
             }
-            values.corporationId = parseInt(sessionStorage.getItem("userId"));
-            values.bankId = parseInt(values.bankId);
-            values.state = 0;
+
+            // 查找已经签约银行列表中是否包含当前选中银行
+            var bankID = parseInt(values.bankId);
+            for (let i = 0; i < this.state.signedbanks.length; i++) {
+                if (bankID == this.state.signedbanks[i].info.bank.id) {
+                    if (this.state.signedbanks[i].info.StateSign == 0) {
+                        message.error("正在同此银行进行签约，请等待！");
+                    } else if (this.state.signedbanks[i].info.StateSign == 1) {
+                        message.error("此银行已经进行签约，请重新选中其它银行！");
+                    } else {
+                        message.error("此银行签约失败，请在签约银行列表界面重新发起签约！");
+                    }
+                    return;
+                }
+            }
+
+            // 获取签约银行的所有数据
+            var bankinfo;
+            for (let i = 0; i < this.state.banks.length; i++) {
+                if (bankID == this.state.banks[i].bankinfo.id) {
+                    bankinfo = this.state.banks[i].bankinfo;
+                }
+            }
+
+            // 获取签约企业信息
+            var corpinfo = this.state.corp;
+
+            // 通过用户选择银行信息获取数据进行签约
+            var req = {
+                "No": this.state.corp.id + "_" + bankinfo.id,
+                "Type": "Sign",
+                "bank": {
+                    "id": bankinfo.id.toString(),
+                    "no": bankinfo.no,
+                    "name": bankinfo.name,
+                    "domain": bankinfo.domain,
+                    "address": bankinfo.address,
+                    "postcode": "",
+                    "telephone": "",
+                    "telefax": "",
+                    "remark": bankinfo.remark
+                },
+                "corp": {
+                    "id": corpinfo.id.toString(),
+                    "name": corpinfo.name,
+                    "domain": corpinfo.domain,
+                    "nation": corpinfo.nation,
+                    "contact": corpinfo.contact,
+                    "email": corpinfo.email,
+                    "account": corpinfo.account,
+                    "depositBank": corpinfo.depositBank,
+                    "address": corpinfo.address,
+                    "postcode": "",
+                    "telephone": "",
+                    "telefax": "",
+                    "creationTime": corpinfo.creationTime
+                },
+                "StateSign": 0
+            };
+
+            // 发送签约请求
             request("/api/signedbank", {
                 method: "POST",
-                body: values,
-            })
-                .then((data) => {
-                    this.handleBankInfo(data);
-                })
-                .catch((error) => {
-                    message.error("创建失败！");
-                });
+                body: req,
+            }).then((data) => {
+                // 获取签约银行信息
+                this.getSignedBank();
+            }).catch((error) => {
+                message.error("创建失败！");
+            });
             form.resetFields();
             this.setState({
                 creaeDraftFromVisible: false,
@@ -184,15 +256,9 @@ class Bank extends React.Component {
                 for (let i = 0; i < data.length; i++) {
                     banks.push({
                         key: i,
-                        id: data[i].id,
-                        bankNo: data[i].no,
-                        bankName: data[i].name,
-                        address: data[i].address,
-                        accountName: data[i].accountName,
-                        accountNo: data[i].accountNo,
+                        bankinfo: data[i]
                     })
                 }
-
                 this.setState({
                     banks: banks,
                     creaeDraftFromVisible: true,
@@ -201,7 +267,7 @@ class Bank extends React.Component {
     }
 
     render() {
-        const options = this.state.banks.map(bank => <Option key={bank.id}>{bank.bankName}</Option>);
+        const options = this.state.banks.map(bank => <Option key={bank.bankinfo.id}>{bank.bankinfo.name}</Option>);
         return (
             <PageHeaderLayout title="签约银行列表">
                 <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
@@ -218,8 +284,8 @@ class Bank extends React.Component {
                     onCancel={this.closeForm}
                     onCreate={this.handleCreate}
                     selectOptions={options}
-                //data={this.state.tData[this.state.index]}
-                //onEdit={this.handleEdit}
+                // data={this.state.tData[this.state.index]}
+                // onEdit={this.handleEdit}
                 />
             </PageHeaderLayout>
         )

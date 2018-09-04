@@ -1,7 +1,8 @@
 'use strict';
 var fabric = require("../fabric");
-var models = require('../models');
 var constants = require("./Constants");
+const log4js = require('../utils/log4js');
+const Logger = log4js.getLogger('be');
 
 var STATUS_ENUM = [
     "企业申请",
@@ -29,7 +30,7 @@ const STEP_ENUM = {
     "BeneficiaryHandOverBillsStep": "受益人交单",
     "AdvisingBankReviewBillsStep": "通知行审核交单信息",
     "IssuingBankAcceptOrRejectStep": "发证行承兑或拒付",   // 开证行面向受益人
-    "ApplicantRetireBillsStep": "申请人赎单",  
+    "ApplicantRetireBillsStep": "申请人赎单",
     "IssuingBankReviewRetireBillsStep": "开证行审核赎单",  // 开证行面向申请人
     "IssuingBankCloseLCStep": "闭卷",
     "LCEnd": "结束",
@@ -41,16 +42,20 @@ const STEP_ENUM = {
  * Params：bankId
  * return: trans list
  **/
-exports.getTxsByBankId = function (req, res, next) { var args=req.swagger.params;
+exports.getTxsByBankId = function (req, res, next) {
+    var args = req.swagger.params;
     var bankId = args.bankId.value;
+
+    Logger.debug("args:" + args);
+
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
-        if(resp == null || resp.result == null) {
+        if (resp == null || resp.result == null) {
             res.status(405).end();
             //res.end();
         } else {
-            var txs= [];
-            var resultObj=JSON.parse(resp.result);
-            for(var i=0;i<resultObj.length;i++){
+            var txs = [];
+            var resultObj = JSON.parse(resp.result);
+            for (var i = 0; i < resultObj.length; i++) {
                 txs.push(chaincodeTx2ViewTx(resultObj[i]));
                 /*if (resultObj[i].Record.CurrentStep != "ApplicantSaveLCApplyFormStep" ){
                     txs.push(chaincodeTx2ViewTx(resultObj[i]));
@@ -68,59 +73,61 @@ exports.getTxsByBankId = function (req, res, next) { var args=req.swagger.params
     });
 };
 
-function selectTxWithStatus(status, txStatus){
-    if(status == "" || status == undefined || status == null || status == "null") {
+function selectTxWithStatus(status, txStatus) {
+    if (status == "" || status == undefined || status == null || status == "null") {
         return true;
-    } else if (status == txStatus){
+    } else if (status == txStatus) {
         return true;
-    } else{
+    } else {
         return false;
     }
 }
 
-function selectTxWithLcNo(lcNo, lcNum){
-    if(lcNo == "" || lcNo == undefined || lcNo == null || lcNo == "null") {
+function selectTxWithLcNo(lcNo, lcNum) {
+    if (lcNo == "" || lcNo == undefined || lcNo == null || lcNo == "null") {
         return true;
-    } else if (lcNo == lcNum){
+    } else if (lcNo == lcNum) {
         return true;
-    } else{
+    } else {
         return false;
     }
 }
 
-function selectTxWithApplicant(applicant, lcApplicant){
-    if(applicant == "" || applicant == undefined || applicant == null || applicant == "null") {
+function selectTxWithApplicant(applicant, lcApplicant) {
+    if (applicant == "" || applicant == undefined || applicant == null || applicant == "null") {
         return true;
-    } else if (applicant == lcApplicant){
+    } else if (applicant == lcApplicant) {
         return true;
-    } else{
+    } else {
         return false;
     }
 }
 
-function selectTxWithBeneficiary(beneficiary, lcBeneficiary){
-    if(beneficiary == "" || beneficiary == undefined || beneficiary == null || beneficiary == "null") {
+function selectTxWithBeneficiary(beneficiary, lcBeneficiary) {
+    if (beneficiary == "" || beneficiary == undefined || beneficiary == null || beneficiary == "null") {
         return true;
-    } else if (beneficiary == lcBeneficiary){
+    } else if (beneficiary == lcBeneficiary) {
         return true;
-    } else{
+    } else {
         return false;
     }
 }
 
-function selectTxWithDateRange(applyTime, startDate, endDate){
-    if(startDate === undefined || startDate === null) {
+function selectTxWithDateRange(applyTime, startDate, endDate) {
+    if (startDate === undefined || startDate === null) {
         startDate = '1990-01-01'
     }
-    if(endDate === undefined || endDate === null){
+    if (endDate === undefined || endDate === null) {
         endDate = '9999-01-01'
     }
-    
+
     var appDate = new Date(applyTime);
     var stDate = new Date(startDate);
     var enDate = new Date(endDate);
-    console.log("---------appDate:%s------------\n",appDate);
-    if( appDate > stDate && appDate <= enDate) {
+
+    Logger.debug("applyDate[" + appDate + "] startDate[" + stDate + "] endDate[" + enDate + "]");
+
+    if (appDate > stDate && appDate <= enDate) {
         return true;
     } else {
         return false;
@@ -128,12 +135,12 @@ function selectTxWithDateRange(applyTime, startDate, endDate){
 }
 
 //信用证编号查询
-function selectTxWithParams(applyTime, startDate, endDate, lcNo, lcNum,  applicant, lcApplicant, beneficiary, lcBeneficiary,inputStatus, txStatus) {
+function selectTxWithParams(applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, inputStatus, txStatus) {
     if (selectTxWithDateRange(applyTime, startDate, endDate) && selectTxWithStatus(inputStatus, txStatus)
-    && selectTxWithLcNo(lcNo, lcNum)
-    && selectTxWithApplicant(applicant, lcApplicant)
-    && selectTxWithBeneficiary(beneficiary, lcBeneficiary)) {
-        return true;            
+        && selectTxWithLcNo(lcNo, lcNum)
+        && selectTxWithApplicant(applicant, lcApplicant)
+        && selectTxWithBeneficiary(beneficiary, lcBeneficiary)) {
+        return true;
     } else {
         return false;
     }
@@ -145,7 +152,8 @@ function selectTxWithParams(applyTime, startDate, endDate, lcNo, lcNum,  applica
  * Params：bankId, startDate, endDate
  * return: trans list
  **/
-exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagger.params;
+exports.getProcessingTxByBankId = function (req, res, next) {
+    var args = req.swagger.params;
     var stepArrByIssuingBank = [
         'BankConfirmApplyFormStep',
         'BankIssueLCStep',
@@ -167,10 +175,12 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
     var beneficiary = args.beneficiary.value;
     var startDate = args.startDate.value;
     var endDate = args.endDate.value;
-    //console.log("---------bankid------------:%s\n",bankId);
+
+    Logger.debug("args:" + args);
+
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
-        var txs = [];                    
-        if(resp == null || resp.result == null) {
+        var txs = [];
+        if (resp == null || resp.result == null) {
             res.status(405).end();
             //res.end();
         } else {
@@ -178,71 +188,75 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
             for (var i = 0; i < resultObj.length; i++) {
                 var lc = resultObj[i];
                 var lcStep = lc.Record.CurrentStep;
-                var lcNum= lc.Record.lcNo;
+                var lcNum = lc.Record.lcNo;
                 var lcApplicant = lc.Record.LetterOfCredit.Applicant.Name;
                 var lcBeneficiary = lc.Record.LetterOfCredit.Beneficiary.Name;
-            
+
                 //开证行和通知行是同一家银行
-                if (lc.Record.ApplicationForm.IssuingBank.No == bankId 
-                     && lc.Record.ApplicationForm.AdvisingBank.No == bankId)
-                {
-                    console.log("-------bankId:%s-------\n",bankId);
-                    console.log("-------lcSetp:%s-------\n",lcStep);
-                    console.log("-------lcNo:%s-------\n",lcNo);
-                    console.log("-------lcNum:%s-------\n",lcNum);
-                    console.log("-------applicant:%s-------\n",applicant);
-                    console.log("-------lcApplicant:%s-------\n",lcApplicant);
-                    console.log("-------beneficiary:%s-------\n",beneficiary);
-                    console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
-                    console.log("------current status:%s-------\n",lc.Record.lcStatus);
-                    console.log("------select status:%s-------\n",status);
-                    console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
-                    console.log("------startDate :%s-------\n",startDate);
-                    console.log("------endData :%s-------\n",endDate);                
-                    console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
-                    console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
-                   
+                if (lc.Record.ApplicationForm.IssuingBank.No == bankId
+                    && lc.Record.ApplicationForm.AdvisingBank.No == bankId) {
+                    Logger.debug("Issue bank is same with advising bank."
+                        + "\n bankId:" + bankId
+                        + "\n lcSetp:" + lcStep
+                        + "\n lcNo:" + lcNo
+                        + "\n lcNum:" + lcNum
+                        + "\n applicant:" + applicant
+                        + "\n lcApplicant:" + lcApplicant
+                        + "\n beneficiary:" + beneficiary
+                        + "\n lcBeneficiary:" + lcBeneficiary
+                        + "\n current status:" + lc.Record.lcStatus
+                        + "\n select status:" + status
+                        + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
+                        + "\n startDate:" + startDate
+                        + "\n endData:" + endDate
+                        + "\n stepArrByIssuingBank:" + stepArrByIssuingBank.indexOf(lcStep)
+                        + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+
                     if ((stepArrByIssuingBank.indexOf(lcStep) > -1 || stepArrByAdvisingBank.indexOf(lcStep) > -1)
                         && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
-                           txs.push(chaincodeTx2ViewTx(lc));
+                        txs.push(chaincodeTx2ViewTx(lc));
                     }
-                }else if (lc.Record.ApplicationForm.IssuingBank.No == bankId){//开证行
-                    // console.log("-------bankId:%s-------\n",bankId);
-                    // console.log("-------lcSetp:%s-------\n",lcStep);
-                    // console.log("-------lcNo:%s-------\n",lcNo);
-                    // console.log("-------lcNum:%s-------\n",lcNum);
-                    // console.log("-------applicant:%s-------\n",applicant);
-                    // console.log("-------lcApplicant:%s-------\n",lcApplicant);
-                    // console.log("-------beneficiary:%s-------\n",beneficiary);
-                    // console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
-                    // console.log("------current status:%s-------\n",lc.Record.lcStatus);
-                    // console.log("------select status:%s-------\n",status);
-                    // console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
-                    // console.log("------startDate :%s-------\n",startDate);
-                    // console.log("------endData :%s-------\n",endDate);                
-                    // console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
-                    // console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                } else if (lc.Record.ApplicationForm.IssuingBank.No == bankId) {//开证行
+                    Logger.debug("Issue bank info."
+                        + "\n bankId:" + bankId
+                        + "\n lcSetp:" + lcStep
+                        + "\n lcNo:" + lcNo
+                        + "\n lcNum:" + lcNum
+                        + "\n applicant:" + applicant
+                        + "\n lcApplicant:" + lcApplicant
+                        + "\n beneficiary:" + beneficiary
+                        + "\n lcBeneficiary:" + lcBeneficiary
+                        + "\n current status:" + lc.Record.lcStatus
+                        + "\n select status:" + status
+                        + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
+                        + "\n startDate:" + startDate
+                        + "\n endData:" + endDate
+                        + "\n stepArrByIssuingBank:" + stepArrByIssuingBank.indexOf(lcStep)
+                        + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+
                     // txs.push(chaincodeTx2ViewTx(lc));                    
                     if (stepArrByIssuingBank.indexOf(lcStep) > -1
                         && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
-                           txs.push(chaincodeTx2ViewTx(lc));
+                        txs.push(chaincodeTx2ViewTx(lc));
                     }
-                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId){//通知行
-                    // console.log("-------bankId:%s-------\n",bankId);
-                    // console.log("-------lcSetp:%s-------\n",lcStep);
-                    // console.log("-------lcNo:%s-------\n",lcNo);
-                    // console.log("-------lcNum:%s-------\n",lcNum);
-                    // console.log("-------applicant:%s-------\n",applicant);
-                    // console.log("-------lcApplicant:%s-------\n",lcApplicant);
-                    // console.log("-------beneficiary:%s-------\n",beneficiary);
-                    // console.log("-------lcBeneficiary:%s-------\n",lcBeneficiary);
-                    // console.log("------current status:%s-------\n",lc.Record.lcStatus);
-                    // console.log("------select status:%s-------\n",status);
-                    // console.log("------enum status:%s-------\n",STATUS_ENUM[lc.Record.lcStatus]);
-                    // console.log("------startDate :%s-------\n",startDate);
-                    // console.log("------endData :%s-------\n",endDate);                
-                    // console.log("------stepArrByIssuingBank :%d-------\n",stepArrByIssuingBank.indexOf(lcStep));
-                    // console.log("------selectTx :%d-------\n",selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId) {//通知行
+                    Logger.debug("Advising bank info."
+                        + "\n bankId:" + bankId
+                        + "\n lcSetp:" + lcStep
+                        + "\n lcNo:" + lcNo
+                        + "\n lcNum:" + lcNum
+                        + "\n applicant:" + applicant
+                        + "\n lcApplicant:" + lcApplicant
+                        + "\n beneficiary:" + beneficiary
+                        + "\n lcBeneficiary:" + lcBeneficiary
+                        + "\n current status:" + lc.Record.lcStatus
+                        + "\n select status:" + status
+                        + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
+                        + "\n startDate :" + startDate
+                        + "\n endData :" + endDate
+                        + "\n stepArrByIssuingBank :" + stepArrByIssuingBank.indexOf(lcStep)
+                        + "\n selectTx :" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+
                     // txs.push(chaincodeTx2ViewTx(lc));
                     if (stepArrByAdvisingBank.indexOf(lcStep) > -1
                         && selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
@@ -267,7 +281,7 @@ exports.getProcessingTxByBankId = function (req, res, next) { var args=req.swagg
  * Params：chaincodeTx
  * return: viewTx
  **/
-function chaincodeTx2ViewTx(chaincodeTx){
+function chaincodeTx2ViewTx(chaincodeTx) {
     var tx = {
         "id": chaincodeTx.Key,
         "no": chaincodeTx.Record.lcNo,
@@ -279,7 +293,7 @@ function chaincodeTx2ViewTx(chaincodeTx){
         "amount": chaincodeTx.Record.LetterOfCredit.amount,
         "currency": chaincodeTx.Record.LetterOfCredit.Currency,
         "status": STEP_ENUM[chaincodeTx.Record.CurrentStep],
-        "state" : STATUS_ENUM[chaincodeTx.Record.lcStatus],
+        "state": STATUS_ENUM[chaincodeTx.Record.lcStatus],
         "issuseDate": chaincodeTx.Record.LetterOfCredit.applyTime
     };
     return tx;
@@ -291,13 +305,16 @@ function chaincodeTx2ViewTx(chaincodeTx){
  * Params：TxId
  * return: processflows
  **/
-exports.getProcessFlowByTxId = function (req, res, next) { 
-    var args=req.swagger.params;
+exports.getProcessFlowByTxId = function (req, res, next) {
+    var args = req.swagger.params;
     var id = args.txId.value;
+
+    Logger.debug("args:" + args);
+
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
-        if (resp == null || resp.result == null){
+        if (resp == null || resp.result == null) {
             res.end();
-        }else {
+        } else {
             var resultObj = JSON.parse(resp.result);
             var progressFlow = lc2ProgressFlow(resultObj);
             if (progressFlow == null) {
@@ -310,11 +327,11 @@ exports.getProcessFlowByTxId = function (req, res, next) {
     });
 };
 
-function lc2ProgressFlow(lc){
+function lc2ProgressFlow(lc) {
     lc.TransProgressFlow = lc.TransProgressFlow.reverse();
-    lc.TransProgressFlow.map(flow => { flow.Status = constants.STEPS[flow.Status];});
-    var tx={
-        "TransProgressFlow":lc.TransProgressFlow,
+    lc.TransProgressFlow.map(flow => { flow.Status = constants.STEPS[flow.Status]; });
+    var tx = {
+        "TransProgressFlow": lc.TransProgressFlow,
         "CurrentStep": lc.CurrentStep,
     };
 
@@ -328,9 +345,13 @@ function lc2ProgressFlow(lc){
  * Params：TxId
  * return: LCDraftView
  **/
-exports.getLCDraftByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
-        if(resp == null || resp.result == "") {
+exports.getLCDraftByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
+        if (resp == null || resp.result == "") {
             res.end();
         } else {
             var lc = JSON.parse(resp.result);
@@ -353,9 +374,13 @@ exports.getLCDraftByTxId = function (req, res, next) { var args=req.swagger.para
  * Params：TxId
  * return: DepositView
  **/
-exports.getDepositByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
-        if(resp == null || resp.result == "") {
+exports.getDepositByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
+        if (resp == null || resp.result == "") {
             res.end();
         } else {
             var deposit = JSON.parse(resp.result).LCTransDeposit;
@@ -375,9 +400,13 @@ exports.getDepositByTxId = function (req, res, next) { var args=req.swagger.para
  * Params：TxId
  * return: DepositDocs
  **/
-exports.getDepositDocsByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
-        if(resp == null || resp.result == "") {
+exports.getDepositDocsByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
+        if (resp == null || resp.result == "") {
             res.end();
         } else {
             var depositDoc = JSON.parse(resp.result).LCTransDeposit.DepositDoc;
@@ -397,9 +426,13 @@ exports.getDepositDocsByTxId = function (req, res, next) { var args=req.swagger.
  * Params：TxId
  * return: Contract Attachments
  **/
-exports.getContractsByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
-        if(resp == null || resp.result == "") {
+exports.getContractsByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
+        if (resp == null || resp.result == "") {
             res.end();
         } else {
             res.setHeader('Content-Type', 'application/json');
@@ -410,7 +443,7 @@ exports.getContractsByTxId = function (req, res, next) { var args=req.swagger.pa
 
 function chaincodeTx2Contract(lc) {
     var attachments = [];
-    for (var i=0; i<lc.ApplicationForm.Contract.Attachments.length; i++){
+    for (var i = 0; i < lc.ApplicationForm.Contract.Attachments.length; i++) {
         var attachment = {
             "No": lc.ApplicationForm.Contract.Attachments[i].No,
             "FileName": lc.ApplicationForm.Contract.Attachments[i].FileName,
@@ -421,7 +454,7 @@ function chaincodeTx2Contract(lc) {
         };
         attachments.push(attachment);
     }
-    var tx =  {
+    var tx = {
         "no": lc.id,
         "attachments": JSON.stringify(attachments)
     };
@@ -434,9 +467,13 @@ function chaincodeTx2Contract(lc) {
  * Params：TxId
  * return: LC Original | 信用证正本附件
  **/
-exports.getLCOriginalByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
-        if(resp == null || resp.result == "") {
+exports.getLCOriginalByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
+        if (resp == null || resp.result == "") {
             res.end();
         } else {
             var lCOriginalAttachment = JSON.parse(resp.result).LetterOfCredit.LCOriginalAttachment;
@@ -456,9 +493,13 @@ exports.getLCOriginalByTxId = function (req, res, next) { var args=req.swagger.p
  * Params：TxId
  * return: LCTransDocsReceived
  **/
-exports.getLCDocsReceivedByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
-        if(resp == null || resp.result == "") {
+exports.getLCDocsReceivedByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
+        if (resp == null || resp.result == "") {
             res.end();
         } else {
             var lCTransDocsReceive = JSON.parse(resp.result).LCTransDocsReceive;
@@ -478,13 +519,17 @@ exports.getLCDocsReceivedByTxId = function (req, res, next) { var args=req.swagg
  * Params：TxId
  * return: LCTxAcceptPayment
  **/
-exports.getLCAcceptPaymentByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
+exports.getLCAcceptPaymentByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
             res.end();
-        } else { 
-            var resultObj = JSON.parse(resp.result);        
-            var tx={
+        } else {
+            var resultObj = JSON.parse(resp.result);
+            var tx = {
                 "no": resultObj.LcNo,
                 "transactionId": resultObj.LcNo,
                 "applicant": JSON.stringify(resultObj.LetterOfCredit.Applicant),
@@ -508,8 +553,12 @@ exports.getLCAcceptPaymentByTxId = function (req, res, next) { var args=req.swag
  * Params：TxId
  * return: LCTxCLosing
  **/
-exports.getLCClosingByTxId = function (req, res, next) { var args=req.swagger.params;
-    fabric.query(req,"getLcByNo", [args.txId.value], function (error, resp) {
+exports.getLCClosingByTxId = function (req, res, next) {
+    var args = req.swagger.params;
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
             res.end();
         } else {

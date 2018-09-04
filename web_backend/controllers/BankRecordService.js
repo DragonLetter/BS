@@ -1,14 +1,14 @@
 'use strict';
 
 const log4js = require('../utils/log4js');
-const belogger = log4js.getLogger('be');
+const Logger = log4js.getLogger('be');
 
 var models = require('../models');
 var Sequelize = require("sequelize");
 
 function addBankRecord(req, res, next) {
     var args = req.swagger.params;
-    belogger.debug("Add a new bank record:" + args);
+    Logger.debug("Add a new bank record:" + args);
 
     /**
      * Add a new operation record to the db
@@ -23,7 +23,7 @@ function deleteBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcID = args.LcNo.value;
 
-    belogger.debug("Delete a bank record:" + args);
+    Logger.debug("Delete a bank record:" + args);
 
     models.BankRecord.destroy({ where: { Id: lcID }, truncate: false });
 
@@ -35,7 +35,7 @@ function getBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcNo = args.lcNo.value;
 
-    belogger.debug("Get a bank record:" + args);
+    Logger.debug("Get a bank record:" + args);
 
     models.BankRecord.findAll({
         'where': {
@@ -54,7 +54,7 @@ exports.getBankRecordByLcNo = getBankRecordByLcNo;
 
 function updateBankRecord(req, res, next) {
     var args = req.swagger.params;
-    belogger.debug("Update a bank record:" + args);
+    Logger.debug("Update a bank record:" + args);
 
     /**
      * Update an existing Bank
@@ -74,7 +74,7 @@ exports.updateAFStateRecord = function (req, res, next) {
     var userName = req.session.user.username;
     var values = args.body.value;
 
-    belogger.debug("updateAFStateRecord:" + args);
+    Logger.debug("updateAFStateRecord:" + args);
 
     var dbVal;
     dbVal = {
@@ -88,12 +88,12 @@ exports.updateAFStateRecord = function (req, res, next) {
         "depositAmount": values.depositAmount
     };
 
-    belogger.debug("updateAFStateRecord: Add record:" + JSON.stringify(dbVal));
+    Logger.debug("updateAFStateRecord: Add record:" + JSON.stringify(dbVal));
 
     /**
      * Add a new operation record to the db
      **/
     models.BankRecord.create(dbVal).then(function (data) {
-        belogger.debug("updateAFStateRecord: resp:" + JSON.stringify(data));
+        Logger.debug("updateAFStateRecord: resp:" + JSON.stringify(data));
     });
 };

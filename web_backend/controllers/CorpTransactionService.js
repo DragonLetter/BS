@@ -2,8 +2,11 @@
 var fabric = require("../fabric");
 var models = require('../models');
 var constants = require("./Constants")
+const log4js = require('../utils/log4js');
+const Logger = log4js.getLogger('be');
 
-exports.getProcessingTransByCorpId = function (req, res, next) { var args=req.swagger.params;
+exports.getProcessingTransByCorpId = function (req, res, next) {
+    var args = req.swagger.params;
     /**
      * 获取指定企业正在进行中的交易列表
      *
@@ -11,20 +14,26 @@ exports.getProcessingTransByCorpId = function (req, res, next) { var args=req.sw
      * corpId String
      * returns List
      **/
-    let id = args.corpId.value, applyLCs = [], beneficiaryLCs = [], lcs;
+    let id = args.corpId.value,
+        applyLCs = [],
+        beneficiaryLCs = [],
+        lcs;
+
+    Logger.debug("args:" + args);
+
     models.Corporation.findById(id).then(function (corp) {
-        if (corp == null || Object.keys(corp).length == 0){
+        if (corp == null || Object.keys(corp).length == 0) {
             res.end(JSON.stringify("该企业不在系统中"));
         }
         else if (Object.keys(corp).length > 0) {
-            fabric.query(req,"getLcListByApplicant", [id], function (err, resp) {
+            fabric.query(req, "getLcListByApplicant", [id], function (err, resp) {
                 if (!err) {
                     let results = JSON.parse(resp.result);
                     results.map(lc => {
                         lc.Record.CurrentStep = constants.STEPS[lc.Record.CurrentStep];
                         lc.Record.TransProgressFlow.map(flow => {
                             flow.Status = constants.STEPS[flow.Status];
-                          });
+                        });
                         if (constants.APPLICANT_PROCESSING_STEPS.includes(lc.Record.CurrentStep)) {
                             applyLCs.push(lc);
                         }
@@ -50,19 +59,20 @@ exports.getProcessingTransByCorpId = function (req, res, next) { var args=req.sw
                             }
                         }
                         else {
-                            console.log(err);
+                            Logger.error(err);
                         }
                     });
                 }
                 else {
-                    console.log(err);
+                    Logger.error(err);
                 }
             });
         }
     });
 };
 
-exports.getProgressFlowByTransId = function (req, res, next) { var args=req.swagger.params;
+exports.getProgressFlowByTransId = function (req, res, next) {
+    var args = req.swagger.params;
     /**
      * 获取指定交易的交易进度信息
      *
@@ -72,10 +82,13 @@ exports.getProgressFlowByTransId = function (req, res, next) { var args=req.swag
      **/
 
     var id = args.transId.value;
-    fabric.query(req,"getLcByNo", [id], function (error, resp) {
-        if (resp.result == ""){
+
+    Logger.debug("args:" + args);
+
+    fabric.query(req, "getLcByNo", [id], function (error, resp) {
+        if (resp.result == "") {
             res.end();
-        }else {
+        } else {
             var resultObj = JSON.parse(resp.result);
             var progressFlow = lc2ProgressFlow(resultObj);
             if (progressFlow == null) {
@@ -88,15 +101,16 @@ exports.getProgressFlowByTransId = function (req, res, next) { var args=req.swag
     });
 };
 
-function lc2ProgressFlow(lc){
-    var tx={
-        "TransProgressFlow":lc.TransProgressFlow,
+function lc2ProgressFlow(lc) {
+    var tx = {
+        "TransProgressFlow": lc.TransProgressFlow,
         "CurrentStep": lc.CurrentStep,
     };
     return tx;
 }
-  
-exports.getTransByCorpId = function (req, res, next) { var args=req.swagger.params;
+
+exports.getTransByCorpId = function (req, res, next) {
+    var args = req.swagger.params;
     /**
      * 获取指定企业的所有交易列表
      *
@@ -105,12 +119,15 @@ exports.getTransByCorpId = function (req, res, next) { var args=req.swagger.para
      * returns List
      **/
     var id = args.corpId.value;
+
+    Logger.debug("args:" + args);
+
     models.Corporation.findById(id).then(function (corp) {
-        if (corp == null || Object.keys(corp).length == 0){
+        if (corp == null || Object.keys(corp).length == 0) {
             res.end();
         }
         else if (Object.keys(corp).length > 0) {
-            fabric.query(req,"getLcListByApplicant", [id], function (err, resp) {
+            fabric.query(req, "getLcListByApplicant", [id], function (err, resp) {
                 if (!err) {
                     let results = JSON.parse(resp.result);
                     const lcs = results.map(lc => {
@@ -118,8 +135,8 @@ exports.getTransByCorpId = function (req, res, next) { var args=req.swagger.para
                         return lc;
                     });
                     res.end(JSON.stringify(lcs));
-                }else {
-                    console.log(err);
+                } else {
+                    Logger.error(err);
                 }
             });
         }

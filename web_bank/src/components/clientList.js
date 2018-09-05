@@ -90,7 +90,6 @@ class ClientList extends React.Component{
     handleSCPass = () => {
         let vals = this.state.curSignCorp;
         vals.StateSign = 1;
-        message.error(JSON.stringify(vals));
         fetch_post("/api/SignedBank/signAudit",vals)
         .then((res) => {
             if (res.status >= 200 && res.status < 300) {
@@ -106,7 +105,6 @@ class ClientList extends React.Component{
     handleSCReject = () => {
         let vals = this.state.curSignCorp;
         vals.StateSign = -1;
-        message.error(JSON.stringify(vals));
         fetch_post("/api/SignedBank/signAudit",vals)
         .then((res) => {
             if (res.status >= 200 && res.status < 300) {
@@ -151,8 +149,8 @@ class ClientList extends React.Component{
                   footer={this.state.curSignCorp.StateSign=='0'?
                     [<Button key="back" onClick={this.handleSCCancel}>关闭</Button>,
                     <Button key="pass" onClick={this.handleSCPass}>通过</Button>,
-                    <Button key="reject" onClick={this.handleSCReject}>拒绝</Button>,]  :
-                    [<Button key="back" onClick={this.handleSCCancel}>关闭</Button>]
+                    // <Button key="reject" onClick={this.handleSCReject}>拒绝</Button>,
+                    ] : [<Button key="back" onClick={this.handleSCCancel}>关闭</Button>]
                   }
                 >
                     <Layout style={{ padding: '1px 1px' }}>

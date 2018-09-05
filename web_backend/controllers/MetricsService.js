@@ -16,6 +16,9 @@ exports.getMetrcsByBankId = function (req, res, next) {
     var Customers = 0;
     var args=req.swagger.params;
     var bankId = args.bankId.value;
+
+    Logger.debug("args:" + args);
+
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
         if(resp == null || resp.result == null) {
             res.status(405).end();

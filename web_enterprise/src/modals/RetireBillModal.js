@@ -11,9 +11,9 @@ const RetireBillModal = Form.create()((props) => {
     };
 
     const record = data ? data.detail.Record : [],
-         applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
+        applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
         deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
-        amount = applicationForm.amount - deposit.depositAmount,
+        amount = applicationForm.amount - deposit.commitAmount,
         title = "赎单——" + record.lcNo;
 
     return (
@@ -39,11 +39,12 @@ const RetireBillModal = Form.create()((props) => {
                         </Col>
                         <Col span={12} key={1}>
                             <FormItem {...formItemLayout} label={`已付金额`}>
+                                {/* <span>{deposit.commitAmount}</span> */}
                                 {getFieldDecorator('commitAmount', {
                                     rules: [{ required: true, message: '请填写已付金额!' }],
                                 })(
                                     <Input placeholder="已付金额" maxLength="40"></Input>
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                     </Row>

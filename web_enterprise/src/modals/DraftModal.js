@@ -214,10 +214,10 @@ const DraftModal = (props) => {
                         <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1' }}>
                             <Row key={17}>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>应缴金额</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.commitAmount}</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.depositAmount}</Col>
                                 <Col span={3}></Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.depositAmount}</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.commitAmount}</Col>
                             </Row>
                             <Row key={18}>
                                 <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>单据信息</Col>
@@ -244,10 +244,10 @@ const DraftModal = (props) => {
                         <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1' }}>
                             <Row key={20}>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>应缴金额</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.commitAmount}</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.depositAmount}</Col>
                                 <Col span={3}></Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
-                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.depositAmount}</Col>
+                                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.commitAmount}</Col>
                             </Row>
                             <Row key={21}>
                                 <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>单据信息</Col>

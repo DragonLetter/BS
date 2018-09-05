@@ -7,12 +7,12 @@ var sdkUtils = require('fabric-client/lib/utils')
 var fs = require('fs');
 var options = require(path.join(__dirname, '..', 'config', 'fabric.json'));
 const log4js = require('../utils/log4js');
-const belogger = log4js.getLogger('be');
+const Logger = log4js.getLogger('be');
 
 var fabric = {};
 
 fabric.invoke = function (req, functionName, args, callback) {
-    belogger.info("fabric.invoke");
+    Logger.info("fabric.invoke");
 
     var session = req.session;
     var username = session.username;
@@ -24,10 +24,10 @@ fabric.invoke = function (req, functionName, args, callback) {
     var targets = [];
     var tx_id = null;
 
-    belogger.debug("req:" + req);
+    Logger.debug("req:" + req);
 
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
 
         client = new hfc();
         var createUserOpt = {
@@ -68,7 +68,7 @@ fabric.invoke = function (req, functionName, args, callback) {
         return;
     }).then(() => {
         tx_id = client.newTransactionID();
-        belogger.debug("Assigning transaction_id:" + tx_id._transaction_id);
+        Logger.debug("Assigning transaction_id:" + tx_id._transaction_id);
 
         var request = {
             targets: targets,
@@ -87,9 +87,9 @@ fabric.invoke = function (req, functionName, args, callback) {
         if (proposalResponses && proposalResponses[0].response &&
             proposalResponses[0].response.status === 200) {
             isProposalGood = true;
-            belogger.debug("transaction proposal was good");
+            Logger.debug("transaction proposal was good");
         } else {
-            belogger.info("transaction proposal was bad");
+            Logger.info("transaction proposal was bad");
         }
         if (isProposalGood) {
             // console.log(util.format( 
@@ -129,10 +129,10 @@ fabric.invoke = function (req, functionName, args, callback) {
                     eh.disconnect();
 
                     if (code !== 'VALID') {
-                        belogger.debug("The transaction was invalid, code:" + code);
+                        Logger.debug("The transaction was invalid, code:" + code);
                         reject();
                     } else {
-                        belogger.debug("The transaction has been committed on peer:" + eh._ep._endpoint.addr);
+                        Logger.debug("The transaction has been committed on peer:" + eh._ep._endpoint.addr);
                         //res.end('The transaction has been committed on peer ' + eh._ep._endpoint.addr);
                         resolve();
                     }
@@ -141,30 +141,30 @@ fabric.invoke = function (req, functionName, args, callback) {
             eventPromises.push(txPromise);
             var sendPromise = channel.sendTransaction(request);
             return Promise.all([sendPromise].concat(eventPromises)).then((results) => {
-                belogger.debug("event promise all complete and testing complete");
+                Logger.debug("event promise all complete and testing complete");
                 return results[0]; // the first returned value is from the 'sendPromise' which is from the 'sendTransaction()' call 
             }).catch((err) => {
-                belogger.error("Failed to send transaction and get notifications within the timeout period.");
+                Logger.error("Failed to send transaction and get notifications within the timeout period.");
                 return 'Failed to send transaction and get notifications within the timeout period.';
             });
         } else {
-            belogger.error("Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...");
+            Logger.error("Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...");
             return 'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...';
         }
     }, (err) => {
-        belogger.error("Failed to send proposal due to error: " + err.stack ? err.stack : err);
+        Logger.error("Failed to send proposal due to error: " + err.stack ? err.stack : err);
         return 'Failed to send proposal due to error: ' + err.stack ? err.stack : err;
     }).then((response) => {
         if (response.status === 'SUCCESS') {
-            belogger.debug("Successfully sent transaction to the orderer.");
+            Logger.debug("Successfully sent transaction to the orderer.");
             let resp = { "result": "Successfully sent transaction to the orderer.", "txId": tx_id.getTransactionID() }
             callback(null, resp);
         } else {
-            belogger.error("Failed to order the transaction. Error code:" + response.status);
+            Logger.error("Failed to order the transaction. Error code:" + response.status);
             return 'Failed to order the transaction. Error code: ' + response.status;
         }
     }, (err) => {
-        belogger.error("Failed to send transaction due to error:" + err.stack ? err.stack : err);
+        Logger.error("Failed to send transaction due to error:" + err.stack ? err.stack : err);
         return 'Failed to send transaction due to error: ' + err.stack ? err.stack : err;
     });
 }
@@ -173,7 +173,7 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
     var username = session.username;
     var option = options[username];
     if (option == undefined) { option = options["B1Admin"]; }
-//    var chaincodeid = "mylc";
+    //    var chaincodeid = "mylc";
     var chaincodeid = "bcs";
     var channel = {};
     var client = null;
@@ -341,7 +341,7 @@ fabric.query = function (req, functionName, args, callback) {
     var client = null;
     var channel_id = option.channel_id;
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
         client = new hfc();
         // var pkFolder= path.join(__dirname, '..', 'config/crypto', option.privateKeyFolder)
         // var certPath= path.join(__dirname, '..', 'config/crypto', option.signedCert)
@@ -373,9 +373,9 @@ fabric.query = function (req, functionName, args, callback) {
         channel.addPeer(peer);
         return;
     }).then(() => {
-        belogger.debug("Make query");
+        Logger.debug("Make query");
         var transaction_id = client.newTransactionID();
-        belogger.debug("Assigning transaction_id: " + transaction_id._transaction_id);
+        Logger.debug("Assigning transaction_id: " + transaction_id._transaction_id);
         //构造查询request参数 
         const request = {
             chaincodeId: chaincodeid,
@@ -385,19 +385,19 @@ fabric.query = function (req, functionName, args, callback) {
         };
         return channel.queryByChaincode(request);
     }).then((query_responses) => {
-        belogger.debug("returned from query");
+        Logger.debug("returned from query");
         if (!query_responses.length) {
-            belogger.debug("No payloads were returned from query");
+            Logger.debug("No payloads were returned from query");
         } else {
-            belogger.debug("Query result count = " + query_responses.length)
+            Logger.debug("Query result count = " + query_responses.length)
         }
         if (query_responses[0] instanceof Error) {
-            belogger.error("error from query = " + query_responses[0]);
+            Logger.error("error from query = " + query_responses[0]);
         }
-        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        Logger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
         callback(null, { "result": query_responses[0].toString() });
     }).catch((err) => {
-        belogger.error("Caught Error" + err);
+        Logger.error("Caught Error" + err);
         callback(err, null);
     });
 }
@@ -411,7 +411,7 @@ fabric.query2cc = function (req, functionName, args, callback) {
     var client = null;
     var channel_id = option.channel_id;
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
         client = new hfc();
         // var pkFolder= path.join(__dirname, '..', 'config/crypto', option.privateKeyFolder)
         // var certPath= path.join(__dirname, '..', 'config/crypto', option.signedCert)
@@ -443,9 +443,9 @@ fabric.query2cc = function (req, functionName, args, callback) {
         channel.addPeer(peer);
         return;
     }).then(() => {
-        belogger.debug("Make query");
+        Logger.debug("Make query");
         var transaction_id = client.newTransactionID();
-        belogger.debug("Assigning transaction_id: " + transaction_id._transaction_id);
+        Logger.debug("Assigning transaction_id: " + transaction_id._transaction_id);
         //构造查询request参数 
         const request = {
             chaincodeId: chaincodeid,
@@ -455,19 +455,19 @@ fabric.query2cc = function (req, functionName, args, callback) {
         };
         return channel.queryByChaincode(request);
     }).then((query_responses) => {
-        belogger.debug("returned from query");
+        Logger.debug("returned from query");
         if (!query_responses.length) {
-            belogger.debug("No payloads were returned from query");
+            Logger.debug("No payloads were returned from query");
         } else {
-            belogger.debug("Query result count = " + query_responses.length)
+            Logger.debug("Query result count = " + query_responses.length)
         }
         if (query_responses[0] instanceof Error) {
-            belogger.error("error from query = " + query_responses[0]);
+            Logger.error("error from query = " + query_responses[0]);
         }
-        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        Logger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
         callback(null, { "result": query_responses[0].toString() });
     }).catch((err) => {
-        belogger.error("Caught Error" + err);
+        Logger.error("Caught Error" + err);
         callback(err, null);
     });
 }
@@ -480,7 +480,7 @@ fabric.queryHeight = function (req, channel, callback) {
     var client = null;
     var channel_id = channel;
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
         client = new hfc();
         var createUserOpt = {
             username: option.user_id,
@@ -512,12 +512,12 @@ fabric.queryHeight = function (req, channel, callback) {
     }).then((blockchainInfo) => {
 
         if (blockchainInfo == undefined) {
-            belogger.error("error from query chain height");
+            Logger.error("error from query chain height");
         }
-        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        Logger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
         callback(null, { "result": blockchainInfo });
     }).catch((err) => {
-        belogger.error("Caught Error" + err);
+        Logger.error("Caught Error" + err);
         callback(err, null);
     });
 }
@@ -530,7 +530,7 @@ fabric.queryBlock = function (req, channel, blockId, callback) {
     var client = null;
     var channel_id = channel;
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
         client = new hfc();
         var createUserOpt = {
             username: option.user_id,
@@ -562,12 +562,12 @@ fabric.queryBlock = function (req, channel, blockId, callback) {
     }).then((block) => {
 
         if (block == undefined) {
-            belogger.error("error from query chain height");
+            Logger.error("error from query chain height");
         }
-        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        Logger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
         callback(null, { "result": block });
     }).catch((err) => {
-        belogger.error("Caught Error", err);
+        Logger.error("Caught Error", err);
         callback(err, null);
     });
 }
@@ -580,7 +580,7 @@ fabric.queryTx = function (req, channel, txId, callback) {
     var client = null;
     var channel_id = channel;
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
         client = new hfc();
         var createUserOpt = {
             username: option.user_id,
@@ -612,12 +612,12 @@ fabric.queryTx = function (req, channel, txId, callback) {
     }).then((processedTransaction) => {
 
         if (processedTransaction == undefined) {
-            belogger.error("error from query chain height");
+            Logger.error("error from query chain height");
         }
-        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        Logger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
         callback(null, { "result": processedTransaction });
     }).catch((err) => {
-        belogger.error("Caught Error" + err);
+        Logger.error("Caught Error" + err);
         callback(err, null);
     });
 }
@@ -630,7 +630,7 @@ fabric.getAllChannels = function (req, callback) {
     var client = null;
 
     Promise.resolve().then(() => {
-        belogger.debug("Load privateKey and signedCert");
+        Logger.debug("Load privateKey and signedCert");
         client = new hfc();
         var createUserOpt = {
             username: option.user_id,
@@ -662,12 +662,12 @@ fabric.getAllChannels = function (req, callback) {
     }).then((ChannelQueryResponse) => {
 
         if (ChannelQueryResponse == undefined) {
-            belogger.error("error from query chain height");
+            Logger.error("error from query chain height");
         }
-        belogger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
+        Logger.debug("Response is " + query_responses[0].toString());//打印返回的结果 
         callback(null, { "result": ChannelQueryResponse.channels });
     }).catch((err) => {
-        belogger.error("Caught Error" + err);
+        Logger.error("Caught Error" + err);
         callback(err, null);
     });
 }

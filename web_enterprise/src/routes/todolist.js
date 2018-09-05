@@ -1,6 +1,6 @@
 import React from 'react'
 import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/common';
-import {List, Spin, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message} from 'antd'
+import { List, Spin, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd'
 const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
@@ -20,12 +20,12 @@ const RadioGroup = Radio.Group
 const CheckboxGroup = Checkbox.Group
 const { TextArea } = Input;
 
-class TodoList extends React.Component{
-    constructor(props){
+class TodoList extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
             visible: false,
-            bordered : false,
+            bordered: false,
             pagination: true,
             showHeader: true,
             display: false,
@@ -46,14 +46,14 @@ class TodoList extends React.Component{
     }
 
     handleTransInfo = (data) => {
-        if(data === "暂无数据"){
+        if (data === "暂无数据") {
             this.setState({
                 loading: false,
             });
             return;
         }
         const transactions = [];
-        for(let i = 0; i < data.length; i++){
+        for (let i = 0; i < data.length; i++) {
             transactions.push({
                 id: data[i].Key,
                 title: data[i].Record.lcNo || "尚未获得信用证编号",
@@ -74,7 +74,7 @@ class TodoList extends React.Component{
 
     getTransInfo = () => {
         const userId = sessionStorage.getItem("userId");
-            request("/api/transaction/corp/processing/" + userId)
+        request("/api/transaction/corp/processing/" + userId)
             .then((data) => {
                 this.handleTransInfo(data);
             });
@@ -151,7 +151,7 @@ class TodoList extends React.Component{
         this.setState({
             transactionData: transaction,
         });
-        switch(transaction.status){
+        switch (transaction.status) {
             case "保存":
                 this.setState({
                     confirmModalVisible: true,
@@ -207,12 +207,12 @@ class TodoList extends React.Component{
             method: "POST",
             body: data,
         })
-        .then((data) => {
+            .then((data) => {
                 this.getTransInfo();
                 this.setState({
                     loading: false,
                 });
-        });
+            });
         // fetch_post('/api/applicationform/submit',data)
         // .then((res) => {
         //     if(res.status >= 200 && res.status < 300){
@@ -233,6 +233,14 @@ class TodoList extends React.Component{
             if (err) {
                 return;
             }
+
+            // 判断已付金额是否合法
+            var depositAmount = parseInt(this.state.transactionData.detail.Record.LCTransDeposit.depositAmount);
+            if (parseInt(values.commitAmount) > depositAmount) {
+                message.error("已付金额不能超过应付金额:" + depositAmount + "!");
+                return;
+            }
+
             // contract.ContractNo = values.ContractNo;
             // let data = {};
             // data.Contract = contract;
@@ -242,12 +250,12 @@ class TodoList extends React.Component{
                 method: "POST",
                 body: values,
             })
-            .then((data) => {
-                message.success("提交保证金成功!");
-                this.setState({
-                    depositModalVisible: false,
-                });
-            })
+                .then((data) => {
+                    message.success("提交保证金成功!");
+                    this.setState({
+                        depositModalVisible: false,
+                    });
+                })
             // fetch_post('/api/letterOfCredit/deposit', values)
             //     .then((res) => {
             //         if (res.status >= 200 && res.status < 300) {
@@ -281,12 +289,12 @@ class TodoList extends React.Component{
                 method: "POST",
                 body: values,
             })
-            .then((data) => {
-                message.success("修改成功!");
-                this.setState({
-                    amendationModalVisible: false,
+                .then((data) => {
+                    message.success("修改成功!");
+                    this.setState({
+                        amendationModalVisible: false,
+                    })
                 })
-            })
             // fetch_post('/api/letterOfCredit/Amending', values)
             //     .then((res) => {
             //         if (res.status >= 200 && res.status < 300) {
@@ -315,11 +323,15 @@ class TodoList extends React.Component{
             // data.Contract = contract;
             // data.no = this.state.transactionData.id;
             values.no = this.state.transactionData.id;
+            // values = {
+            //     no: this.state.transactionData.id,
+            //     commitAmount: this.state.transactionData.detail.Record.LCTransDeposit.commitAmount
+            // }
+            message.error(JSON.stringify(values));
             request('/api/letterOfCredit/retire', {
                 method: "POST",
                 body: values,
-            })
-            .then((data) => {
+            }).then((data) => {
                 message.success("赎单成功!");
                 this.setState({
                     retireBillModalVisible: false,
@@ -354,18 +366,18 @@ class TodoList extends React.Component{
                 method: "POST",
                 body: values,
             })
-            .then((data) => {
-                message.success("处理成功!");
-                this.setState({
-                    LCNoticeModalVisible: false,
+                .then((data) => {
+                    message.success("处理成功!");
+                    this.setState({
+                        LCNoticeModalVisible: false,
+                    })
                 })
-            })
-            .catch((error) => {
-                message.error("处理失败！");
-                this.setState({
-                    LCNoticeModalVisible: false,
-                });
-            })
+                .catch((error) => {
+                    message.error("处理失败！");
+                    this.setState({
+                        LCNoticeModalVisible: false,
+                    });
+                })
             // fetch_post('/api/LetterofCredit/beneficiaryHandle', values)
             //     .then((res) => {
             //         if (res.status >= 200 && res.status < 300) {
@@ -404,18 +416,18 @@ class TodoList extends React.Component{
             method: "POST",
             body: values,
         })
-        .then((data) => {
-            message.success("处理成功!");
-            this.setState({
-                handoverBillModalVisible: false,
-            });
-        })
-        .catch((error) => {
-            message.error("处理失败！");
-            this.setState({
-                handoverBillModalVisible: false,
+            .then((data) => {
+                message.success("处理成功!");
+                this.setState({
+                    handoverBillModalVisible: false,
+                });
             })
-        })
+            .catch((error) => {
+                message.error("处理失败！");
+                this.setState({
+                    handoverBillModalVisible: false,
+                })
+            })
         // fetch_post('/api/LetterofCredit/beneficiaryHandoverBills', values)
         // .then((res) => {
         //     if (res.status >= 200 && res.status < 300) {
@@ -433,20 +445,20 @@ class TodoList extends React.Component{
     }
 
     determineActions = (item) => {
-        switch(item.status){
+        switch (item.status) {
             case "保存":
             case "填写信用证草稿":
             case "申请人赎单":
             case "受益人接收信用证":
             case "受益人交单":
-                return ([<a  onClick={() => this.showDetail(item)}>查看详情</a>, <a  onClick={() => this.handleTransaction(item)}>立即处理</a>]);
+                return ([<a onClick={() => this.showDetail(item)}>查看详情</a>, <a onClick={() => this.handleTransaction(item)}>立即处理</a>]);
             // case "银行确认":
             //case "银行发证":
-                 //return ([<a  onClick={() => this.showDetail(item)}>查看详情</a>]);
+            //return ([<a  onClick={() => this.showDetail(item)}>查看详情</a>]);
             case "通知行收到信用证通知":
             case "申请人修改信用证":
             case "发证行承兑或拒付":
-                return ([<a  onClick={() => this.showDetail(item)}>查看详情</a>,<a  onClick={() => this.handleTransaction(item)}>发起修改</a>]);
+                return ([<a onClick={() => this.showDetail(item)}>查看详情</a>, <a onClick={() => this.handleTransaction(item)}>发起修改</a>]);
             // case "受益人接收信用证":
             // case "受益人交单":
             //     return ([<span>等待受益人响应</span>]);
@@ -454,12 +466,12 @@ class TodoList extends React.Component{
             // case "结束":
             //     return ([<span>信用证流转完成</span>]);
         }
-        
+
     }
 
-    render(){
-        const options = this.state.corps.map(corp => <Option key={corp.id}>{corp.name}</Option>), 
-            list = this.state.transactions, 
+    render() {
+        const options = this.state.corps.map(corp => <Option key={corp.id}>{corp.name}</Option>),
+            list = this.state.transactions,
             container = (
                 <div>
                     <List
@@ -468,21 +480,21 @@ class TodoList extends React.Component{
                         dataSource={list.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...list]}
                         renderItem={
                             item => (item.title ? (
-                            <List.Item key={item.id}>
-                                <Card title={item.title} actions={this.determineActions(item)}>
-                                    <span style={{ display: "block" }}>申请人：{item.applicant}</span>
-                                    <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
-                                    <span style={{ display: "block" }}>开证金额：{item.amount}</span>
-                                    <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
-                                    <span style={{ display: "block" }}>当前状态：{item.status}</span>
-                                </Card>
-                            </List.Item>
-                        ) : (
                                 <List.Item key={item.id}>
-                                    <span>暂无任何待处理事件</span>
+                                    <Card title={item.title} actions={this.determineActions(item)}>
+                                        <span style={{ display: "block" }}>申请人：{item.applicant}</span>
+                                        <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
+                                        <span style={{ display: "block" }}>开证金额：{item.amount}</span>
+                                        <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
+                                        <span style={{ display: "block" }}>当前状态：{item.status}</span>
+                                    </Card>
                                 </List.Item>
-                            )
-                        )}
+                            ) : (
+                                    <List.Item key={item.id}>
+                                        <span>暂无任何待处理事件</span>
+                                    </List.Item>
+                                )
+                            )}
                     />
                 </div>
             );
@@ -496,27 +508,27 @@ class TodoList extends React.Component{
                     visible={this.state.confirmModalVisible}
                     onCancel={this.closeForm}
                     onSubmit={this.handleApplicationFormSubmit}
-                    selectOptions = {options}
-                    data = {this.state.transactionData}
+                    selectOptions={options}
+                    data={this.state.transactionData}
                 />
                 <DepositModal
                     ref={this.depositModalRef}
                     visible={this.state.depositModalVisible}
                     onCancel={this.closeDepositModal}
-                    data = {this.state.transactionData}
+                    data={this.state.transactionData}
                     onSubmit={this.handleDepositSubmit}
                 />
                 <AmendationModal
                     ref={this.amendationModalRef}
                     visible={this.state.amendationModalVisible}
                     onCancel={this.closeAmendationModal}
-                    data = {this.state.transactionData}
+                    data={this.state.transactionData}
                     onSubmit={this.handleAmendSubmit}
                 />
                 <HandoverBillsModal
                     visible={this.state.handoverBillModalVisible}
                     onCancel={this.closeHandoverBillsModal}
-                    data = {this.state.transactionData}
+                    data={this.state.transactionData}
                     onSubmit={this.handleHandoverBillSubmit}
                     onBillChange={this.handleBillChange}
                     onFileChange={this.handleFileChange}
@@ -525,14 +537,14 @@ class TodoList extends React.Component{
                     ref={this.retireBillModalRef}
                     visible={this.state.retireBillModalVisible}
                     onCancel={this.closeRetireBillModal}
-                    data = {this.state.transactionData}
+                    data={this.state.transactionData}
                     onSubmit={this.handleRetireBillSubmit}
                 />
                 <LCNoticeModal
                     ref={this.LCNoticeModalRef}
                     visible={this.state.LCNoticeModalVisible}
                     onCancel={this.closeLcNoticeModal}
-                    data = {this.state.transactionData}
+                    data={this.state.transactionData}
                     onSubmit={this.handleLcNoticeSubmit}
                 />
                 <DraftModal

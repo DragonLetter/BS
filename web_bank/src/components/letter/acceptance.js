@@ -185,9 +185,11 @@ class LetterDraft extends React.Component {
     }
 
     handleDepositDate = (data) => {
+        var remainDepositAmount = parseInt(data.depositAmount) - parseInt(data.commitAmount);
         var deposit = {
             commitAmount: data.commitAmount,
             depositAmount: data.depositAmount,
+            remainDepositAmount: remainDepositAmount,
             isDocUploaded: data.DepositDoc.FileHash == "" ? "无" : "有"
         };
         this.setState({
@@ -222,16 +224,19 @@ class LetterDraft extends React.Component {
             approveDialogVisible: false,
         });
     }
+
     closeRejectDialog = () => {
         this.setState({
             rejectDialogVisible: false,
         });
     }
+
     showApproveDialog = () => {
         this.setState({
             approveDialogVisible: true,
         });
     }
+
     showRejectDialog = () => {
         this.setState({
             rejectDialogVisible: true,
@@ -241,6 +246,7 @@ class LetterDraft extends React.Component {
     saveApproveRef = (form) => {
         this.approveForm = form;
     }
+
     saveRejectRef = (form) => {
         this.rejectForm = form;
     }
@@ -433,6 +439,7 @@ class LetterDraft extends React.Component {
 
     render() {
         let data = this.state.letters ? this.state.letters : [],
+            deposit = this.state.deposit ? this.state.deposit : [],
             applicant = data.Applicant ? data.Applicant : [],
             beneficiary = data.Beneficiary ? data.Beneficiary : [],
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
@@ -495,11 +502,11 @@ class LetterDraft extends React.Component {
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.amount}{data.Currency}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>应缴余额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.commitAmount}{data.Currency}</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{deposit.remainDepositAmount}{data.Currency}</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.depositAmount}{data.Currency}</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{deposit.commitAmount}{data.Currency}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日期</Col>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.expiryDate}</Col>
@@ -621,7 +628,7 @@ class LetterDraft extends React.Component {
                             </div>
                         </TabPane>
                         <TabPane tab="面函" key="4" >
-                            <iframe src={pdfPath} width="100%" height="400">                              
+                            <iframe src={pdfPath} width="100%" height="400">
 
                             </iframe>
                             {/* <Button type="primary" style={{ marginLeft: '15px' }} onClick={() => this.printPdf()}>打印</Button>

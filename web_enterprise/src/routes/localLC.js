@@ -70,7 +70,7 @@ const AddDraftForm = Form.create()(
 
                         });
                     }
-                    if(res.status === 401){
+                    if (res.status === 401) {
                         res.redirect("/#/user/login");
                     }
                 });
@@ -100,7 +100,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: false, message: '请选择签约银行!' }],
                                     })(
                                         <InputNumber style={{ display: "none" }} />
-                                        )}
+                                    )}
                                     <span>{sessionStorage.getItem("corp")}</span>
                                 </FormItem>
                             </Col>
@@ -110,7 +110,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择受益人!' }],
                                     })(
                                         <Select placeholder="企业名称" maxLength="40" onSelect={handleSelect}>{corpOptions}</Select>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                         </Row>
@@ -124,7 +124,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择开证银行!' }],
                                     })(
                                         <Select placeholder="开证行名称" maxLength="40">{bankOptions}</Select>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={1}>
@@ -133,7 +133,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择通知银行!' }],
                                     })(
                                         <Select placeholder="通知行名称" maxLength="40">{bankOptions}</Select>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={2} style={{ marginLeft: "-10%" }}>
@@ -146,7 +146,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={2}>任意银行可议付</Radio>
                                             <Radio value={3}>不可议付</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={3} style={{ marginLeft: "-10%" }}>
@@ -158,7 +158,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={1}>可转让</Radio>
                                             <Radio value={2}>不可转让</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={4} style={{ marginLeft: "-10%" }}>
@@ -170,7 +170,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={1}>可保兑</Radio>
                                             <Radio value={2}>不可保兑</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                         </Row>
@@ -187,7 +187,7 @@ const AddDraftForm = Form.create()(
                                             <Option value="CNY">人民币</Option>
                                             <Option value="USD">美元</Option>
                                         </Select>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={1}>
@@ -195,13 +195,13 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('Amount', {
                                         rules: [{ required: true, message: '请输入信用证金额!' }],
                                     })(
-                                            <InputNumber formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="信用证金额" style={{ width: "32%" }}/>
-                                        )}
+                                        <InputNumber formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                            parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="信用证金额" style={{ width: "32%" }} />
+                                    )}
                                 </FormItem>
                                 <div style={{ marginTop: -60, marginRight: 160, float: 'right' }} >
                                     <InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }}/>
+                                        parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} />
                                 </div>
                             </Col>
                             <Col span={12} key={2}>
@@ -210,7 +210,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请输入到期日!' }],
                                     })(
                                         <DatePicker placeholder="到期日" style={{ width: '100%' }} />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={3}>
@@ -219,7 +219,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请输入到期地点!' }],
                                     })(
                                         <Input placeholder="到期地点" />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={4}>
@@ -231,7 +231,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={true}>即期</Radio>
                                             <Radio value={false}>远期</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                 </FormItem>
                                 <div style={{ marginTop: -62, marginRight: 160, float: 'right' }} >
                                     <InputNumber id="afterSightDay" style={{ width: 60 }} />日后
@@ -246,7 +246,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={1}>货物贸易</Radio>
                                             <Radio value={2}>服务贸易</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={6}>
@@ -255,7 +255,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择货物运输或交货方式/服务方式！' }],
                                     })(
                                         <Input placeholder="货物运输或交货方式/服务方式" />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={7}>
@@ -264,7 +264,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请输入装运地(港)!' }],
                                     })(
                                         <Input placeholder="装运地(港)" />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={8}>
@@ -273,7 +273,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请输入目的地!' }],
                                     })(
                                         <Input placeholder="目的地" />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={9}>
@@ -282,7 +282,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择货物的分批分期和转运规定，服务的分次分期提供规定！' }],
                                     })(
                                         <CheckboxGroup options={[{ label: '允许分批/分次', value: '1' }, { label: '允许转运/分期', value: '2' },]} />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={12} key={10}>
@@ -291,7 +291,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择最迟货运/服务提供日！' }],
                                     })(
                                         <DatePicker placeholder="最迟货运/服务提供日" style={{ width: '100%' }} />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={11} style={{ marginLeft: "-10%" }}>
@@ -300,7 +300,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请输入货物/服务描述!' }],
                                     })(
                                         <TextArea rows={4} placeholder="请输入货物/服务描述" />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={12} style={{ marginLeft: "-10%" }}>
@@ -309,7 +309,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: true, message: '请选择所要求的单据类型!' }],
                                     })(
                                         <CheckboxGroup options={[{ label: '增值税发票正本（发票联合抵扣联）注明信用证号和合同号', value: '1' }, { label: '由受益人提供的货物收据', value: '2' }, { label: '保险单', value: '3' },]} />
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                             <Col span={24} key={13} style={{ marginLeft: "-10%" }}>
@@ -319,7 +319,7 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: false, message: '请输入溢短装!' }],
                                     })(
                                         <span style={{ marginTop: 0, marginLeft: 0 }} >
-                                        短装 <InputNumber id="Lowfill" style={{ width: 80 }} />    溢装 <InputNumber id="Overfill" style={{ width: 80 }} />
+                                            短装 <InputNumber id="Lowfill" style={{ width: 80 }} />    溢装 <InputNumber id="Overfill" style={{ width: 80 }} />
                                         </span>
                                     )}
                                 </FormItem>
@@ -332,7 +332,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={1}>申请人</Radio>
                                             <Radio value={2}>受益人</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                     <span>承担。</span>
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
@@ -344,7 +344,7 @@ const AddDraftForm = Form.create()(
                                             <Radio value={1}>申请人</Radio>
                                             <Radio value={2}>受益人</Radio>
                                         </RadioGroup>
-                                        )}
+                                    )}
                                     <span>承担。</span>
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
@@ -355,7 +355,7 @@ const AddDraftForm = Form.create()(
                                             <span>[ ]单据必须自运输单据签发日<Input style={{ width: 32 }} />日内提交，且不能低于信用证有效期</span><br />
                                             <span>[ ]发起日期不能早于开证日期</span>
                                         </div>
-                                        )}
+                                    )}
                                 </FormItem>
                             </Col>
                         </Row>
@@ -378,14 +378,14 @@ const SecondStepForm = Form.create()(
             wrapperCol: { span: 19 },
         };
 
-        function onContractChange(info){
+        function onContractChange(info) {
             contract.FileName = info.file.name;
             contract.FileHash = info.file.response.fileHash;
             contract.FileSignature = info.file.response.signature;
             contract.Uploader = info.file.response.uploader;
         }
 
-        function onAttachmentChange(info){
+        function onAttachmentChange(info) {
             let attachment = {};
             attachment.FileName = info.file.name;
             attachment.FileHash = info.file.response.fileHash;
@@ -395,7 +395,7 @@ const SecondStepForm = Form.create()(
         }
 
         const contractFileUploadOptions = getFileUploadOptions(onContractChange);
-        
+
         const documentFileUploadOptions = getFileUploadOptions(onAttachmentChange);
 
         return (
@@ -459,6 +459,7 @@ class LocalLC extends React.Component {
             draftModalVisible: false,
             LCs: [],
             banks: [],
+            signedbanks: [],
             corporations: [],
             index: 0,
             LCData: [],
@@ -522,6 +523,24 @@ class LocalLC extends React.Component {
                 });
             });
 
+        request("/api/signedbank/" + userId)
+            .then((data) => {
+                const signedbanks = [];
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].StateSign != 1) {
+                        continue;
+                    }
+                    signedbanks.push({
+                        key: i,
+                        info: data[i] //原始数据
+                    })
+                }
+
+                this.setState({
+                    signedbanks: signedbanks
+                });
+            });
+
         request("/api/corporation")
             .then((data) => {
                 const corporations = [];
@@ -542,6 +561,7 @@ class LocalLC extends React.Component {
                 });
             });
     }
+
     closeProtocolForm = () => {
         this.setState({
             createDraftProtocolVisible: false,
@@ -572,7 +592,7 @@ class LocalLC extends React.Component {
         })
     }
 
-    saveCreateProtocolRef = (form) =>{
+    saveCreateProtocolRef = (form) => {
         this.createProtocol = form;
     }
     saveCreateFormRef = (form) => {
@@ -588,8 +608,9 @@ class LocalLC extends React.Component {
             if (err) {
                 return;
             }
-            this.setState({createDraftProtocolVisible:false,
-                createDraftFromVisible:true,
+            this.setState({
+                createDraftProtocolVisible: false,
+                createDraftFromVisible: true,
             })
         });
     }
@@ -656,7 +677,7 @@ class LocalLC extends React.Component {
             values.AdvisingBankId = parseInt(values.AdvisingBankId);
             values.AfterSight = parseInt(values.AfterSight);
             values.DocDelay = parseInt(values.DocDelay);
-            if(values.Amount < values.EnsureAmount )
+            if (values.Amount < values.EnsureAmount)
                 return alert("输入正确的信用证金额及保证金金额！");
             formValues = values;
             request('/api/applicationform', {
@@ -699,11 +720,11 @@ class LocalLC extends React.Component {
                 method: "POST",
                 body: data,
             })
-            .then((data) => {
-                this.setState({
-                    loading: false,
-                })
-            });
+                .then((data) => {
+                    this.setState({
+                        loading: false,
+                    })
+                });
         });
     }
 
@@ -743,7 +764,7 @@ class LocalLC extends React.Component {
                 }
             },
         ];
-        const bankOptions = this.state.banks.map(bank => <Option key={bank.id}>{bank.bankName}</Option>), 
+        const bankOptions = this.state.signedbanks.map(bank => <Option key={bank.info.bank.id}>{bank.info.bank.name}</Option>),
             corpOptions = this.state.corporations.map(corporation => <Option key={corporation.id}>{corporation.name}</Option>);
         return (
             <PageHeaderLayout title="国内信用证">

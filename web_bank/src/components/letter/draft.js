@@ -127,13 +127,14 @@ class LetterDraft extends React.Component {
     }
     //获得LC的内部编号，并且将序列+1,并作为transactionId
     getLCNumber = () => {
-        var lcno = sessionStorage.getItem("bankno")+time.Now().Format("20060102");
+        var lcno = sessionStorage.getItem("bankno") + time.Now().Format("20060102");
     }
+
     componentDidMount = () => {
         this.getLCApplyDetail();
         this.getLCProcessFlows();
-        this.getAFStateInfo();
     }
+
     getAFStateInfo = () => {
         fetch_get("/api/applicationform/afstate/" + this.props.params.id)
             .then((res) => {
@@ -166,6 +167,7 @@ class LetterDraft extends React.Component {
                 }
             });
     }
+
     getLCApplyDetail = () => {
         fetch_get("/api/applicationform/" + this.props.params.id)
             .then((res) => {
@@ -200,6 +202,8 @@ class LetterDraft extends React.Component {
         this.setState({
             letter: data,
         });
+        // Afstate数据依赖于letter需要先letter返回数据后再请求afstate
+        this.getAFStateInfo();
     }
 
     // 接受申请 Dialog
@@ -451,10 +455,10 @@ class LetterDraft extends React.Component {
             chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
             chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
             docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
-            Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
-            Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
-            Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
-            OverLow = "短装:"+applicationForm.Lowfill+"    溢装:"+applicationForm.Overfill  ;
+            Negotiate = applicationForm.Negotiate === "1" ? "以下银行可议付" : (applicationForm.Negotiate === "2" ? "任意银行可议付" : "不可议付"),
+            Transfer = applicationForm.Transfer === "1" ? "可转让" : "不可转让",
+            Confirmed = applicationForm.Confirmed === "1" ? "可保兑" : "不可保兑",
+            OverLow = "短装:" + applicationForm.Lowfill + "    溢装:" + applicationForm.Overfill;
 
         let btnDivHtml;
         if (this.state.letter != null && this.state.letter.CurrentStep != "" && this.state.letter.CurrentStep == "BankConfirmApplyFormStep" &&
@@ -482,7 +486,7 @@ class LetterDraft extends React.Component {
                 <Content style={{ background: '#fff', padding: 0, margin: '0' }}>
 
                     <Tabs defaultActiveKey="1" onChange={this.tabsCallback} style={{ marginTop: '20px' }}>
-                        <TabPane tab="开征申请书" key="1">
+                        <TabPane tab="开证申请书" key="1">
                             <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
                                 <Row>
                                     <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>申请人信息</Col>
@@ -532,7 +536,6 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
                                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{}</Col>
                                 </Row>
-
                                 <Row>
                                     <Col style={{ marginTop: '30px', marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>详细信息</Col>
                                 </Row>
@@ -564,7 +567,6 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>最迟装运日期</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.latestShipmentDate}</Col>
                                 </Row>
-
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>装运地点</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingPlace}</Col>
@@ -572,7 +574,6 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>目的地</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingDestination}</Col>
                                 </Row>
-
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.tradeNature == 1 ? "货物贸易" : "服务贸易"}</Col>
@@ -580,12 +581,10 @@ class LetterDraft extends React.Component {
                                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>溢短装</Col>
                                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{OverLow}</Col>
                                 </Row>
-
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物描述</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={21}>{goodsInfo.GoodsDescription}</Col>
                                 </Row>
-
                                 <Row>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
                                     <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
@@ -605,8 +604,8 @@ class LetterDraft extends React.Component {
                             </div>
 
                             <div style={{ margin: '5px 8px', borderTop: '1px solid #e6ebf1', minHeight: 20 }}>
-
                             </div>
+
                             <div>
                                 {btnDivHtml}
                             </div>

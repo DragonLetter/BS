@@ -45,6 +45,12 @@ const STEP_ENUM = {
 exports.getTxsByBankId = function (req, res, next) {
     var args = req.swagger.params;
     var bankId = args.bankId.value;
+    var status = args.status.value;
+    var lcNo = args.lcNo.value;
+    var applicant = args.applicant.value;
+    var beneficiary = args.beneficiary.value;
+    var startDate = args.startDate.value;
+    var endDate = args.endDate.value;
 
     Logger.debug("args:" + args);
 
@@ -56,10 +62,78 @@ exports.getTxsByBankId = function (req, res, next) {
             var txs = [];
             var resultObj = JSON.parse(resp.result);
             for (var i = 0; i < resultObj.length; i++) {
-                txs.push(chaincodeTx2ViewTx(resultObj[i]));
-                /*if (resultObj[i].Record.CurrentStep != "ApplicantSaveLCApplyFormStep" ){
-                    txs.push(chaincodeTx2ViewTx(resultObj[i]));
-                }*/
+                // txs.push(chaincodeTx2ViewTx(resultObj[i]));
+                var lc = resultObj[i];
+                var lcStep = lc.Record.CurrentStep;
+                var lcNum = lc.Record.lcNo;
+                var lcApplicant = lc.Record.LetterOfCredit.Applicant.Name;
+                var lcBeneficiary = lc.Record.LetterOfCredit.Beneficiary.Name;
+
+                 //开证行和通知行是同一家银行
+                if (lc.Record.ApplicationForm.IssuingBank.No == bankId
+                    && lc.Record.ApplicationForm.AdvisingBank.No == bankId) {
+                        Logger.debug("Issue bank is same with advising bank."
+                        + "\n bankId:" + bankId
+                        + "\n lcSetp:" + lcStep
+                        + "\n lcNo:" + lcNo
+                        + "\n lcNum:" + lcNum
+                        + "\n applicant:" + applicant
+                        + "\n lcApplicant:" + lcApplicant
+                        + "\n beneficiary:" + beneficiary
+                        + "\n lcBeneficiary:" + lcBeneficiary
+                        + "\n current status:" + lc.Record.lcStatus
+                        + "\n select status:" + status
+                        + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
+                        + "\n startDate:" + startDate
+                        + "\n endData:" + endDate                        
+                         + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+
+                    if (selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                        txs.push(chaincodeTx2ViewTx(lc));
+                    }                
+                }else if (lc.Record.ApplicationForm.IssuingBank.No == bankId) {//开证行
+                    Logger.debug("Issue bank info."
+                        + "\n bankId:" + bankId
+                        + "\n lcSetp:" + lcStep
+                        + "\n lcNo:" + lcNo
+                        + "\n lcNum:" + lcNum
+                        + "\n applicant:" + applicant
+                        + "\n lcApplicant:" + lcApplicant
+                        + "\n beneficiary:" + beneficiary
+                        + "\n lcBeneficiary:" + lcBeneficiary
+                        + "\n current status:" + lc.Record.lcStatus
+                        + "\n select status:" + status
+                        + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
+                        + "\n startDate:" + startDate
+                        + "\n endData:" + endDate                    
+                        + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                   
+                    // txs.push(chaincodeTx2ViewTx(lc));                    
+                    if (selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                        txs.push(chaincodeTx2ViewTx(lc));
+                    }
+                } else if (lc.Record.ApplicationForm.AdvisingBank.No == bankId) {//通知行
+                    Logger.debug("Advising bank info."
+                        + "\n bankId:" + bankId
+                        + "\n lcSetp:" + lcStep
+                        + "\n lcNo:" + lcNo
+                        + "\n lcNum:" + lcNum
+                        + "\n applicant:" + applicant
+                        + "\n lcApplicant:" + lcApplicant
+                        + "\n beneficiary:" + beneficiary
+                        + "\n lcBeneficiary:" + lcBeneficiary
+                        + "\n current status:" + lc.Record.lcStatus
+                        + "\n select status:" + status
+                        + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
+                        + "\n startDate :" + startDate
+                        + "\n endData :" + endDate                      
+                        + "\n selectTx :" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+
+                    // txs.push(chaincodeTx2ViewTx(lc));
+                    if (selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
+                        txs.push(chaincodeTx2ViewTx(lc));
+                    }
+                }
             }
 
             if (txs.length > 0) {
@@ -74,7 +148,7 @@ exports.getTxsByBankId = function (req, res, next) {
 };
 
 function selectTxWithStatus(status, txStatus) {
-    if (status == "" || status == undefined || status == null || status == "null") {
+    if (status == "" || status == undefined || status == "undefined" || status == null || status == "null") {        
         return true;
     } else if (status == txStatus) {
         return true;

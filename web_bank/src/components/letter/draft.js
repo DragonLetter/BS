@@ -16,7 +16,7 @@ const { Header, Content, Sider } = Layout;
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onOk, dataform, data, form } = props;
+        const { visible, onCancel, onOk, lcPicker, dataform, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 19 }, };
 
@@ -31,16 +31,33 @@ const ApproveDialog = Form.create()(
                 width='800'
             >
                 <Form>
-                    <FormItem label="信用证编号" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
+                    {/* <FormItem label="信用证编号" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
                         {
                             getFieldDecorator('LCNumber', {
                                 initialValue: dataform ? dataform.lcNo : "",
                                 rules: [{ required: true, message: '请填写国结系统分配的信用证编号.' }],
                             })
                                 (
-                                <Input />
+                                <span style={{ marginTop: 0, marginLeft: 0 }} >
+                                <InputNumber id="LCNumber" style={{ width: 180 }} />   <Button style={{ width: 180 }} onClick={lcPicker}>信用证取号</Button>
+                                </span>
                                 )
                         }
+                    </FormItem> */}
+                    <FormItem label="信用证编号" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
+                        <Row>
+                            <Col span={19}>
+                                {getFieldDecorator('LCNumber', {
+                                initialValue: dataform ? dataform.lcNo : "",
+                                rules: [{ required: true, message: '请填写国结系统分配的信用证编号.' }],
+                                })(
+                                <Input />
+                                )}
+                            </Col>
+                            <Col span={5}>
+                                <Button onClick={lcPicker}>信用证取</Button>
+                            </Col>
+                        </Row>
                     </FormItem>
                     <FormItem label="保证金金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
                         {
@@ -120,14 +137,19 @@ class LetterDraft extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
-            lcNo: "",
             afstate: {},
             letter: {}
         }
     }
-    //获得LC的内部编号，并且将序列+1,并作为transactionId
-    getLCNumber = () => {
-        var lcno = sessionStorage.getItem("bankno") + time.Now().Format("20060102");
+    //获得信用证的编号
+    letterPicker = () => {
+        var date = new Date().getTime();
+        var lcno = sessionStorage.getItem("bankno")+date;
+        const form = this.approveForm;
+        form.validateFields((err, values) => {
+            values.LCNumber  = lcno;
+            form.setFieldsValue(values);
+        });
     }
 
     componentDidMount = () => {
@@ -630,6 +652,7 @@ class LetterDraft extends React.Component {
                     visible={this.state.approveDialogVisible}
                     onCancel={this.closeApproveDialog}
                     onOk={this.handleApprove}
+                    lcPicker={this.letterPicker}
                     dataform={this.state.afstate}
                 />
                 <RejectDialog

@@ -52,7 +52,7 @@ exports.getTxsByBankId = function (req, res, next) {
     var startDate = args.startDate.value;
     var endDate = args.endDate.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
         if (resp == null || resp.result == null) {
@@ -250,7 +250,7 @@ exports.getProcessingTxByBankId = function (req, res, next) {
     var startDate = args.startDate.value;
     var endDate = args.endDate.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
         var txs = [];
@@ -383,7 +383,7 @@ exports.getProcessFlowByTxId = function (req, res, next) {
     var args = req.swagger.params;
     var id = args.txId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         if (resp == null || resp.result == null) {
@@ -422,7 +422,7 @@ function lc2ProgressFlow(lc) {
 exports.getLCDraftByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -451,7 +451,7 @@ exports.getLCDraftByTxId = function (req, res, next) {
 exports.getDepositByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -477,7 +477,7 @@ exports.getDepositByTxId = function (req, res, next) {
 exports.getDepositDocsByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -503,7 +503,7 @@ exports.getDepositDocsByTxId = function (req, res, next) {
 exports.getContractsByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -544,7 +544,7 @@ function chaincodeTx2Contract(lc) {
 exports.getLCOriginalByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -570,7 +570,7 @@ exports.getLCOriginalByTxId = function (req, res, next) {
 exports.getLCDocsReceivedByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -596,7 +596,7 @@ exports.getLCDocsReceivedByTxId = function (req, res, next) {
 exports.getLCAcceptPaymentByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {
@@ -630,7 +630,7 @@ exports.getLCAcceptPaymentByTxId = function (req, res, next) {
 exports.getLCClosingByTxId = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [args.txId.value], function (error, resp) {
         if (resp == null || resp.result == "") {

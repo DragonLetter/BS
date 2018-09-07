@@ -4,6 +4,7 @@ var models = require('../models');
 var constants = require("./Constants")
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.getProcessingTransByCorpId = function (req, res, next) {
     var args = req.swagger.params;
@@ -19,7 +20,7 @@ exports.getProcessingTransByCorpId = function (req, res, next) {
         beneficiaryLCs = [],
         lcs;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     models.Corporation.findById(id).then(function (corp) {
         if (corp == null || Object.keys(corp).length == 0) {
@@ -83,7 +84,7 @@ exports.getProgressFlowByTransId = function (req, res, next) {
 
     var id = args.transId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         if (resp.result == "") {
@@ -120,7 +121,7 @@ exports.getTransByCorpId = function (req, res, next) {
      **/
     var id = args.corpId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     models.Corporation.findById(id).then(function (corp) {
         if (corp == null || Object.keys(corp).length == 0) {

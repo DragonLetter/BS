@@ -6,11 +6,12 @@ var keyHelper = require("../keyhelper");
 var options = require(path.join(__dirname, '..', 'config', 'fabric.json'));
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.createUser = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Create user
@@ -62,7 +63,7 @@ exports.createUser = function (req, res, next) {
 exports.umCreate = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Create user
@@ -95,7 +96,7 @@ exports.umCreate = function (req, res, next) {
 exports.umUpdate = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Updated user
@@ -130,7 +131,7 @@ exports.umUpdate = function (req, res, next) {
 exports.umDelete = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * delete user
@@ -159,7 +160,7 @@ exports.umDelete = function (req, res, next) {
 exports.getUMUsers = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.User.findAll({
     where: { domain: args.key.value }
@@ -178,7 +179,7 @@ exports.getUMUsers = function (req, res, next) {
 exports.createUsersWithArrayInput = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Creates list of users with given input array
@@ -187,7 +188,6 @@ exports.createUsersWithArrayInput = function (req, res, next) {
    * body List List of user object
    * no response value expected for this operation
    **/
-  Logger.info("trace args:" + args);
   //  models.User.bulkCreate(JSON.stringify(args.body.value));
   models.User.bulkCreate(args.body.value);
   res.end(JSON.stringify("true"));
@@ -196,7 +196,7 @@ exports.createUsersWithArrayInput = function (req, res, next) {
 exports.createUsersWithListInput = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Creates list of users with given input array
@@ -211,7 +211,7 @@ exports.createUsersWithListInput = function (req, res, next) {
 exports.deleteUser = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Delete user
@@ -239,7 +239,7 @@ exports.deleteUser = function (req, res, next) {
 exports.getUserByName = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Get user by user name
@@ -281,7 +281,7 @@ exports.getUserByName = function (req, res, next) {
 exports.appLoginUser = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   const myCache = new NodeCache();
   myCache.set(args.body.value.userName, args.body.value.privateKey, 10000);
@@ -300,7 +300,7 @@ exports.loginUser = function (req, res, next) {
   var args = req.swagger.params;
   var hashPwd = keyHelper.hashPassword(args.body.value.userName, args.body.value.password);
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.User.findOne({
     'where': {
@@ -343,7 +343,7 @@ exports.loginUser = function (req, res, next) {
 exports.logoutUser = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   req.session.destroy();
   res.end(JSON.stringify("true"));
@@ -352,7 +352,7 @@ exports.logoutUser = function (req, res, next) {
 exports.updateUser = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Updated user
@@ -387,7 +387,7 @@ exports.updateUser = function (req, res, next) {
 exports.getAllUsers = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.User.findAll().then(function (data) {
     var result = [];
@@ -419,7 +419,7 @@ exports.getCurrentUser = function (req, res, next) {
   var args = req.swagger.params;
   var u = args.sessionUser;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   if (!u) {
     res.status(401).send("please login first!");

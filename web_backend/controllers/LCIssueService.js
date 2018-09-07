@@ -2,11 +2,12 @@
 var fabric = require("../fabric");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.corporationConfirmDraft = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * confirm LCIssue
@@ -21,7 +22,7 @@ exports.corporationConfirmDraft = function (req, res, next) {
 exports.getLCIssueByLcNo = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 根据信用证编号获取信用证文本信息
@@ -83,7 +84,7 @@ exports.getLCIssueByLcNo = function (req, res, next) {
 exports.lCIssueEdit = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 信用证修改
@@ -98,7 +99,7 @@ exports.lCIssueEdit = function (req, res, next) {
 exports.surrenderDocuments = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 信用证交单 handOverBills

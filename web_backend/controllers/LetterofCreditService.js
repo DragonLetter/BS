@@ -3,6 +3,7 @@ var fabric = require("../fabric");
 var models = require('../models');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 /**
  * 申请人：修改信用证（信用证修改由申请人发起）
@@ -25,7 +26,7 @@ exports.lcAmendation = function (req, res, next) {
         "AddedDepositAmt": value.addedDepositAmt,
     };
 
-    Logger.debug("input args:" + args
+    Logger.debug("input args:" + inspect(args)
         + "\n fabric req:" + fabricArg);
 
     fabric.invoke(req, "lcAmendSubmit", [no, JSON.stringify(fabricArg)], function (err, resp) {
@@ -51,7 +52,7 @@ exports.amendCountersign = function (req, res, next) {
         p2 = values.opinion,
         p3 = values.isAgreed.toString();
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.invoke(req, "lcAmendConfirm", [p1, p2, p3], function (err, resp) {
         if (!err) {
@@ -79,7 +80,7 @@ exports.lcDeposit = function (req, res, next) {
             "DepositDoc": depositDoc ? depositDoc : {},
         };
 
-    Logger.debug("input args:" + args
+    Logger.debug("input args:" + inspect(args)
         + "\n fabric req:" + fabricArg);
 
     fabric.invoke(req, "deposit", [no, JSON.stringify(fabricArg)], function (err, resp) {
@@ -104,7 +105,7 @@ exports.beneficiaryHandleLCNotice = function (req, res, next) {
         suggestion = value.suggestion,
         isAgreed = value.isAgreed;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.invoke(req, "beneficiaryReceiveLCNotice", [no, suggestion, isAgreed], function (err, resp) {
         if (!err) {
@@ -130,7 +131,7 @@ exports.beneficiaryHandoverBills = function (req, res, next) {
         },
         fabricArg1 = value.billFile;
 
-    Logger.debug("input args:" + args
+    Logger.debug("input args:" + inspect(args)
         + "\n fabric arg:" + fabricArg
         + "\n fabric arg1:" + fabricArg1);
 
@@ -155,7 +156,7 @@ exports.retireShippingBills = function (req, res, next) {
         no = value.no,
         commitAmount = value.commitAmount;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.invoke(req, "retireShippingBills", [no, commitAmount], function (err, resp) {
         if (!err) {

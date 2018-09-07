@@ -2,6 +2,7 @@
 var fabric = require("../fabric");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 /**
  * 获取指定银行的关键业务指标
@@ -17,7 +18,7 @@ exports.getMetrcsByBankId = function (req, res, next) {
     var args=req.swagger.params;
     var bankId = args.bankId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcListByBankId", [bankId], function (err, resp) {
         if(resp == null || resp.result == null) {
@@ -59,7 +60,7 @@ exports.getMetrcsByBankId = function (req, res, next) {
 exports.getNetworkMetrics = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     res.end();
 }

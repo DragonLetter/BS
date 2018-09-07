@@ -10,6 +10,7 @@ var config = require(path.join(__dirname, '..', 'config', 'dbconfig.json'))[env]
 var nodeConf = require(path.join(__dirname, '../config/nodeconf.json'));
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 if (process.env.DATABASE_URL) {
   var sequelize = new Sequelize(process.env.DATABASE_URL, config);
@@ -20,7 +21,7 @@ if (process.env.DATABASE_URL) {
 exports.cancelCertificateApply = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -57,7 +58,7 @@ exports.cancelCertificateApply = function (req, res, next) {
 exports.cancelCertificateEnroll = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -95,7 +96,7 @@ exports.cancelCertificateEnroll = function (req, res, next) {
 exports.certificateApply = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -124,7 +125,7 @@ exports.certificateApply = function (req, res, next) {
 exports.certificatePublish = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -157,7 +158,7 @@ exports.certificatePublish = function (req, res, next) {
 exports.certificateRevoke = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -194,7 +195,7 @@ exports.certificateRevoke = function (req, res, next) {
 exports.confirmCertificateApply = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -231,7 +232,7 @@ exports.confirmCertificateApply = function (req, res, next) {
 exports.confirmCertificateEnroll = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -270,7 +271,7 @@ exports.confirmCertificateEnroll = function (req, res, next) {
 exports.enrollCertificate = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -419,7 +420,7 @@ exports.enroll = function (args) {
 exports.queryCertificateApplyState = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -448,7 +449,7 @@ exports.queryCertificateApplyState = function (req, res, next) {
 exports.queryCertificateEnrollState = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:
@@ -469,7 +470,7 @@ exports.queryCertificateEnrollState = function (req, res, next) {
 exports.getCertificateState = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * parameters expected in the args:

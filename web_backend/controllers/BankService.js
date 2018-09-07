@@ -4,11 +4,12 @@ var models = require('../models');
 var Sequelize = require("sequelize");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.addBank = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Add a new bank to the store
@@ -25,7 +26,7 @@ exports.addBank = function (req, res, next) {
 exports.deleteBank = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.Bank.destroy({ where: { Id: args.BankId.value }, truncate: false });
   res.end();
@@ -34,7 +35,7 @@ exports.deleteBank = function (req, res, next) {
 exports.findBanksByName = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Finds Banks by name
@@ -74,7 +75,7 @@ exports.getBankById = function (req, res, next) {
   var args = req.swagger.params;
   var id = args.BankId.value;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.Bank.findById(id).then(function (bank) {
     if (Object.keys(bank).length > 0) {
@@ -102,7 +103,7 @@ exports.getBanks = getBanks;
 exports.updateBank = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Update an existing Bank
@@ -117,7 +118,7 @@ exports.updateBank = function (req, res, next) {
 exports.addBank2cc = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Add a new bank to the store

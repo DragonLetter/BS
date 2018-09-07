@@ -2,6 +2,7 @@
 var fabric = require("../fabric")
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.transfer = function (req, res, next) {
     var args = req.swagger.params;
@@ -10,7 +11,7 @@ exports.transfer = function (req, res, next) {
     var amount = args.amount.value;
     var fabricArgs = [accountA, accountB, amount];
 
-    Logger.debug("args:" + args
+    Logger.debug("args:" + inspect(args)
         + "\n fabric req:" + fabricArgs);
 
     fabric.invoke(req, "invoke", fabricArgs, function (err, resp) {
@@ -28,7 +29,7 @@ exports.getAccountBalance = function (req, res, next) {
     var args = req.swagger.params;
     var account = args.account.value;
 
-    Logger.debug("args:" + args
+    Logger.debug("args:" + inspect(args)
         + "\n fabric account:" + account);
 
     fabric.query(req, "query", [account], function (err, resp) {

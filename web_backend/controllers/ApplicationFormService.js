@@ -6,10 +6,11 @@ var constants = require("./Constants");
 var moment = require("moment");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.addApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 新建申请表
@@ -140,7 +141,7 @@ exports.addApplicationForm = function (req, res, next) {
 
 exports.updateAFState = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.Afstate.update(args.body.value,
     {
@@ -165,7 +166,7 @@ exports.updateAFState = function (req, res, next) {
 
 exports.getAFState = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   models.Afstate.findOne({
     'where': {
@@ -195,7 +196,7 @@ function submitApplicationFormByCorp(req, corpNo, key, res, next) {
 
 exports.addFile = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * add file to application
@@ -209,7 +210,7 @@ exports.addFile = function (req, res, next) {
 
 exports.deleteApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Deletes a ApplicationForm
@@ -223,7 +224,7 @@ exports.deleteApplicationForm = function (req, res, next) {
 
 exports.findApplicationFormsByBank = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 根据开证行的编号获得信用证申请单
@@ -302,7 +303,7 @@ function getApplicationFormByIssuingBank(bankId, res, next) {
 
 exports.findApplicationFormsByCorp = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 根据企业号获得企业的申请单
@@ -316,7 +317,7 @@ exports.findApplicationFormsByCorp = function (req, res, next) {
 
 exports.findApplicationFormsByMyBank = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 银行端根据当前用户的银行编号获得信用证申请单
@@ -358,7 +359,7 @@ exports.findApplicationFormsByMyBank = function (req, res, next) {
 
 exports.findApplicationFormsByMyCorp = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 企业端根据当前用户的企业号获得企业的申请单
@@ -400,7 +401,7 @@ exports.findApplicationFormsByMyCorp = function (req, res, next) {
 
 exports.getApplicationFormById = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Find ApplicationForm by ID
@@ -418,7 +419,7 @@ exports.getApplicationFormById = function (req, res, next) {
 
 exports.getApplicationForms = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Get all ApplicationForms
@@ -461,7 +462,7 @@ exports.getApplicationForms = function (req, res, next) {
 
 exports.updateApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Update an existing ApplicationForm
@@ -475,7 +476,7 @@ exports.updateApplicationForm = function (req, res, next) {
 
 exports.submitApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   var id = args.id.value.toString();
   fabric.invoke(req, "submitLCApplication", [id], function (err, resp) {
@@ -491,7 +492,7 @@ exports.submitApplicationForm = function (req, res, next) {
 
 exports.confirmApplicationForm = function (req, res, next) {
   var args = req.swagger.params;
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   let value = args.body.value, no = value.no, depositAmount = value.depositAmount, lcNo = value.lcNo, suggestion = value.suggestion, isAgreed = value.isAgreed;
   fabric.invoke(req, "bankConfirmApplication", [no, lcNo, depositAmount, suggestion, isAgreed], function (err, resp) {

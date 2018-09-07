@@ -2,6 +2,7 @@
 var fabric = require("../fabric");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.applicationAudit = function (req, res, next) {
     var args = req.swagger.params;
@@ -12,7 +13,7 @@ exports.applicationAudit = function (req, res, next) {
         suggestion = value.suggestion,
         isAgreed = value.isAgreed;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.invoke(req, "bankConfirmApplication", [no, lcNo, depositAmount, suggestion, isAgreed], function (err, resp) {
         if (!err) {
@@ -27,7 +28,7 @@ exports.getApplicationById = function (req, res, next) {
     var args = req.swagger.params;
     var id = args.appId.value.toString();
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         res.setHeader('Content-Type', 'application/json');

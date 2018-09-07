@@ -2,13 +2,14 @@
 
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 var models = require('../models');
 var Sequelize = require("sequelize");
 
 function addBankRecord(req, res, next) {
     var args = req.swagger.params;
-    Logger.debug("Add a new bank record:" + args);
+    Logger.debug("Add a new bank record:" + inspect(args));
 
     /**
      * Add a new operation record to the db
@@ -23,7 +24,7 @@ function deleteBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcID = args.LcNo.value;
 
-    Logger.debug("Delete a bank record:" + args);
+    Logger.debug("Delete a bank record:" + inspect(args));
 
     models.BankRecord.destroy({ where: { Id: lcID }, truncate: false });
 
@@ -35,7 +36,7 @@ function getBankRecordByLcNo(req, res, next) {
     var args = req.swagger.params;
     var lcNo = args.lcNo.value;
 
-    Logger.debug("Get a bank record:" + args);
+    Logger.debug("Get a bank record:" + inspect(args));
 
     models.BankRecord.findAll({
         'where': {
@@ -54,7 +55,7 @@ exports.getBankRecordByLcNo = getBankRecordByLcNo;
 
 function updateBankRecord(req, res, next) {
     var args = req.swagger.params;
-    Logger.debug("Update a bank record:" + args);
+    Logger.debug("Update a bank record:" + inspect(args));
 
     /**
      * Update an existing Bank
@@ -74,7 +75,7 @@ exports.updateAFStateRecord = function (req, res, next) {
     var userName = req.session.user.username;
     var values = args.body.value;
 
-    Logger.debug("updateAFStateRecord:" + args);
+    Logger.debug("updateAFStateRecord:" + inspect(args));
 
     var dbVal;
     dbVal = {

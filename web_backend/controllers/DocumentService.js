@@ -6,11 +6,12 @@ var pdf = require('html-pdf');
 var fs = require('fs');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.downloadFile = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 根据文件Hash获得文件内容
@@ -41,7 +42,7 @@ exports.uploadFile = function (req, res, next) {
    **/
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   var content = args.file.value.buffer;
   var fileSize = args.file.value.size;
@@ -106,7 +107,7 @@ exports.transHtml2Pdf = function (req, res, next) {
   var value = args.body.value;
   var options = { format: true };
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   pdf.create(value.data.toString(), options).toBuffer(function (err, buffer) {
     if (err) return console.log(err);
@@ -121,7 +122,7 @@ exports.TransFData = function (req, res, next) {
   var options = { format: true };
   var content = args.body.data;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   pdf.create(content, options).toBuffer(function (err, buffer) {
     if (err) return console.log(err);
@@ -139,7 +140,7 @@ exports.getTransFData = function (req, res, next) {
   var options = { format: true };
   var filePath = path.resolve(__dirname, '../pdf/');
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   fs.readFile(filePath + '/' + filename, 'utf8', function (err, files) {
     Logger.debug(filePath + '/' + filename);

@@ -2,12 +2,13 @@
 var models = require('../models');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.addCorpPartnership = function (req, res, next) {
     var args = req.swagger.params;
     var corpId = args.body.value.hostCorpId;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     args.body.value.creationTime = args.body.value.creationTime.split("T")[0];
     models.CorpPartnership.create(args.body.value).then(function (data) {
@@ -18,7 +19,7 @@ exports.addCorpPartnership = function (req, res, next) {
 exports.deleteCorpPartnership = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     /**
      * Deletes a CorpPartnership
@@ -48,7 +49,7 @@ exports.getCorpPartnershipById = function (req, res, next) {
     var args = req.swagger.params;
     var corpId = args.corpId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     getCorpPartnershipById(corpId, res);
 }
@@ -56,7 +57,7 @@ exports.getCorpPartnershipById = function (req, res, next) {
 exports.updateCorpPartnership = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     /**
      * Update an existing CorpPartnership

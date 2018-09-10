@@ -3,6 +3,7 @@ var fabric = require("../fabric");
 var constants = require("./Constants");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 var STATUS_ENUM = [
     "企业申请",

@@ -28,3 +28,8 @@ module.exports.beneficiaryHandoverBills = function beneficiaryHandoverBills(req,
   Logger.info("beneficiaryHandoverBills");
   LetterofCredit.beneficiaryHandoverBills(req, res, next);
 }
+
+module.exports.appliciantCheckBills = function appliciantCheckBills(req, res, next) {
+  Logger.info("appliciantCheckBills");
+  LetterofCredit.appliciantCheckBills(req, res, next);
+}

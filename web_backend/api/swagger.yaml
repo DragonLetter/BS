@@ -725,12 +725,14 @@ paths:
         default:
           description: "OK"
       x-swagger-router-controller: "LetterofCredit"      
+
+# 信用证交单业务流程，操作接口 ------- 企业端 ------
   /LetterofCredit/beneficiaryHandoverBills:
     post:
       tags: 
       - "LetterofCredit"
-      summary: "申请人修改信用证"
-      description: "申请人修改信用证"
+      summary: "受益人交单"
+      description: "受益人交单"
       operationId: "beneficiaryHandoverBills"
       produces: 
       - "application/json"
@@ -741,6 +743,26 @@ paths:
         required: true
         schema:
             $ref: "#/definitions/HandoverBills"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit"                               
+  /LetterofCredit/appliciantCheckBills:
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "申请人审单"
+      description: "申请人审单"
+      operationId: "appliciantCheckBills"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/BillsCheck"
       responses:
         default:
           description: "OK"
@@ -3071,11 +3093,37 @@ definitions:
       isAgreed: 
         type: "string"
       depositDoc:
-        $ref: "#/definitions/Document"   
+        $ref: "#/definitions/Document" 
+  # 信用证交单结构，受益人  
   HandoverBills:
     type: "object"
     properties:
       no:
+        type: "string"
+      billinfo:
+        type: "object"
+        properties:
+          bolNo:
+            type: "string"
+          goodsNo:
+            type: "string"
+          goodsInfo:
+            type: "string"
+          shippingTime:
+            type: "string"
+      billFile:
+        type: "object"
+  # 信用证交单审核，申请人/开证行
+  BillsCheck:
+    type: "object"
+    properties:
+      lcNo:
+        type: "string"
+      billNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
         type: "string"
   TransFData:
     type: "object"

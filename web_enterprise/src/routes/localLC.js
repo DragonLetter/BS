@@ -3,6 +3,7 @@ import PDF from 'react-pdf-js';
 import { Popconfirm, Upload, Row, Layout, Breadcrumb, Collapse, InputNumber, Table, Badge, Timeline, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd';
 import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/common';
 import DraftModal from '../modals/DraftModal';
+import HandoverBillsModal from '../modals/HandoverBillsModal';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
 const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
@@ -457,6 +458,7 @@ class LocalLC extends React.Component {
             createDraftFromVisible: false,
             secondStepFromVisible: false,
             draftModalVisible: false,
+            handoverBillsModalVisible: false,
             LCs: [],
             banks: [],
             signedbanks: [],
@@ -464,6 +466,7 @@ class LocalLC extends React.Component {
             index: 0,
             LCData: [],
             loading: true,
+            handoverBillsInfo: [],
         }
     }
 
@@ -482,6 +485,7 @@ class LocalLC extends React.Component {
                 amount: data[i].Record.ApplicationForm.amount,
                 state: data[i].Record.CurrentStep,
                 applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
+                detail: data[i]
             })
         }
         this.setState({
@@ -586,6 +590,12 @@ class LocalLC extends React.Component {
         });
     }
 
+    closeHandoverBillsModal = () => {
+        this.setState({
+            handoverBillsModalVisible: false,
+        });
+    }
+
     showCreateDraftProtocol = () => {
         this.setState({
             createDraftProtocolVisible: true,
@@ -595,6 +605,7 @@ class LocalLC extends React.Component {
     saveCreateProtocolRef = (form) => {
         this.createProtocol = form;
     }
+
     saveCreateFormRef = (form) => {
         this.createForm = form;
     }
@@ -602,6 +613,7 @@ class LocalLC extends React.Component {
     saveSecondStepFormRef = (form) => {
         this.secondStepForm = form;
     }
+
     handleProtocolSubmit = () => {
         const form = this.createProtocol;
         form.validateFields((err, values) => {
@@ -614,6 +626,7 @@ class LocalLC extends React.Component {
             })
         });
     }
+
     handleSubmit = () => {
         const form = this.createForm;
         form.validateFields((err, values) => {
@@ -728,6 +741,60 @@ class LocalLC extends React.Component {
         });
     }
 
+    // 交单相关处理逻辑
+    handoverBill = (index, text) => {
+        this.setState({
+            index: index
+        })
+
+        // 申请人进入赎单状态后，受益人可以进行交单
+        if (this.state.LCData[index].Record.CurrentStep == "applicantRetireBills") {
+            this.setState({
+                handoverBillsModalVisible: true,
+            })
+        } else {
+            message.error("还未进入受益人交单流程！");
+        }
+    }
+    handleHandoverBillSubmit = () => {
+        // 获取交单基本信息
+        var billInfo = [];
+        for (let i = 0; i < this.state.handoverBillsInfo.length; i++) {
+            billInfo.push({
+                bolNo: this.state.handoverBillsInfo[i].bolNo,
+                goodsNo: this.state.handoverBillsInfo[i].goodsNo,
+                goodsInfo: this.state.handoverBillsInfo[i].goodsInfo,
+                shippingTime: this.state.handoverBillsInfo[i].shippingTime,
+            });
+        }
+
+        let values = {
+            no: this.state.LCData[this.state.index].Record.lcNo,
+            billinfo: billInfo,
+        };
+
+        message.error("bill info:" + JSON.stringify(values));
+        // request('/api/LetterofCredit/beneficiaryHandoverBills', {
+        //     method: "POST",
+        //     body: values,
+        // }).then((data) => {
+        //     message.success("处理成功!");
+        //     this.setState({
+        //         handoverBillsModalVisible: false,
+        //     });
+        // }).catch((error) => {
+        //     message.error("处理失败！");
+        //     this.setState({
+        //         handoverBillsModalVisible: false,
+        //     })
+        // })
+    }
+    handleBillChange = (data) => {
+        this.setState({
+            handoverBillsInfo: data,
+        });
+    }
+
     showDetailModal = (index, text) => {
         this.setState({
             index: index,
@@ -742,11 +809,23 @@ class LocalLC extends React.Component {
     render = () => {
         const columns = [
             { title: '信用证编号', dataIndex: 'lcNo', key: 'lcNo' },
-            { title: '受益人', dataIndex: 'applicant', key: 'applicant' },
+            { title: '申请人', dataIndex: 'applicant', key: 'applicant' },
             { title: '受益人', dataIndex: 'beneficiary', key: 'beneficiary' },
             { title: '开证金额', dataIndex: 'amount', key: 'amount' },
             { title: '当前进度', dataIndex: 'state', key: 'state' },
             { title: '发起日期', dataIndex: 'applyTime', key: 'applyTime' },
+            {
+                title: '交单',
+                dataIndex: 'handoverBill',
+                key: 'handoverBill',
+                render: (text, record, index) => {
+                    return (
+                        <span>
+                            <a onClick={() => this.handoverBill(index, text)}>交单</a>
+                        </span>
+                    )
+                }
+            },
             {
                 title: '操作',
                 dataIndex: 'id',
@@ -812,6 +891,14 @@ class LocalLC extends React.Component {
                     onCancel={this.closeDraftModal}
                     data={this.state.LCData[this.state.index]}
                     onSubmit={this.closeDraftModal}
+                />
+                <HandoverBillsModal
+                    visible={this.state.handoverBillsModalVisible}
+                    onCancel={this.closeHandoverBillsModal}
+                    data={this.state.LCs[this.state.index]}
+                    onSubmit={this.handleHandoverBillSubmit}
+                    onBillChange={this.handleBillChange}
+                //onFileChange={this.handleFileChange}
                 />
             </PageHeaderLayout>
         )

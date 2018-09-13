@@ -2,6 +2,7 @@ import React from 'react'
 import { Timeline, Row, Layout, Table, Icon, Steps, Col, Modal } from 'antd'
 
 const { Content } = Layout;
+import { LC_STEPS } from '../routes/constant';
 
 const DraftModal = (props) => {
     // 外部传入数据
@@ -59,20 +60,24 @@ const DraftModal = (props) => {
     // 设置需要展示的内容
     let depositDisplay = { display: "none" }, handoverDisplay = { display: "none" };
     switch (record.CurrentStep) {
-        case "银行发证":
-        case "通知行收到信用证通知":
-        case "受益人接收信用证":
-        case "申请人修改信用证":
-        case "多方会签":
-        case "受益人交单":
+        case LC_STEPS.BankIssueLCStep://"银行发证":
+        case LC_STEPS.AdvisingBankReceiveLCNoticeStep://"通知行收到信用证通知":
+        case LC_STEPS.BeneficiaryReceiveLCStep: //"受益人接收信用证":
+        // case LC_MODIFY_STEPS.ApplicantLCAmendStep: //"申请人修改信用证":
+        // case LC_MODIFY_STEPS.MultiPartyCountersignStep: //"多方会签":
+        // case LC_HANDOVER_STEPS.BeneficiaryHandOverBillsStep: //"受益人交单":
             depositDisplay = { display: "" };
             break;
-        case "通知行审核交单":
-        case "发证行承兑或拒付":
-        case "开证行审核赎单":
-        case "申请人赎单":
-        case "闭卷":
-        case "结束":
+        // case LC_HANDOVER_STEPS.IssuingBankReviewBillsStep: //"发证行审核交单":
+        // case LC_HANDOVER_STEPS.ApplicantReviewBillsStep: //"申请人审核交单":
+        // case LC_HANDOVER_STEPS.IssuingBankAcceptOrRejectStep: //"发证行承兑或拒付",
+        // case LC_HANDOVER_STEPS.IssuingBankRejectBillsStep:  //"开证行拒付交单",
+        // case LC_HANDOVER_STEPS.ApplicantRejectBillsStep:  //"申请人拒付交单",
+        // case LC_HANDOVER_STEPS.BeneficiaryBillsSuccStep:  //"受益人交单成功"
+        case LC_STEPS.IssuingBankReviewRetireBillsStep: //"开证行审核赎单":
+        case LC_STEPS.ApplicantRetireBillsStep: //"申请人赎单":
+        case LC_STEPS.IssuingBankCloseLCStep: // "闭卷":
+        case LC_STEPS.LCEnd: // "结束":
             depositDisplay = { display: "" };
             handoverDisplay = { display: "" };
             break;
@@ -80,28 +85,29 @@ const DraftModal = (props) => {
 
     // 构造交单列表
     let handoverHtml = [];
-    // if (handoverData.length > 0) {
-    //     for (var i = 0; i < handoverData.length; i++) {
-    //         handoverHtml[i] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
-    //             <Row>
-    //                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData[i].No}</Col>
-    //                 <Col span={3}></Col>
-    //                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{handoverData[i].HandOverBillStep}</Col>
-    //             </Row>
-    //             <Table bordered dataSource={handoverData[i].BillOfLandings} columns={handoverColumns} pagination={false} />
-    //         </div>);
-    //     }
+    if (handoverData.length > 0) {
+        for (var i = 0; i < handoverData.length; i++) {
+            handoverHtml[i] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData[i].No}</Col>
+                    <Col span={3}></Col>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{handoverData[i].HandOverBillStep}</Col>
+                </Row>
+                <Table bordered dataSource={handoverData[i].BillOfLandings} columns={handoverColumns} pagination={false} />
+            </div>);
+        }
+    }
+    // if (handoverData) {
+    //     handoverHtml[0] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
+    //         <Row>
+    //             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData.No}</Col>
+    //             <Col span={3}></Col>
+    //             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{handoverData.HandOverBillStep}</Col>
+    //         </Row>
+    //         <Table bordered dataSource={handoverData.BillOfLandings} columns={handoverColumns} pagination={false} />
+    //     </div>);
     // }
-    if (handoverData) {
-        handoverHtml[0] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
-            <Row>
-                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData.No}</Col>
-                <Col span={3}></Col>
-                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{handoverData.HandOverBillStep}</Col>
-            </Row>
-            <Table bordered dataSource={handoverData.BillOfLandings} columns={handoverColumns} pagination={false} />
-        </div>);
-    } else {
+    else {
         handoverHtml[0] = <div></div>
     }
 

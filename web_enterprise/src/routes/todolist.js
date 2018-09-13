@@ -501,8 +501,7 @@ class TodoList extends React.Component {
                 lcHandoverTransData: transaction,
             });
             // 信用证交单流程
-            if (transaction.status == LC_STEPS.ApplicantRetireBillsStep ||
-                transaction.status == LC_HANDOVER_STEPS.BeneficiaryHandOverBillsStep) {
+            if (transaction.status == LC_STEPS.ApplicantRetireBillsStep) {
                 this.setState({
                     checkBillModalVisible: true,
                 });

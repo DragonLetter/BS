@@ -18,6 +18,7 @@ import Users from './components/users'
 import LetterDraft from './components/letter/draft'
 import LetterOriginal from './components/letter/original'
 import LetterAdvising from './components/letter/advising'
+import LetterBills from './components/letter/billtransact'
 import LetterAcceptance from './components/letter/acceptance'
 import LetterAcceptancebyAB from './components/letter/acceptancebyadvisingbank'
 import LetterRedemption from './components/letter/redemption'
@@ -41,6 +42,7 @@ ReactDom.render(
                     <Route path="draft(/:id)" component={LetterDraft} />
                     <Route path="original(/:id)" component={LetterOriginal} />
                     <Route path="advising(/:id)" component={LetterAdvising} />
+                    <Route path="billtransact(/:id)" component={LetterBills} />
                     <Route path="acceptance(/:id)" component={LetterAcceptance} />
                     <Route path="acceptancebyadvisingbank(/:id)" component={LetterAcceptancebyAB} />
                     <Route path="redemption(/:id)" component={LetterRedemption} />

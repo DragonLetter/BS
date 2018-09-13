@@ -24,6 +24,7 @@ const columns = [
   ];
 
 var renderAction = function(params) {
+    return (<a href={'/#/lcpayment/billtransact/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
     switch(params.status){
         case "银行确认":
             return (<a href={'/#/lcpayment/draft/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);

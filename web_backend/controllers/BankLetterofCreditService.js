@@ -91,6 +91,37 @@ exports.advisingBankDocsReceivedAudit = function (req, res, next) {
         }
     });
 };
+//开证行：到单审查
+exports.billBankReceivedAudit = function (req, res, next) {
+    var args = req.swagger.params;
+    var values = args.body.value, no = values.no,
+        suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
+
+    fabric.invoke(req, "reviewBills", [no, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            res.end(JSON.stringify("到单已处理！"));
+        } else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+};
+/**
+ * 开证行：承兑或者拒付
+ **/
+exports.billAcceptancePayment = function (req, res, next) {
+    var args = req.swagger.params;
+    var values = args.body.value, no = values.no, amount = values.amount.toString(), dismatchPoints = values.dismatchPoints,
+        suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
+
+    fabric.invoke(req, "lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            writeAcceptancePdf(req, no, res)
+            // res.end(JSON.stringify("审核通过"));
+        } else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+};
 
 /**
  * 开证行：办理交单（拒绝之后，不符点修改）

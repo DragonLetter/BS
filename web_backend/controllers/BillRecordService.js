@@ -47,8 +47,37 @@ exports.updateBillState = function (req, res, next) {
         res.end(JSON.stringify(data.dataValues || {}, null, 2));
       }
     });
-  };
-  
+};
+//以下接口为backend内部使用，不提供给上层使用
+exports.addBillStateRecord = function (req, res, next) {
+    var args = req.swagger.params;
+    var userID = req.session.user.id;
+    var userName = req.session.user.username;
+    var values = args.body.value;
+
+    Logger.debug("updateAFStateRecord:" + inspect(args));
+
+    var dbVal;
+    dbVal = {
+        "AFNo": values.AFNo,
+        "No": values.No,
+        "step": values.step,
+        "userID": userID,
+        "userName": userName,
+        "isAgreed": values.isAgreed,
+        "suggestion": values.suggestion,
+        "accAmount": values.accAmount
+    };
+
+    Logger.debug("addBillStateRecord: Add record:" + JSON.stringify(dbVal));
+
+    /**
+     * Add a new operation record to the db
+     **/
+    models.BillRecord.create(dbVal).then(function (data) {
+        Logger.debug("addBillStateRecord: resp:" + JSON.stringify(data));
+    });
+};  
 exports.addBillRecord = function(req, res, next) {
     var args = req.swagger.params;
     Logger.debug("Add a new Bill record:" + inspect(args));

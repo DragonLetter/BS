@@ -50,4 +50,16 @@ module.exports.LCClosing = function LCClosing(req, res, next) {
 module.exports.issuingBankReviseRetire = function issuingBankReviseRetire(req, res, next) {
   Logger.info("issuingBankReviseRetire");
   LetterofCreditService.issuingBankReviseRetire(req, res, next);
-}
+};
+
+// 开证行：发起修改同意或拒绝
+module.exports.issueLetterOfAmendHandle = function issueLetterOfAmendHandle(req, res, next) {
+  Logger.info("issueLetterOfAmendHandle");
+  LetterofCreditService.issueLetterOfAmendHandle(req, res, next);
+};
+
+// 通知行：发起修改同意或拒绝
+module.exports.advisingLetterOfAmendHandle = function advisingLetterOfAmendHandle(req, res, next) {
+  Logger.info("advisingLetterOfAmendHandle");
+  LetterofCreditService.advisingLetterOfAmendHandle(req, res, next);
+};

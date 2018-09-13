@@ -69,10 +69,10 @@ exports.getTxsByBankId = function (req, res, next) {
                 var lcApplicant = lc.Record.LetterOfCredit.Applicant.Name;
                 var lcBeneficiary = lc.Record.LetterOfCredit.Beneficiary.Name;
 
-                 //开证行和通知行是同一家银行
+                //开证行和通知行是同一家银行
                 if (lc.Record.ApplicationForm.IssuingBank.No == bankId
                     && lc.Record.ApplicationForm.AdvisingBank.No == bankId) {
-                        Logger.debug("Issue bank is same with advising bank."
+                    Logger.debug("Issue bank is same with advising bank."
                         + "\n bankId:" + bankId
                         + "\n lcSetp:" + lcStep
                         + "\n lcNo:" + lcNo
@@ -85,13 +85,13 @@ exports.getTxsByBankId = function (req, res, next) {
                         + "\n select status:" + status
                         + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
                         + "\n startDate:" + startDate
-                        + "\n endData:" + endDate                        
-                         + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
+                        + "\n endData:" + endDate
+                        + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
 
                     if (selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
                         txs.push(chaincodeTx2ViewTx(lc));
-                    }                
-                }else if (lc.Record.ApplicationForm.IssuingBank.No == bankId) {//开证行
+                    }
+                } else if (lc.Record.ApplicationForm.IssuingBank.No == bankId) {//开证行
                     Logger.debug("Issue bank info."
                         + "\n bankId:" + bankId
                         + "\n lcSetp:" + lcStep
@@ -105,9 +105,9 @@ exports.getTxsByBankId = function (req, res, next) {
                         + "\n select status:" + status
                         + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
                         + "\n startDate:" + startDate
-                        + "\n endData:" + endDate                    
+                        + "\n endData:" + endDate
                         + "\n selectTx:" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
-                   
+
                     // txs.push(chaincodeTx2ViewTx(lc));                    
                     if (selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus])) {
                         txs.push(chaincodeTx2ViewTx(lc));
@@ -126,7 +126,7 @@ exports.getTxsByBankId = function (req, res, next) {
                         + "\n select status:" + status
                         + "\n enum status:" + STATUS_ENUM[lc.Record.lcStatus]
                         + "\n startDate :" + startDate
-                        + "\n endData :" + endDate                      
+                        + "\n endData :" + endDate
                         + "\n selectTx :" + selectTxWithParams(lc.Record.ApplicationForm.applyTime, startDate, endDate, lcNo, lcNum, applicant, lcApplicant, beneficiary, lcBeneficiary, status, STATUS_ENUM[lc.Record.lcStatus]));
 
                     // txs.push(chaincodeTx2ViewTx(lc));
@@ -148,7 +148,7 @@ exports.getTxsByBankId = function (req, res, next) {
 };
 
 function selectTxWithStatus(status, txStatus) {
-    if (status == "" || status == undefined || status == "undefined" || status == null || status == "null") {        
+    if (status == "" || status == undefined || status == "undefined" || status == null || status == "null") {
         return true;
     } else if (status == txStatus) {
         return true;

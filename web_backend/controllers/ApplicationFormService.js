@@ -110,6 +110,7 @@ exports.addApplicationForm = function (req, res, next) {
         "Contract": values.Contract ? values.Contract : {},
         "Attachments": values.Attachments ? values.Attachments : [],
       };
+      Logger.debug("fabricArg2: " + fabricArg2);
       fabric.invoke(req, "saveLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
         if (!err) {
           models.Afstate.findOne({
@@ -502,3 +503,5 @@ exports.confirmApplicationForm = function (req, res, next) {
     }
   });
 };
+
+ 

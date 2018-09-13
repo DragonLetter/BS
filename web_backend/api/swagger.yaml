@@ -283,7 +283,7 @@ paths:
           description: OK
           schema:
             $ref: "#/definitions/LCTxProcessflow"
-      x-swagger-router-controller: "BankTransaction"
+      x-swagger-router-controller: "BankTransaction"  
   /bank/transaction/draft/{txId}:
     get:
       tags: 
@@ -501,6 +501,46 @@ paths:
         default:
           description: "OK"
       x-swagger-router-controller: "BankLetterofCredit"
+  /bank/LetterofCredit/issueLetterOfAmend:
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "开证行对发起修改同意或拒绝"
+      description: "开证行对发起修改同意或拒绝"
+      operationId: "issueLetterOfAmendHandle"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/IssueAmend"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit" 
+  /bank/LetterofCredit/advisingLetterOfAmend:
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "通知行对发起修改同意或拒绝"
+      description: "通知行对发起修改同意或拒绝"
+      operationId: "advisingLetterOfAmendHandle"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/AdvisingAmend"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit" 
   /bank/LetterofCredit/AmendCountersign:
     post:
       tags: 
@@ -701,6 +741,26 @@ paths:
         required: true
         schema:
             $ref: "#/definitions/LCAmendationForm"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit" 
+  /LetterofCredit/beneficiaryLetterOfAmend:
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "受益人对发起修改同意或拒绝"
+      description: "受益人对发起修改同意或拒绝"
+      operationId: "beneficiaryOfAmendHandle"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/BeneficiaryAmend"
       responses:
         default:
           description: "OK"
@@ -1695,6 +1755,7 @@ paths:
         400:
           description: "Invalid name value"
       x-swagger-router-controller: "ApplicationForm"
+  
   /ApplicationForm/FindByBank/{bankNo}:
     get:
       tags:
@@ -3044,7 +3105,7 @@ definitions:
       LCAcceptance:
         $ref: "#/definitions/TransProgress"
       LCCLose:
-        $ref: "#/definitions/TransProgress"
+        $ref: "#/definitions/TransProgress"  
   LCTxDeposit:
     type: "object"
     properties:
@@ -3389,6 +3450,42 @@ definitions:
         type: "string"
       addedDepositAmt:
         type: "string"
+  # 信用证修改，开证行    
+  IssueAmend:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+  # 信用证修改，通知行    
+  AdvisingAmend:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"            
+  # 信用证修改，受益人    
+  BeneficiaryAmend:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"            
   # 信用证修改，开证行
   LCAmending:
     type: "object"

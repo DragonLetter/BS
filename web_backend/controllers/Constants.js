@@ -17,6 +17,17 @@ exports.STEPS = {
   "LCEnd": "结束"
 };
 
+exports.AMEND_STEPS = { 
+  "AmendApplicantSubmitStep": "申请人发起修改",
+  "AmendIssuingBankAcceptStep": "开证行同意发起修改",
+  "AmendIssuingBankRejectStep": "开证行拒绝发起修改",
+  "AmendAdvisingBankAcceptStep": "通知行同意发起修改",
+  "AmendAdvisingBankRejectStep": "通知行拒绝发起修改",
+  "AmendBeneficiaryAcceptStep": "受益人同意发起修改",
+  "AmendBeneficiaryRejectStep": "受益人拒绝发起修改",
+  "AmendEnd": "发起修改交易结束",  
+};
+
 exports.STEPS_NUM = {
   "LCStart": 1,
   "ApplicantSaveLCApplyFormStep": 2,

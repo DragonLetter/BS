@@ -27,7 +27,7 @@ exports.lcAmendation = function (req, res, next) {
 
     Logger.debug("input args:" + args
         + "\n fabric req:" + fabricArg);
-
+    
     fabric.invoke(req, "lcAmendSubmit", [no, JSON.stringify(fabricArg)], function (err, resp) {
         if (!err) {
             res.end();
@@ -165,3 +165,24 @@ exports.retireShippingBills = function (req, res, next) {
         }
     })
 }
+
+/**
+ * 受益人：发起修改同意或拒绝
+ *
+ * Params：body
+ * return: nil
+ **/
+exports.beneficiaryOfAmendHandle = function (req, res, next) {
+    var args = req.swagger.params;
+    var values = args.body.value, no = values.no, amendNo = values.amendNo,
+        suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
+
+    fabric.invoke(req, "beneficiaryLetterOfAmend", [no, amendNo, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            // writeAcceptancePdf(req, no, res)
+            res.end(JSON.stringify("审核通过"));
+        } else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+};

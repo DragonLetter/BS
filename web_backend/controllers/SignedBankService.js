@@ -4,12 +4,13 @@ var models = require('../models');
 var Sequelize = require("sequelize");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.addSignedBank = function (req, res, next) {
     var args = req.swagger.params;
     var corpId = args.body.value.corporationId;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     models.SignedBank.create(args.body.value).then(function (data) {
         getSignedBankById(corpId, res);
@@ -19,7 +20,7 @@ exports.addSignedBank = function (req, res, next) {
 exports.deleteSignedBank = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     models.SignedBank.destroy({ where: { Id: args.SignedBankId.value }, truncate: false });
     res.end();
@@ -43,7 +44,7 @@ exports.getSignedBankById = function (req, res, next) {
     var args = req.swagger.params;
     var corpId = args.corpId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     getSignedBankById(corpId, res);
 }
@@ -51,7 +52,7 @@ exports.getSignedBankById = function (req, res, next) {
 exports.updateSignedBank = function (req, res, next) {
     var args = req.swagger.params;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     /**
      * Update an existing SignedBank
@@ -84,7 +85,7 @@ exports.getCorpsByBankId = function (req, res, next) {
     var args = req.swagger.params,
         bankId = args.bankId.value;
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     models.SignedBank.findAll({
         where: {
@@ -137,7 +138,7 @@ exports.addSignedBank2cc = function (req, res, next) {
         "StateSign": 0
     };
 
-    Logger.debug("args:" + args
+    Logger.debug("args:" + inspect(args)
         + "\n fabric req:" + JSON.stringify(signvals));
 
     fabric.invoke2cc(req, "saveBCSInfo", [bcsNo, JSON.stringify(signvals)], function (err, resp) {
@@ -181,7 +182,7 @@ exports.signBCAppAudit = function (req, res, next) {
         "StateSign": vals.StateSign
     };
 
-    Logger.debug("args:" + args
+    Logger.debug("args:" + inspect(args)
         + "\n fabric req:" + JSON.stringify(signvals));
 
     fabric.invoke2cc(req, "saveBCSInfo", [bcsNo, JSON.stringify(signvals)], function (err, resp) {
@@ -236,7 +237,7 @@ exports.getSignedBankById2cc = function (req, res, next) {
     var corpId = args.corpId.value;
     var dtype = "Sign";
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query2cc(req, "getBCSList", [dtype], function (err, resp) {
         res.setHeader('Content-Type', 'application/json');
@@ -262,7 +263,7 @@ exports.getCorpsByBankId2cc = function (req, res, next) {
         bankId = args.bankId.value;
     var dtype = "Sign";
 
-    Logger.debug("args:" + args);
+    Logger.debug("args:" + inspect(args));
 
     fabric.query2cc(req, "getBCSList", [dtype], function (err, resp) {
         res.setHeader('Content-Type', 'application/json');

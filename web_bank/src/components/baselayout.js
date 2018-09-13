@@ -2,13 +2,15 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import {fetch_get, fetch_post} from '../common'
 import {Router, Route, Link, hashHistory, IndexRoute, Redirect, IndexLink} from 'react-router'
-import {Layout, Menu,Breadcrumb, Icon, Switch, Input, Popover} from 'antd'
+import {Layout, Menu,Breadcrumb, Icon, Switch, Input, Popover, message} from 'antd'
 
 const { Header, Content, Sider, Footer } = Layout;
 const SubMenu = Menu.SubMenu
 const Search = Input.Search
 
-export const loginAddr = "http://localhost:9000";
+// 获取节点配置信息
+var nodeConf = require('../../config/nodeconf.json');
+export const loginAddr = "http://" + nodeConf["Bank"].IP + ":" + nodeConf["Bank"].Port;
 
 class BaseLayout extends React.Component {
     constructor(props) {
@@ -17,6 +19,7 @@ class BaseLayout extends React.Component {
             current: '',
             username: '',
             notice:'',
+            lcnumber: '',
             documents:''
         };
     }
@@ -39,12 +42,20 @@ class BaseLayout extends React.Component {
                     sessionStorage.setItem("bankno", data.bank.no);
                     sessionStorage.setItem("bankid", data.bank.id);
                     sessionStorage.setItem("userid", data.id);
-            });
-        }
-        if(res.status === 401){
-            window.location.href = loginAddr;
-        }
-    });
+                });
+            }
+            if(res.status === 401){
+                window.location.href = loginAddr;
+            }
+        });
+    }
+    //获得信用证的编号
+    letterPicker = () => {
+        var date = new Date().getTime();
+        var lcno = sessionStorage.getItem("bankno")+date;
+        this.setState({
+            lcnumber: lcno,
+        });
     }
 
     render = () => {
@@ -57,7 +68,7 @@ class BaseLayout extends React.Component {
         
         const userCenter = (
           <div>
-            <p style={{borderBottom: "1px solid #ececec", width: 130, padding: 5, textAlign: 'center'}}><a target="_blank" rel="noopener noreferrer" href="#">个人账户</a></p>
+            {/* <p style={{borderBottom: "1px solid #ececec", width: 130, padding: 5, textAlign: 'center'}}><a target="_blank" rel="noopener noreferrer" href="#">个人账户</a></p> */}
             <p style={{borderBottom: "1px solid #ececec", width: 130, padding: 5, textAlign: 'center'}}><a target="_blank" rel="noopener noreferrer" href="#">退出系统</a></p>
           </div>
         );
@@ -67,6 +78,13 @@ class BaseLayout extends React.Component {
             <p style={{width: 180, padding: 5, textAlign: 'center'}}><Icon type="exclamation-circle-o" style={{fontSize:13, marginRight: 5}}/>您还没有任何通知。</p>
           </div>
         );
+        const lcpicker = (
+            <div>
+              <p style={{width: 240, padding: 5, textAlign: 'center'}}>{this.state.lcnumber}</p>
+              <button style={{width: 240, padding: 5, textAlign: 'center'}} onClick={this.letterPicker}>取号</button>
+            </div>
+          );
+  
         var title_str = "数字信用证银行系统-"+sessionStorage.getItem('bankname');
         var user_name = sessionStorage.getItem('username');
         return (
@@ -79,6 +97,7 @@ class BaseLayout extends React.Component {
                     <Menu
                         theme="dark"
                         mode="horizontal"
+                        onClick={this.letterPicker}
                         defaultSelectedKeys={['2']}
                         style={{ lineHeight: '64px', marginLeft: 200, float: 'right'}}
                     >
@@ -91,6 +110,9 @@ class BaseLayout extends React.Component {
                         </SubMenu>
                         <SubMenu title={<Popover placement="bottom" title={"通知中心"} content={notifications} trigger="click"><Icon type="message" style={{fontSize:15}}/></Popover>}>
                         </SubMenu> */}
+                        <SubMenu title={<Popover placement="bottom" title={"信用证编号"} content={lcpicker} trigger="click"><Icon type="robot" style={{fontSize:15}}/>取号机</Popover>}>
+                        </SubMenu>
+                        {/* <Menu.Item key="picker"> <Icon type="edit" />取号机  </Menu.Item> */}
                         <SubMenu title={<Popover placement="bottom" content={userCenter} trigger="click"><Icon type="user" style={{fontSize:15}}/>{user_name}</Popover>}>
                         </SubMenu>
                     </Menu>

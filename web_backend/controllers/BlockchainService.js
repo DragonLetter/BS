@@ -1,11 +1,12 @@
 'use strict';
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.getConsensusByTransId = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * 获取指定交易的共识状态

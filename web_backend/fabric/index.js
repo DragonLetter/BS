@@ -8,6 +8,7 @@ var fs = require('fs');
 var options = require(path.join(__dirname, '..', 'config', 'fabric.json'));
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 var fabric = {};
 
@@ -23,8 +24,6 @@ fabric.invoke = function (req, functionName, args, callback) {
     var client = null;
     var targets = [];
     var tx_id = null;
-
-    Logger.debug("req:" + req);
 
     Promise.resolve().then(() => {
         Logger.debug("Load privateKey and signedCert");

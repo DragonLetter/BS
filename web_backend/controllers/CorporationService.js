@@ -3,11 +3,12 @@ var fabric = require("../fabric");
 var models = require('../models');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
+var inspect = require('util').inspect;
 
 exports.addCorporation = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Add a new bank to the store
@@ -24,7 +25,7 @@ exports.addCorporation = function (req, res, next) {
 exports.deleteCorporation = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Deletes a Corporation
@@ -39,7 +40,7 @@ exports.deleteCorporation = function (req, res, next) {
 exports.findCorporationsByName = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Finds Corporations by name
@@ -65,7 +66,7 @@ exports.findCorporationsByName = function (req, res, next) {
 exports.getCorporationById = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Find Corporation by ID
@@ -110,7 +111,7 @@ exports.getCorporations = getCorporations;
 exports.updateCorporation = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Update an existing Corporation
@@ -125,7 +126,7 @@ exports.updateCorporation = function (req, res, next) {
 exports.addCorporation2cc = function (req, res, next) {
   var args = req.swagger.params;
 
-  Logger.debug("args:" + args);
+  Logger.debug("args:" + inspect(args));
 
   /**
    * Add a new bank to the store

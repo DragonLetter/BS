@@ -191,7 +191,7 @@ const AddDraftForm = Form.create()(
                                 </FormItem>
                             </Col>
                             <Col span={12} key={1}>
-                                <FormItem {...formItemLayout} label={`金额`}>
+                                <FormItem {...formItemLayout} label={`信用证金额`}>
                                     {getFieldDecorator('Amount', {
                                         rules: [{ required: true, message: '请输入信用证金额!' }],
                                     })(
@@ -199,8 +199,8 @@ const AddDraftForm = Form.create()(
                                             parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="信用证金额" style={{ width: "32%" }} />
                                     )}
                                 </FormItem>
-                                <div style={{ marginTop: -60, marginRight: 160, float: 'right' }} >
-                                    <InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                <div style={{ marginTop: -60, marginRight: 60, float: 'right' }} >
+                                    保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                         parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} />
                                 </div>
                             </Col>

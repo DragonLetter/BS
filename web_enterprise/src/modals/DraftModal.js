@@ -1,8 +1,7 @@
 import React from 'react'
-import { Timeline, Tag, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
-const Step = Steps.Step;
+import { Timeline, Row, Layout, Table, Icon, Steps, Col, Modal } from 'antd'
 
-const { Header, Content, Sider } = Layout;
+const { Content } = Layout;
 
 const DraftModal = (props) => {
     // 外部传入数据
@@ -85,7 +84,9 @@ const DraftModal = (props) => {
     //     for (var i = 0; i < handoverData.length; i++) {
     //         handoverHtml[i] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
     //             <Row>
-    //                 <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={60}>交单编号：{handoverData[i].No}</Col>
+    //                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData[i].No}</Col>
+    //                 <Col span={3}></Col>
+    //                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{handoverData[i].HandOverBillStep}</Col>
     //             </Row>
     //             <Table bordered dataSource={handoverData[i].BillOfLandings} columns={handoverColumns} pagination={false} />
     //         </div>);
@@ -94,7 +95,9 @@ const DraftModal = (props) => {
     if (handoverData) {
         handoverHtml[0] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
             <Row>
-                <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={60}>交单编号：{handoverData.No}</Col>
+                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData.No}</Col>
+                <Col span={3}></Col>
+                <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{handoverData.HandOverBillStep}</Col>
             </Row>
             <Table bordered dataSource={handoverData.BillOfLandings} columns={handoverColumns} pagination={false} />
         </div>);

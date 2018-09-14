@@ -35,16 +35,30 @@ exports.updateBillState = function (req, res, next) {
   exports.getBillState = function (req, res, next) {
     var args = req.swagger.params;
     Logger.debug("args:" + inspect(args));
-  
-    models.Afstate.findOne({
+    models.BillState.findOne({
       'where': {
         'AFNo': args.body.value.AFNo,
-        'No': args.body.value.No,
+        'No': args.body.value.No
       }
     }).then(function (data) {
       if (data) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(data.dataValues || {}, null, 2));
+      }else{
+        var dbVal;
+        dbVal = {
+            "AFNo": args.body.value.AFNo,
+            "No": args.body.value.No,
+            "step": 'IssuingBankCheckBillStep',
+            "state": '11',
+            "suggestion": ' ',
+            "accAmount":' ',
+            "isAgreet": ' '
+        };
+        models.BillState.create(dbVal).then(function (val) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(dbVal || {}, null, 2));
+        });
       }
     });
 };

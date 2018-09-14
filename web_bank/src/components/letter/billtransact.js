@@ -260,27 +260,42 @@ class LetterBill extends React.Component {
     billDetail = (idx) => {
         const curBills = this.state.bills;
         const curBill = curBills[idx];
-        var stateBill = 0;
-        if( curBill.HandOverBillStep == "BeneficiaryHandOverBillsStep" &&
-            sessionStorage.getItem('userType')==this.state.billState.state )
-            stateBill = 1;
-        else if( curBill.HandOverBillStep == "IssuingBankCheckBillStep" &&
-            sessionStorage.getItem('userType')==this.state.billState.state )
-            stateBill = 2;
-        this.setState({
-            stateBill: stateBill,
-            curBill: curBill,
-            billDialogVisible: true,
-        });
+        var valBill = {};
+        valBill.AFNo = this.props.params.id;
+        valBill.No = this.state.bills[idx].No;
+        fetch_post("/api/BillRecord/GetBState", valBill).then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        var bdata = {};
+                        bdata.AFNo = data.AFNo;
+                        bdata.step = data.step;
+                        bdata.state = data.state;
+                        bdata.No = data.No;
+                        bdata.suggestion = data.suggestion;
+                        bdata.accAmount = data.accAmount;
+                        var stateBill = 0;
+                        if( curBill.HandOverBillStep == "IssuingBankCheckBillStep" &&
+                            sessionStorage.getItem('userType')==bdata.state )
+                            stateBill = 1;
+                        else if( curBill.HandOverBillStep == "IssuingBankAcceptanceStep" &&
+                            sessionStorage.getItem('userType')==bdata.state )
+                            stateBill = 2;
+                        this.setState({
+                            stateBill: stateBill,
+                            curBill: curBill,
+                            billState: bdata,
+                            billDialogVisible: true,
+                        });
+                    });
+                }
+            });
     }
 
     componentDidMount = () => {
         this.getLCDraftDetail();
         this.getLCProcessFlows();
         this.getDepositData();
-        this.getAFStateInfo();
     }
-
     getAFStateInfo = () => {
         fetch_get("/api/applicationform/afstate/" + this.props.params.id)
             .then((res) => {
@@ -303,14 +318,13 @@ class LetterBill extends React.Component {
                 }
             });
     }
-
     getLCDraftDetail = () => {
         fetch_get("/api/ApplicationForm/" + this.props.params.id)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
                     res.json().then((data) => {
-                        message.error(JSON.stringify(data.LCTransDocsReceive));
                         this.handleDraftData(data);
+                        this.getAFStateInfo();
                     });
                 }
             });
@@ -408,16 +422,80 @@ class LetterBill extends React.Component {
     saveRejectRef = (form) => {
         this.rejectForm = form;
     }
+    billToChainCode = (url, vals) => {
+        fetch_post(url, vals).then((res) => {
+            if(res.status>=200 && res.status<300){
+                res.json().then((data)=>{
+                    this.closeBillDialog();
+                    message.success("审核完成.");
+                })
+            }else {
+                message.error("交易执行失败，请检查.");
+            }
+        });
+    }
+    billToDataBase = (url, vals) => {
+        fetch_post(url, vals).then((res) => {
+            if (res.status >= 200 && res.status < 300) {
+                res.json().then((data) => {
+                    this.closeBillDialog();
+                });
+            } else {
+                message.error(CONSTANTS.ERROR_SIGNED_FORM_AUDIT);
+            }
+        });
+    }
+    billToProgress = (values, isAgreed) => {
+        var billState = this.state.billState;
+        var billVals = {};
+        var tocc = false;
+        if( isAgreed=='fasle')
+            tocc = true;
+        billState.isAgreed = isAgreed;
+        billState.suggestion = values.comment;
+        if( this.state.stateBill==2 ){
+            billState.accAmount = values.amount.toString();
+            billVals.amount = billState.accAmount;
+        }
+        if( sessionStorage.getItem('userType')==11 )
+            billState.state = '12';
+        else if( sessionStorage.getItem('userType')==12 )
+            billState.state = '13';
+        else if( sessionStorage.getItem('userType')==13 ){
+            billVals.no = billState.AFNo;
+            billVals.bno = billState.No;
+            billVals.suggestion = billState.suggestion;
+            billVals.isAgreed = billState.isAgreed;
+            billState.state = '11';
+            var urlcc;
+            if(this.state.stateBill==1)
+            {
+                billState.step = 'IssuingBankAcceptanceStep';
+                urlcc = '/api/bank/LetterofCredit/BillBankReceivedAudit'
+            }
+            else if( this.state.stateBill==2)
+            {
+                billState.step = 'HandoverBillSuccStep';
+                urlcc = '/api/bank/LetterofCredit/BillAcceptancePayment';
+            }
+            tocc = true;
+        }
+        if( tocc )
+            this.billToChainCode(urlcc, billVals);
+        this.billToDataBase('/api/BillRecord/UpdateBState', billState);
+    }
     billApprove = (value) => {
         const form = this.billForm;
         form.validateFields((err, values) => {
             if (err) { return; }
+            this.billToProgress(values, 'true')
         });
     }
     billRejest = (value) => {
         const form = this.billForm;
         form.validateFields((err, values) => {
             if (err) { return; }
+            this.billToProgress(values, 'false')
         });
     }
     handleApprove = (value) => {
@@ -610,7 +688,7 @@ class LetterBill extends React.Component {
         ];
         // 合同及附件证明材料部分组件
         const billcolumns = [
-            { title: '编号', dataIndex: 'NO', key: 'NO' },
+            { title: '编号', dataIndex: 'No', key: 'No' },
             { title: '到单金额', dataIndex: 'ReceivedAmount', key: 'ReceivedAmount' },
             { title: '不符点', dataIndex: 'Discrepancy', key: 'Discrepancy' },
             { title: '到单状态', dataIndex: 'HandOverBillStep', key: 'HandOverBillStep' },

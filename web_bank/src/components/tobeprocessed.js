@@ -39,6 +39,8 @@ var renderAction = function (params) {
             return (<a href={'/#/lcpayment/acceptance/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "通知行审核交单信息":
             return (<a href={'/#/lcpayment/acceptancebyadvisingbank/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
+        case "申请人赎单":
+            return (<a href={'/#/lcpayment/billtransact/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "开证行审核赎单":
             return (<a href={'/#/lcpayment/redemption/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "闭卷":

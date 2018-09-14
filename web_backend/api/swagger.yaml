@@ -1271,8 +1271,8 @@ paths:
         405:
           description: "Validation exception"
       x-swagger-router-controller: "BillRecord"
-  /BillRecord/Bill:
-    get:
+  /BillRecord/GetBState:
+    post:
       tags:
       - "BillRecord"
       summary: "Get the state of this LC's bill "
@@ -1283,16 +1283,17 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "BillState object that needs to be update to the store"
-        required: false
+        description: "BillQuery object that needs to be update to the store"
+        required: true
         schema:
-          $ref: "#/definitions/BillState"
+          $ref: "#/definitions/BillQuery"
       responses:
         200:
           description: "successful operation"
           schema:
             $ref: "#/definitions/BillState"
       x-swagger-router-controller: "BillRecord"
+  /BillRecord/UpdateBState:
     post:
       tags:
       - "BillRecord"
@@ -3046,9 +3047,18 @@ definitions:
         type: "string"
       depositAmount:
         type: "string"
+  BillQuery:
+    type: "object"
+    properties:
+      AFNo:
+        type: "string"
+      No:
+        type: "string"
   BillState:
     type: "object"
     properties:
+      id:
+        type: "string"
       #信用证申请编号
       AFNo:
         type: "string"
@@ -3666,6 +3676,8 @@ definitions:
     properties:
       no:
         type: "string"
+      bno:
+        type: "string"
       suggestion:
         type: "string"
       isAgreed:
@@ -3685,9 +3697,9 @@ definitions:
     properties:
       no:
         type: "string"
-      amount:
+      bno:
         type: "string"
-      dismatchPoints:
+      amount:
         type: "string"
       suggestion:
         type: "string"

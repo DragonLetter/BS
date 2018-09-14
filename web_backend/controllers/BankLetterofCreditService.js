@@ -94,10 +94,10 @@ exports.advisingBankDocsReceivedAudit = function (req, res, next) {
 //开证行：到单审查
 exports.billBankReceivedAudit = function (req, res, next) {
     var args = req.swagger.params;
-    var values = args.body.value, no = values.no,
+    var values = args.body.value, no = values.no, bno = values.bno,
         suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
 
-    fabric.invoke(req, "reviewBills", [no, suggestion, isAgreed], function (err, resp) {
+    fabric.invoke(req, "reviewBills", [no, bno, suggestion, isAgreed], function (err, resp) {
         if (!err) {
             res.end(JSON.stringify("到单已处理！"));
         } else {
@@ -110,10 +110,10 @@ exports.billBankReceivedAudit = function (req, res, next) {
  **/
 exports.billAcceptancePayment = function (req, res, next) {
     var args = req.swagger.params;
-    var values = args.body.value, no = values.no, amount = values.amount.toString(), dismatchPoints = values.dismatchPoints,
+    var values = args.body.value, no = values.no, bno = values.bno, amount = values.amount.toString(),
         suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
 
-    fabric.invoke(req, "lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function (err, resp) {
+    fabric.invoke(req, "lcAcceptOrReject", [no, bno, amount, suggestion, isAgreed], function (err, resp) {
         if (!err) {
             writeAcceptancePdf(req, no, res)
             // res.end(JSON.stringify("审核通过"));

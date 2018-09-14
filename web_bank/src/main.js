@@ -10,6 +10,7 @@ import Explorer from './components/explorer'
 import Home from './components/home'
 import TobeProcessed from "./components/tobeprocessed"
 import Letters from './components/letters.js'
+import Amend from './components/Amend.js'
 import Clients from './components/clients'
 import ClientList from './components/clientList'
 import Settings from './components/settings'
@@ -34,6 +35,7 @@ ReactDom.render(
                     <Route path="index" component={Home} />
                     <Route path="tobeprocessed" component={TobeProcessed} />                    
                     <Route path="letters" component={Letters} />
+                    <Route path="amend" component={Amend} />
                     <Route path="clients" component={Clients} />
                     <Route path="clientlist" component={ClientList} />
                     <Route path="settings" component={Settings} />

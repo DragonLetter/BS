@@ -254,6 +254,7 @@ class LetterBill extends React.Component {
             curBill:{},
             stateBill: 0,
             billState: {},
+            curStep: "",
         }
     }
     
@@ -332,6 +333,7 @@ class LetterBill extends React.Component {
 
     handleDraftData = (data) => {
         this.setState({
+            curStep: data.CurrentStep,
             letters: data.LetterOfCredit,
             bills: data.LCTransDocsReceive,
         });
@@ -672,7 +674,24 @@ class LetterBill extends React.Component {
                 }
             });
     }
-
+    billStateTrans = (key) =>{
+        switch(key){
+            case "BeneficiaryHandOverBillsStep":
+                return "待交单";
+            case "IssuingBankCheckBillStep":
+                return "到单待审";
+            case "ApplicantAcceptOrRejectStep":
+                return "待确认";
+            case "IssuingBankAcceptanceStep":
+                return "到单待承兑";
+            case "HandoverBillSuccStep":
+                return "完成";
+            case "ApplicantRejectStep":
+                return "交单被拒";
+            case "IssuingBankRejectStep":
+                return "到单被拒付";
+        }
+    }
     tabsCallback = (key) => {
         this.getLCDraftDetail();
         this.getLCProcessFlows();
@@ -691,7 +710,7 @@ class LetterBill extends React.Component {
             { title: '编号', dataIndex: 'No', key: 'No' },
             { title: '到单金额', dataIndex: 'ReceivedAmount', key: 'ReceivedAmount' },
             { title: '不符点', dataIndex: 'Discrepancy', key: 'Discrepancy' },
-            { title: '到单状态', dataIndex: 'HandOverBillStep', key: 'HandOverBillStep' },
+            { title: '到单状态', key: 'HandOverBillStep', render:(text,record,index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
             { title: '到单日期', dataIndex: 'ReceivedDate', key: 'ReceivedDate' },
             { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.billDetail(index)}>详情</a></span>,}
         ];
@@ -711,13 +730,13 @@ class LetterBill extends React.Component {
         let btnDivHtml;
         let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
 
-        if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
+        if ( this.state.curStep=="IssuingBankReviewRetireBillsStep" && parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
                     <Row>
                         <Col style={{ fontSize: '13px' }} span={24} offset={0}>
-                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />确认承兑</Button>
-                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />不符点驳回</Button>
+                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />确认赎单</Button>
+                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝赎单</Button>
                         </Col>
                     </Row>
                 </div>
@@ -735,7 +754,44 @@ class LetterBill extends React.Component {
                 <Content style={{ background: '#fff', padding: 0, margin: '0' }}>
 
                     <Tabs defaultActiveKey="0" onChange={this.tabsCallback} style={{ marginTop: '20px' }}>
-                        <TabPane tab="信用证正本" key="0">
+                        {this.state.curStep=="IssuingBankReviewRetireBillsStep"?[
+                        <TabPane tab="赎单审核" key="0">
+                            <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
+                                <div>
+                                    <Row>
+                                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>信用证编号</Col>
+                                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#6b7c93', fontWeight: 'bold' }} span={3}>{this.state.letters.LCNo}</Col>
+                                    </Row>
+                                </div>
+                                <div>
+                                    <Row>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>赎单金额</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>1000.00 RMB</Col>
+                                    </Row>
+                                </div>
+                            </div>
+                            <div>
+                                {btnDivHtml}
+                            </div>
+                        </TabPane>
+
+                        ]:[]}
+                        <TabPane tab="到单" key="1">
+                            <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
+                                <div>
+                                    <Row>
+                                        <Col style={{ marginTop: '15px', marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>到单列表</Col>
+                                    </Row>
+                                    <Table
+                                        className="components-table-demo-nested"
+                                        columns={billcolumns}
+                                        dataSource={this.state.bills}
+                                    />
+                                </div>
+                            </div>
+                        </TabPane>
+
+                        <TabPane tab="信用证正本" key="2">
                             <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
                                 <div>
                                     <Row>
@@ -818,23 +874,6 @@ class LetterBill extends React.Component {
                                     showHeader={false}
                                 />
                                 <div>
-                                </div>
-                            </div>
-                            <div>
-                                {btnDivHtml}
-                            </div>
-                        </TabPane>
-                        <TabPane tab="到单" key="1">
-                            <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
-                                <div>
-                                    <Row>
-                                        <Col style={{ marginTop: '15px', marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>到单列表</Col>
-                                    </Row>
-                                    <Table
-                                        className="components-table-demo-nested"
-                                        columns={billcolumns}
-                                        dataSource={this.state.bills}
-                                    />
                                 </div>
                             </div>
                         </TabPane>

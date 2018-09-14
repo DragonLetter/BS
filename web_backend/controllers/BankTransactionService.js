@@ -235,6 +235,7 @@ exports.getProcessingTxByBankId = function (req, res, next) {
         'MultiPartyCountersignStep',
         'IssuingBankAcceptOrRejectStep',
         'IssuingBankReviewRetireBillsStep',
+        'ApplicantRetireBillsStep',
         'IssuingBankCloseLCStep'
     ];
     var stepArrByAdvisingBank = [

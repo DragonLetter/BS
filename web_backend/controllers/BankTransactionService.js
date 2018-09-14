@@ -357,6 +357,15 @@ exports.getProcessingTxByBankId = function (req, res, next) {
  * return: viewTx
  **/
 function chaincodeTx2ViewTx(chaincodeTx) {
+    //增加信用证发起修改信息    
+    var amend = [];    
+    if (chaincodeTx.Record.AmendFormFlow != null) {
+        for (var i = 0; i < chaincodeTx.Record.AmendFormFlow.length; i++) {
+           
+            amend[i] = chaincodeTx.Record.AmendFormFlow[i];            
+        }
+    }
+
     var tx = {
         "id": chaincodeTx.Key,
         "no": chaincodeTx.Record.lcNo,
@@ -369,7 +378,8 @@ function chaincodeTx2ViewTx(chaincodeTx) {
         "currency": chaincodeTx.Record.LetterOfCredit.Currency,
         "status": STEP_ENUM[chaincodeTx.Record.CurrentStep],
         "state": STATUS_ENUM[chaincodeTx.Record.lcStatus],
-        "issuseDate": chaincodeTx.Record.LetterOfCredit.applyTime
+        "issuseDate": chaincodeTx.Record.LetterOfCredit.applyTime,
+        "amend": amend
     };
     return tx;
 }

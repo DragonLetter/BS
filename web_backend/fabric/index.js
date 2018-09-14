@@ -77,6 +77,7 @@ fabric.invoke = function (req, functionName, args, callback) {
             chainId: option.channel_id,
             txId: tx_id
         };
+        Logger.debug("fabric req:" + JSON.stringify(request));
         return channel.sendTransactionProposal(request);
     }).then((results) => {
         var proposalResponses = results[0];

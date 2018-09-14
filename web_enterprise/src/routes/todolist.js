@@ -75,7 +75,8 @@ class TodoList extends React.Component {
             })
 
             // 信用证交单流程数据，只有进入 申请人审单状态 才有数据
-            if (data[i].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep) {
+            if (data[i].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep &&
+                data[i].Record.LCTransDocsReceive) {
                 for (let j = 0; j < data[i].Record.LCTransDocsReceive.length; j++) {
                     if (data[i].Record.LCTransDocsReceive[j].HandOverBillStep == LC_HANDOVER_STEPS.ApplicantReviewBillsStep) {
                         handoverTrans.push({
@@ -521,6 +522,9 @@ class TodoList extends React.Component {
                     <TabPane tab="信用证开证" key="1">
                         <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
                             <Spin spinning={this.state.loading} delay={500} >{container}</Spin>
+                        </Content>
+                        <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                            <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
                         </Content>
                         <ConfirmDraftModal
                             ref={this.saveCreateFormRef}

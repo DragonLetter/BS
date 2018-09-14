@@ -5,10 +5,11 @@ import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/c
 import DraftModal from '../modals/DraftModal';
 import HandoverBillsModal from '../modals/HandoverBillsModal';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
+import { LC_STEPS, LC_HANDOVER_STEPS } from './constant';
+
 const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
-
 const InputGroup = Input.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -467,6 +468,7 @@ class LocalLC extends React.Component {
             LCData: [],
             loading: true,
             handoverBillsInfo: [],
+            handoverBillsFile: [],
         }
     }
 
@@ -748,7 +750,7 @@ class LocalLC extends React.Component {
         })
 
         // 申请人进入赎单状态后，受益人可以进行交单
-        if (this.state.LCData[index].Record.CurrentStep == "applicantRetireBills") {
+        if (this.state.LCData[index].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep) {
             this.setState({
                 handoverBillsModalVisible: true,
             })
@@ -769,30 +771,36 @@ class LocalLC extends React.Component {
         }
 
         let values = {
-            no: this.state.LCData[this.state.index].Record.lcNo,
+            no: this.state.LCData[this.state.index].Key,
             billinfo: billInfo,
+            billFile: this.state.handoverBillsFile
         };
 
         message.error("bill info:" + JSON.stringify(values));
-        // request('/api/LetterofCredit/beneficiaryHandoverBills', {
-        //     method: "POST",
-        //     body: values,
-        // }).then((data) => {
-        //     message.success("处理成功!");
-        //     this.setState({
-        //         handoverBillsModalVisible: false,
-        //     });
-        // }).catch((error) => {
-        //     message.error("处理失败！");
-        //     this.setState({
-        //         handoverBillsModalVisible: false,
-        //     })
-        // })
+        request('/api/LetterofCredit/beneficiaryHandoverBills', {
+            method: "POST",
+            body: values,
+        }).then((data) => {
+            message.success("处理成功!");
+            this.setState({
+                handoverBillsModalVisible: false,
+            });
+        }).catch((error) => {
+            message.error("处理失败！");
+            this.setState({
+                handoverBillsModalVisible: false,
+            })
+        })
     }
     handleBillChange = (data) => {
         this.setState({
             handoverBillsInfo: data,
         });
+    }
+    handleFileChange = (fileList) => {
+        this.setState({
+            handoverBillsFile: fileList,
+        })
     }
 
     showDetailModal = (index, text) => {
@@ -898,7 +906,7 @@ class LocalLC extends React.Component {
                     data={this.state.LCs[this.state.index]}
                     onSubmit={this.handleHandoverBillSubmit}
                     onBillChange={this.handleBillChange}
-                //onFileChange={this.handleFileChange}
+                    onFileChange={this.handleFileChange}
                 />
             </PageHeaderLayout>
         )

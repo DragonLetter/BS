@@ -3310,18 +3310,22 @@ definitions:
       no:
         type: "string"
       billinfo:
-        type: "object"
-        properties:
-          bolNo:
-            type: "string"
-          goodsNo:
-            type: "string"
-          goodsInfo:
-            type: "string"
-          shippingTime:
-            type: "string"
-      billFile:
-        type: "object"
+        type: "array"
+        items:
+          $ref: "#/definitions/BillInfo"
+      # billFile:
+      #   type: "object"
+  BillInfo:
+    type: "object"
+    properties:
+      bolNo:
+        type: "string"
+      goodsNo:
+        type: "string"
+      goodsInfo:
+        type: "string"
+      shippingTime:
+        type: "string"
   # 信用证交单审核，申请人/开证行
   BillsCheck:
     type: "object"

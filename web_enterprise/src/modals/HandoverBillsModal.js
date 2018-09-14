@@ -147,16 +147,16 @@ class HandoverBillsModal extends React.Component {
             // deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
             // amount = applicationForm.amount - deposit.depositAmount,
             title = "交单——" + record.lcNo;
-        // function onDocumentChange(info) {
-        //     let attachment = {};
-        //     attachment.FileName = info.file.name;
-        //     attachment.FileHash = info.file.response.fileHash;
-        //     attachment.FileSignature = info.file.response.signature;
-        //     attachment.Uploader = info.file.response.uploader;
-        //     fileList.push(attachment);
-        //     onFileChange(fileList);
-        // }
-        // const documentFileUploadOptions = getFileUploadOptions(onDocumentChange);
+        function onDocumentChange(info) {
+            let attachment = {};
+            attachment.FileName = info.file.name;
+            attachment.FileHash = info.file.response.fileHash;
+            attachment.FileSignature = info.file.response.signature;
+            attachment.Uploader = info.file.response.uploader;
+            fileList.push(attachment);
+            onFileChange(fileList);
+        }
+        const documentFileUploadOptions = getFileUploadOptions(onDocumentChange);
         // const documentFileUploadOptions = {
         //     name: 'file',
         //     action: 'http://localhost:8080/api/Document/Upload',
@@ -195,7 +195,7 @@ class HandoverBillsModal extends React.Component {
                     <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }}>添加</Button>
                     <Table bordered dataSource={dataSource} columns={columns} />
                 </div>
-                {/* <Row>
+                <Row>
                     <Col style={{ marginBottom: '12px', fontSize: '15px', color: '#32325d' }} span={6}>附件</Col>
                 </Row>
                 <Row gutter={40} style={{ marginBottom: 10 }}>
@@ -206,7 +206,7 @@ class HandoverBillsModal extends React.Component {
                                     </Button>
                         </Upload>
                     </Col>
-                </Row> */}
+                </Row>
             </Modal>
         );
     }

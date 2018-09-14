@@ -127,13 +127,24 @@ exports.beneficiaryHandoverBills = function (req, res, next) {
     let value = args.body.value,
         no = value.no,
         fabricArg = {
-            "BillOfLandings": value.billInfo,
         },
+        billLandings = [],
+        // "BillOfLandings": value.billinfo,
         fabricArg1 = value.billFile;
 
+    for (var i = 0; i < value.billinfo.length; i++) {
+        var billLanding = {};
+        billLanding.BolNO = value.billinfo[i].bolNo;
+        billLanding.GoodsNo = value.billinfo[i].goodsNo;
+        billLanding.GoodsDesc = value.billinfo[i].goodsInfo;
+        billLanding.ShippingTime = value.billinfo[i].shippingTime;
+        billLandings[i] = billLanding;
+    }
+    fabricArg.BillOfLandings = billLandings;
+
     Logger.debug("input args:" + inspect(args)
-        + "\n fabric arg:" + fabricArg
-        + "\n fabric arg1:" + fabricArg1);
+        + "\n fabric arg:" + JSON.stringify(fabricArg)
+        + "\n fabric arg1:" + JSON.stringify(fabricArg1));
 
     fabric.invoke(req, "handOverBills", [no, JSON.stringify(fabricArg), JSON.stringify(fabricArg1)], function (err, resp) {
         if (!err) {

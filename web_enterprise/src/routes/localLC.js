@@ -698,22 +698,21 @@ class LocalLC extends React.Component {
             request('/api/applicationform', {
                 method: "POST",
                 body: values,
-            })
-                .then((data) => {
-                    message.success("创建成功!");
-                    this.handleLCInfo(data);
-                    // No = data[data.length - 1].Key;
-                    let keyArray = [];
-                    for (let i in data) {
-                        keyArray.push(data[i].Key);
-                    }
-                    No = Math.max(...keyArray);
-                    this.setState({
-                        createDraftFromVisible: false,
-                        secondStepFromVisible: true,
-                        loading: false,
-                    });
+            }).then((data) => {
+                message.success("创建成功!");
+                this.handleLCInfo(data);
+                // No = data[data.length - 1].Key;
+                let keyArray = [];
+                for (let i in data) {
+                    keyArray.push(data[i].Key);
+                }
+                No = Math.max(...keyArray);
+                this.setState({
+                    createDraftFromVisible: false,
+                    secondStepFromVisible: true,
+                    loading: false,
                 });
+            });
         })
     }
 
@@ -749,13 +748,20 @@ class LocalLC extends React.Component {
             index: index
         })
 
-        // 申请人进入赎单状态后，受益人可以进行交单
+        // 1.申请人进入赎单状态后，受益人可以进行交单
+        // 2.交单人必须为受益人
+        var userId = sessionStorage.getItem("userId");
         if (this.state.LCData[index].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep) {
-            this.setState({
-                handoverBillsModalVisible: true,
-            })
+            var beneficiaryID = this.state.LCData[index].Record.LetterOfCredit.Beneficiary.No;
+            if (userId == beneficiaryID) {
+                this.setState({
+                    handoverBillsModalVisible: true,
+                })
+            } else {
+                message.error("身份不符，不允许交单！");
+            }
         } else {
-            message.error("还未进入受益人交单流程！");
+            message.error("非申请人赎单状态，受益人不允许交单！");
         }
     }
     handleHandoverBillSubmit = () => {
@@ -776,7 +782,6 @@ class LocalLC extends React.Component {
             billFile: this.state.handoverBillsFile
         };
 
-        message.error("bill info:" + JSON.stringify(values));
         request('/api/LetterofCredit/beneficiaryHandoverBills', {
             method: "POST",
             body: values,

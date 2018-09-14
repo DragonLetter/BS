@@ -45,12 +45,6 @@ export const getNavData = app => [
         path: 'settings',
         component: dynamicWrapper(app, [], () => import('../routes/settings')),
       },
-      {
-        name: '区块链浏览器',
-        icon: 'area-chart',
-        path: 'browser',
-        component: dynamicWrapper(app, [], () => import('../routes/blockBrowser')),
-      },
     ],
   },
 ];

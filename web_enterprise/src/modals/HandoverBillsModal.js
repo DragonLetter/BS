@@ -195,7 +195,7 @@ class HandoverBillsModal extends React.Component {
                     <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }}>添加</Button>
                     <Table bordered dataSource={dataSource} columns={columns} />
                 </div>
-                <Row>
+                {/* <Row>
                     <Col style={{ marginBottom: '12px', fontSize: '15px', color: '#32325d' }} span={6}>附件</Col>
                 </Row>
                 <Row gutter={40} style={{ marginBottom: 10 }}>
@@ -206,7 +206,7 @@ class HandoverBillsModal extends React.Component {
                                     </Button>
                         </Upload>
                     </Col>
-                </Row>
+                </Row> */}
             </Modal>
         );
     }

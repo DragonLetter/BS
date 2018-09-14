@@ -1,6 +1,6 @@
 import React from 'react'
 import { request, getFileUploadOptions } from '../utils/common';
-import { List, Spin, Card, Layout, Select, message, Tabs } from 'antd'
+import { List, Spin, Card, Layout, Select, message, Tabs, Row, Col } from 'antd'
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
 import ConfirmDraftModal from '../modals/ConfirmDraftModal';
 import DepositModal from '../modals/DepositModal';
@@ -518,75 +518,81 @@ class TodoList extends React.Component {
 
         return (
             <PageHeaderLayout title="待办事项">
-                <Tabs defaultActiveKey="1" onChange={this.tabsCallback} style={{ marginTop: '20px' }}>
-                    <TabPane tab="信用证开证" key="1">
-                        <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                            <Spin spinning={this.state.loading} delay={500} >{container}</Spin>
-                        </Content>
-                        <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                            <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
-                        </Content>
-                        <ConfirmDraftModal
-                            ref={this.saveCreateFormRef}
-                            selectOptions={options}
-                            visible={this.state.confirmModalVisible}
-                            data={this.state.lcTransData}
-                            onSubmit={this.handleApplicationFormSubmit}
-                            onCancel={this.closeForm}
-                        />
-                        <DepositModal
-                            ref={this.depositModalRef}
-                            visible={this.state.depositModalVisible}
-                            data={this.state.lcTransData}
-                            onSubmit={this.handleDepositSubmit}
-                            onCancel={this.closeDepositModal}
-                        />
-                        <RetireBillModal
-                            ref={this.retireBillModalRef}
-                            visible={this.state.retireBillModalVisible}
-                            data={this.state.lcTransData}
-                            onSubmit={this.handleRetireBillSubmit}
-                            onCancel={this.closeRetireBillModal}
-                        />
-                        <LCNoticeModal
-                            ref={this.LCNoticeModalRef}
-                            visible={this.state.LCNoticeModalVisible}
-                            data={this.state.lcTransData}
-                            onSubmit={this.handleLcNoticeSubmit}
-                            onCancel={this.closeLcNoticeModal}
-                        />
-                        <DraftModal
-                            visible={this.state.draftModalVisible}
-                            data={this.state.lcTransData}
-                            onSubmit={this.closeDraftModal}
-                            onCancel={this.closeDraftModal}
-                        />
-                    </TabPane>
-                    <TabPane tab="信用证修改" key="2">
-                        <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                            <Spin spinning={this.state.loading} delay={500} >{containerModify}</Spin>
-                        </Content>
-                        <AmendationModal
-                            ref={this.amendationModalRef}
-                            visible={this.state.amendationModalVisible}
-                            data={this.state.lcModifyTransData}
-                            onSubmit={this.handleAmendSubmit}
-                            onCancel={this.closeAmendationModal}
-                        />
-                    </TabPane>
-                    <TabPane tab="信用证交单" key="3">
-                        <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                            <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
-                        </Content>
-                        <CheckBillsModal
-                            ref={this.checkBillsModalRef}
-                            visible={this.state.checkBillModalVisible}
-                            data={this.state.lcHandoverTransData}
-                            onOk={this.acceptCheckBills}
-                            onCancel={this.cancelCheckBills}
-                        />
-                    </TabPane>
-                </Tabs>
+                {/* <Tabs defaultActiveKey="1" onChange={this.tabsCallback} style={{ marginTop: '20px' }}> */}
+                {/* <TabPane tab="信用证开证" key="1"> */}
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证开证</Col>
+                </Row>
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >{container}</Spin>
+                </Content>
+                <ConfirmDraftModal
+                    ref={this.saveCreateFormRef}
+                    selectOptions={options}
+                    visible={this.state.confirmModalVisible}
+                    data={this.state.lcTransData}
+                    onSubmit={this.handleApplicationFormSubmit}
+                    onCancel={this.closeForm}
+                />
+                <DepositModal
+                    ref={this.depositModalRef}
+                    visible={this.state.depositModalVisible}
+                    data={this.state.lcTransData}
+                    onSubmit={this.handleDepositSubmit}
+                    onCancel={this.closeDepositModal}
+                />
+                <RetireBillModal
+                    ref={this.retireBillModalRef}
+                    visible={this.state.retireBillModalVisible}
+                    data={this.state.lcTransData}
+                    onSubmit={this.handleRetireBillSubmit}
+                    onCancel={this.closeRetireBillModal}
+                />
+                <LCNoticeModal
+                    ref={this.LCNoticeModalRef}
+                    visible={this.state.LCNoticeModalVisible}
+                    data={this.state.lcTransData}
+                    onSubmit={this.handleLcNoticeSubmit}
+                    onCancel={this.closeLcNoticeModal}
+                />
+                <DraftModal
+                    visible={this.state.draftModalVisible}
+                    data={this.state.lcTransData}
+                    onSubmit={this.closeDraftModal}
+                    onCancel={this.closeDraftModal}
+                />
+                {/* </TabPane>
+                    <TabPane tab="信用证修改" key="2"> */}
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证修改</Col>
+                </Row>
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >{containerModify}</Spin>
+                </Content>
+                <AmendationModal
+                    ref={this.amendationModalRef}
+                    visible={this.state.amendationModalVisible}
+                    data={this.state.lcModifyTransData}
+                    onSubmit={this.handleAmendSubmit}
+                    onCancel={this.closeAmendationModal}
+                />
+                {/* </TabPane>
+                    <TabPane tab="信用证交单" key="3"> */}
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证交单</Col>
+                </Row>
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
+                </Content>
+                <CheckBillsModal
+                    ref={this.checkBillsModalRef}
+                    visible={this.state.checkBillModalVisible}
+                    data={this.state.lcHandoverTransData}
+                    onOk={this.acceptCheckBills}
+                    onCancel={this.cancelCheckBills}
+                />
+                {/* </TabPane> */}
+                {/* </Tabs> */}
             </PageHeaderLayout >
         )
     }

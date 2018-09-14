@@ -745,24 +745,9 @@ class LocalLC extends React.Component {
     // 交单相关处理逻辑
     handoverBill = (index, text) => {
         this.setState({
-            index: index
+            index: index,
+            handoverBillsModalVisible: true,
         })
-
-        // 1.申请人进入赎单状态后，受益人可以进行交单
-        // 2.交单人必须为受益人
-        var userId = sessionStorage.getItem("userId");
-        if (constants.APPLICANT_HANDOVER_PROCESSING_STEPS.includes(this.state.LCData[index].Record.CurrentStep)) {
-            var beneficiaryID = this.state.LCData[index].Record.LetterOfCredit.Beneficiary.No;
-            if (userId == beneficiaryID) {
-                this.setState({
-                    handoverBillsModalVisible: true,
-                })
-            } else {
-                message.error("身份不符，不允许交单！");
-            }
-        } else {
-            message.error("非申请人赎单状态，受益人不允许交单！");
-        }
     }
     handleHandoverBillSubmit = () => {
         // 获取交单基本信息
@@ -832,11 +817,18 @@ class LocalLC extends React.Component {
                 dataIndex: 'handoverBill',
                 key: 'handoverBill',
                 render: (text, record, index) => {
-                    return (
-                        <span>
-                            <a onClick={() => this.handoverBill(index, text)}>交单</a>
-                        </span>
-                    )
+                    var userId = sessionStorage.getItem("userId");
+                    var data = record.detail.Record;
+                    if (constants.APPLICANT_HANDOVER_PROCESSING_STEPS.includes(data.CurrentStep)) {
+                        var beneficiaryID = data.LetterOfCredit.Beneficiary.No;
+                        if (userId == beneficiaryID) {
+                            return (
+                                <span>
+                                    <a onClick={() => this.handoverBill(index, text)}>交单</a>
+                                </span>
+                            )
+                        }
+                    }
                 }
             },
             {
@@ -847,10 +839,6 @@ class LocalLC extends React.Component {
                     return (
                         <span>
                             <a onClick={() => this.showDetailModal(index, text)}>详情  </a>
-                            {/* <span className="ant-divider" />
-                            <Popconfirm title="确定提交该信用证至银行?" okText="确定" cancelText="取消" onConfirm={() => this.submitLc(index, text, record)}>
-                                <a href="#">提交</a>
-                            </Popconfirm> */}
                         </span>
                     )
                 }

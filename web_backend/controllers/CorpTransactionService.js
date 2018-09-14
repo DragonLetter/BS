@@ -47,7 +47,10 @@ exports.getProcessingTransByCorpId = function (req, res, next) {
                                 lc.Record.TransProgressFlow.map(flow => {
                                     flow.Status = constants.STEPS[flow.Status];
                                 });
-                                if (constants.BENEFICIARY_PROCESSING_STEPS.includes(lc.Record.CurrentStep)) {
+
+                                // 受益人需要处理修改流程和信用证正常流程
+                                if (constants.BENEFICIARY_PROCESSING_STEPS.includes(lc.Record.CurrentStep) ||
+                                    constants.AMEND_PROCESSING_STEPS.includes(lc.Record.CurrentStep)) {
                                     beneficiaryLCs.push(lc);
                                 }
                             });

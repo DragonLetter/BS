@@ -5,8 +5,8 @@ import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/c
 import DraftModal from '../modals/DraftModal';
 import HandoverBillsModal from '../modals/HandoverBillsModal';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
-import { LC_STEPS, LC_HANDOVER_STEPS } from './constant';
 
+const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
@@ -751,7 +751,7 @@ class LocalLC extends React.Component {
         // 1.申请人进入赎单状态后，受益人可以进行交单
         // 2.交单人必须为受益人
         var userId = sessionStorage.getItem("userId");
-        if (this.state.LCData[index].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep) {
+        if (constants.APPLICANT_HANDOVER_PROCESSING_STEPS.includes(this.state.LCData[index].Record.CurrentStep)) {
             var beneficiaryID = this.state.LCData[index].Record.LetterOfCredit.Beneficiary.No;
             if (userId == beneficiaryID) {
                 this.setState({

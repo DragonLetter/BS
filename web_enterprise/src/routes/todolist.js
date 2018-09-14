@@ -9,8 +9,8 @@ import RetireBillModal from '../modals/RetireBillModal';
 import LCNoticeModal from '../modals/LCNoticeModal';
 import DraftModal from '../modals/DraftModal';
 import CheckBillsModal from '../modals/CheckBillsModal';
-import { LC_STEPS, LC_HANDOVER_STEPS } from './constant';
 
+const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
 const Option = Select.Option
 const TabPane = Tabs.TabPane;
@@ -61,24 +61,33 @@ class TodoList extends React.Component {
         const transactions = [];
         const handoverTrans = [];
         const modifyTrans = [];
+        var userId = sessionStorage.getItem("userId");
         for (let i = 0; i < data.length; i++) {
+            // 获取申请人ID和受益人ID
+            var applicantID = data[i].Record.LetterOfCredit.Applicant.No;
+            var beneficiaryID = data[i].Record.LetterOfCredit.Beneficiary.No;
             // 信用证流程数据
-            transactions.push({
-                id: data[i].Key,
-                title: data[i].Record.lcNo || "尚未获得信用证编号",
-                applicant: data[i].Record.ApplicationForm.Applicant.Name,
-                beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
-                amount: data[i].Record.LetterOfCredit.amount,
-                status: data[i].Record.CurrentStep,
-                applyTime: data[i].Record.LetterOfCredit.applyTime.split("T")[0],
-                detail: data[i]
-            })
+            if ((constants.APPLICANT_PROCESSING_STEPS.includes(data[i].Record.CurrentStep) && userId == applicantID)
+                || (constants.BENEFICIARY_PROCESSING_STEPS.includes(data[i].Record.CurrentStep) && userId == beneficiaryID)) {
+                transactions.push({
+                    id: data[i].Key,
+                    title: data[i].Record.lcNo || "尚未获得信用证编号",
+                    applicant: data[i].Record.ApplicationForm.Applicant.Name,
+                    beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
+                    amount: data[i].Record.LetterOfCredit.amount,
+                    status: data[i].Record.CurrentStep,
+                    applyTime: data[i].Record.LetterOfCredit.applyTime.split("T")[0],
+                    detail: data[i]
+                })
+            }
 
             // 信用证交单流程数据，只有进入 申请人审单状态 才有数据
-            if (data[i].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep &&
+            if (constants.APPLICANT_HANDOVER_PROCESSING_STEPS.includes(data[i].Record.CurrentStep) &&
                 data[i].Record.LCTransDocsReceive) {
                 for (let j = 0; j < data[i].Record.LCTransDocsReceive.length; j++) {
-                    if (data[i].Record.LCTransDocsReceive[j].HandOverBillStep == LC_HANDOVER_STEPS.ApplicantReviewBillsStep) {
+                    // 申请人处理交单后的审单
+                    if (data[i].Record.LCTransDocsReceive[j].HandOverBillStep == constants.LC_HANDOVER_STEPS.ApplicantAcceptOrRejectStep
+                        && userId == applicantID) {
                         handoverTrans.push({
                             id: data[i].Key,
                             title: data[i].Record.lcNo || "尚未获得信用证编号",
@@ -96,19 +105,26 @@ class TodoList extends React.Component {
             }
 
             // 信用证修改流程数据
-            if (data[i].Record.CurrentStep == LC_STEPS.ApplicantFillLCDraftStep ||
-                data[i].Record.CurrentStep == LC_STEPS.BeneficiaryReceiveLCStep ||
-                data[i].Record.CurrentStep == LC_STEPS.ApplicantRetireBillsStep) {
-                modifyTrans.push({
-                    id: data[i].Key,
-                    title: data[i].Record.lcNo || "尚未获得信用证编号",
-                    applicant: data[i].Record.ApplicationForm.Applicant.Name,
-                    beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
-                    amount: data[i].Record.LetterOfCredit.amount,
-                    status: data[i].Record.CurrentStep,
-                    applyTime: data[i].Record.LetterOfCredit.applyTime.split("T")[0],
-                    detail: data[i]
-                })
+            if (constants.AMEND_PROCESSING_STEPS.includes(data[i].Record.CurrentStep) &&
+                data[i].Record.AmendFormFlow) {
+                for (let j = 0; j < data[i].Record.AmendFormFlow.length; j++) {
+                    // 只有受益人有信用证修改处理流程
+                    if (data[i].Record.AmendFormFlow[j].Status == constants.LC_MODIFY_STEPS.AmendBeneficiaryAcceptStep &&
+                        userId == beneficiaryID) {
+                        modifyTrans.push({
+                            id: data[i].Key,
+                            title: data[i].Record.lcNo || "尚未获得信用证编号",
+                            amendNo: data[i].Record.AmendFormFlow[j].amendNo,
+                            applicant: data[i].Record.ApplicationForm.Applicant.Name,
+                            beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
+                            amount: data[i].Record.LetterOfCredit.amount,
+                            status: data[i].Record.CurrentStep,
+                            applyTime: data[i].Record.LetterOfCredit.applyTime.split("T")[0],
+                            detail: data[i],
+                            amendDetail: data[i].Record.AmendFormFlow[j]
+                        })
+                    }
+                }
             }
         }
 
@@ -399,7 +415,7 @@ class TodoList extends React.Component {
                             item => (item.title ? (
                                 <List.Item key={item.id}>
                                     <Card title={item.title}
-                                        actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>发起修改</a>]}>
+                                        actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>修改审核</a>]}>
                                         <span style={{ display: "block" }}>申请人：{item.applicant}</span>
                                         <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
                                         <span style={{ display: "block" }}>开证金额：{item.amount}</span>
@@ -458,22 +474,22 @@ class TodoList extends React.Component {
                 lcTransData: transaction,
             });
             switch (transaction.status) {
-                case LC_STEPS.ApplicantSaveLCApplyFormStep:
+                case constants.LC_STEPS.ApplicantSaveLCApplyFormStep:
                     this.setState({
                         confirmModalVisible: true,
                     });
                     break;
-                case LC_STEPS.ApplicantFillLCDraftStep:
+                case constants.LC_STEPS.ApplicantFillLCDraftStep:
                     this.setState({
                         depositModalVisible: true,
                     });
                     break;
-                case LC_STEPS.BeneficiaryReceiveLCStep:
+                case constants.LC_STEPS.BeneficiaryReceiveLCStep:
                     this.setState({
                         LCNoticeModalVisible: true,
                     });
                     break;
-                case LC_STEPS.ApplicantRetireBillsStep:
+                case constants.LC_STEPS.ApplicantRetireBillsStep:
                     this.setState({
                         retireBillModalVisible: true,
                     });
@@ -484,25 +500,17 @@ class TodoList extends React.Component {
                 lcModifyTransData: transaction,
             });
             // 信用证修改流程
-            switch (transaction.status) {
-                case LC_STEPS.ApplicantFillLCDraftStep:
-                case LC_STEPS.BankIssueLCStep:
-                case LC_STEPS.AdvisingBankReceiveLCNoticeStep:
-                case LC_STEPS.BeneficiaryReceiveLCStep:
-                case LC_STEPS.ApplicantRetireBillsStep:
-                case LC_STEPS.IssuingBankReviewRetireBillsStep:
-                case LC_STEPS.IssuingBankCloseLCStep:
-                    this.setState({
-                        amendationModalVisible: true,
-                    });
-                    break;
+            if (constants.AMEND_PROCESSING_STEPS.includes(transaction.status)) {
+                this.setState({
+                    amendationModalVisible: true,
+                });
             }
         } else if (3 == type) {
             this.setState({
                 lcHandoverTransData: transaction,
             });
             // 信用证交单流程
-            if (transaction.status == LC_STEPS.ApplicantRetireBillsStep) {
+            if (constants.APPLICANT_HANDOVER_PROCESSING_STEPS.includes(transaction.status)) {
                 this.setState({
                     checkBillModalVisible: true,
                 });

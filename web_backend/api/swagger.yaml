@@ -165,6 +165,64 @@ paths:
         404:
           description: "Application not found"
       x-swagger-router-controller: "BankApplication"
+  /bank/Application/AmendState/{AFNo}:
+    get:
+      tags:
+      - "Bank Service: Application"
+      summary: "Get the state of this amend  "
+      description: "Returns Amend state"
+      operationId: "getAmendState"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "AFNo"
+        in: "path"
+        description: "信用证ID"
+        required: true
+        type: "string"
+      - in: query
+        name: amendNo
+        description: "信用证修改编号"
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/AmendState"
+      x-swagger-router-controller: "BankApplication"
+    post:
+      tags:
+      - "Bank Service: Application"
+      summary: "更新信用证修改表状态(如果是新记录则生成，否则更新)"
+      description: ""
+      operationId: "updateAmendState"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "AFNo"
+        in: "path"
+        description: "信用证ID"
+        required: true
+        type: "string"
+      - in: query
+        name: amendNo
+        description: "信用证修改编号"
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "amend object that needs to be update to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/AmendState"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "BankApplication"
   /bank/transaction/{bankId}:
     get:
       tags: 
@@ -3674,6 +3732,34 @@ definitions:
       #办理过程备注
       backup:
         type: "string"
+  #信用证修改表状态
+  AmendState:
+    type: "object"
+    properties:
+      #信用证申请编号
+      AFNo:
+        type: "string"
+      #信用证修改编号
+      amendNo:
+        type: "string"
+      #步骤
+      step:
+        type: "string"
+      #状态
+      state:
+        type: "string"
+      #办理过程数据lcNo
+      lcNo:
+        type: "string"      
+      #办理过程数据suggestion
+      suggestion:
+        type: "string"
+      #办理过程数据isAgreed
+      isAgreed:
+        type: "string"
+      #办理过程备注
+      backup:
+        type: "string"        
   #信用证列表项
   LCListItem:
     type: "object"

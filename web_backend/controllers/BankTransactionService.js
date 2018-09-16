@@ -379,6 +379,8 @@ function chaincodeTx2ViewTx(chaincodeTx) {
         "status": STEP_ENUM[chaincodeTx.Record.CurrentStep],
         "state": STATUS_ENUM[chaincodeTx.Record.lcStatus],
         "issuseDate": chaincodeTx.Record.LetterOfCredit.applyTime,
+        "issuingBankNo": chaincodeTx.Record.LetterOfCredit.IssuingBank.No,
+        "advisingBankNo": chaincodeTx.Record.LetterOfCredit.AdvisingBank.No,
         "amend": amend
     };
     return tx;
@@ -664,4 +666,3 @@ exports.getLCClosingByTxId = function (req, res, next) {
         }
     });
 };
-

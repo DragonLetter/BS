@@ -183,7 +183,7 @@ exports.appliciantCheckBills = function (req, res, next) {
 }
 
 /**
- * 申请人：赎单
+ * 申请人：付款
  * 
  * Params：body
  * return: nil
@@ -198,7 +198,7 @@ exports.retireShippingBills = function (req, res, next) {
 
     fabric.invoke(req, "retireShippingBills", [no, commitAmount], function (err, resp) {
         if (!err) {
-            res.end(JSON.stringify("赎单成功"));
+            res.end(JSON.stringify("付款成功"));
         } else {
             res.end(JSON.stringify(err));
         }

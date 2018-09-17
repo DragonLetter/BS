@@ -390,7 +390,7 @@ class LetterDraft extends React.Component {
     approveUpdateAfState = () => {
         var afstate = this.state.afstate;
         afstate.state = '11';//初始化身份--经办
-        afstate.step = 'IssuingBankReviewRetireBillsStep';//开证行审核赎单
+        afstate.step = 'IssuingBankReviewRetireBillsStep';//开证行审核付款
         afstate.suggestion = "";
         afstate.depositAmount = "";
         fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)

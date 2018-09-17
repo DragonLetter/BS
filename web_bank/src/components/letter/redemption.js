@@ -428,7 +428,7 @@ class LetterRedemption extends React.Component {
                     <Row>
                         <Col style={{ fontSize: '13px' }} span={24} offset={0}>
                             <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />审核通过</Button>
-                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝赎单</Button>
+                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝付款</Button>
                         </Col>
                     </Row>
                 </div>
@@ -458,8 +458,8 @@ class LetterRedemption extends React.Component {
                                 </div>
                                 <div>
                                     <Row>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>赎单金额</Col>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount+this.state.letters.LetterOfCredit.Currency}</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>付款金额</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount + this.state.letters.LetterOfCredit.Currency}</Col>
                                     </Row>
                                 </div>
                             </div>

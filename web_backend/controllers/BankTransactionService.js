@@ -13,7 +13,7 @@ var STATUS_ENUM = [
     "会签共识",
     "交单",
     "承兑",
-    "赎单",
+    "付款",
     "拒付",
     "闭卷"
 ];
@@ -32,7 +32,7 @@ const STEP_ENUM = {
     "AdvisingBankReviewBillsStep": "通知行审核交单信息",
     "IssuingBankAcceptOrRejectStep": "发证行承兑或拒付",   // 开证行面向受益人
     "ApplicantRetireBillsStep": "申请人付款",
-    "IssuingBankReviewRetireBillsStep": "开证行审核赎单",  // 开证行面向申请人
+    "IssuingBankReviewRetireBillsStep": "开证行审核付款",  // 开证行面向申请人
     "IssuingBankCloseLCStep": "闭卷",
     "LCEnd": "结束",
 };

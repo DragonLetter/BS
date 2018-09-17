@@ -639,7 +639,7 @@ class LetterBill extends React.Component {
     approveUpdateAfState = () => {
         var afstate = this.state.afstate;
         afstate.state = '11';//初始化身份--经办
-        afstate.step = 'IssuingBankReviewRetireBillsStep';//开证行审核赎单
+        afstate.step = 'IssuingBankReviewRetireBillsStep';//开证行审核付款
         afstate.suggestion = "";
         afstate.depositAmount = "";
         fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
@@ -735,8 +735,8 @@ class LetterBill extends React.Component {
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
                     <Row>
                         <Col style={{ fontSize: '13px' }} span={24} offset={0}>
-                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />确认赎单</Button>
-                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝赎单</Button>
+                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />确认付款</Button>
+                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝付款</Button>
                         </Col>
                     </Row>
                 </div>
@@ -755,7 +755,7 @@ class LetterBill extends React.Component {
 
                     <Tabs defaultActiveKey="0" onChange={this.tabsCallback} style={{ marginTop: '20px' }}>
                         {this.state.curStep=="IssuingBankReviewRetireBillsStep"?[
-                        <TabPane tab="赎单审核" key="0">
+                        <TabPane tab="付款审核" key="0">
                             <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
                                 <div>
                                     <Row>
@@ -765,7 +765,7 @@ class LetterBill extends React.Component {
                                 </div>
                                 <div>
                                     <Row>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>赎单金额</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>付款金额</Col>
                                         <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>1000.00 RMB</Col>
                                     </Row>
                                 </div>

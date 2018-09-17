@@ -50,20 +50,22 @@ exports.updateAmendState = function (req, res, next) {
     }).then(function (data) {
         if (data == null) {
             Logger.debug("query amend AFNo:" + args.AFNo.value + " query amend amendNo: " + args.amendNo.value);
-            
+
             models.AmendState.create({
                 'AFNo': args.AFNo.value,
                 'amendNo': args.amendNo.value,
                 'step': args.body.value.step,
                 'state': args.body.value.state,
-                'lcNo' : args.body.value.lcNo,
-                'suggestion' : args.body.value.suggestion,
+                'lcNo': args.body.value.lcNo,
+                'suggestion': args.body.value.suggestion,
+                "isAgreed": args.body.value.isAgreed,
+                "backup": args.body.value.backup
             }).then(function (data) {
                 Logger.debug("insert amend state");
                 res.end();
-                
+
             }).catch(function (e) {
-                Logger.debug("insert amend state error:" + e);              
+                Logger.debug("insert amend state error:" + e);
                 res.end();
             });
         }
@@ -73,12 +75,14 @@ exports.updateAmendState = function (req, res, next) {
                 'amendNo': args.amendNo.value,
                 'step': args.body.value.step,
                 'state': args.body.value.state,
-                'lcNo' : args.body.value.lcNo,
-                'suggestion' : args.body.value.suggestion,
-              };
+                'lcNo': args.body.value.lcNo,
+                'suggestion': args.body.value.suggestion,
+                "isAgreed": args.body.value.isAgreed,
+                "backup": args.body.value.backup
+            };
 
             models.AmendState.update(
-                info,                
+                info,
                 {
                     'where': {
                         'AFNo': args.AFNo.value,

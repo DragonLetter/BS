@@ -39,7 +39,7 @@ var renderAction = function(params) {
             return (<a href={'/#/lcpayment/original/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
         case "申请人付款":
             return (<a href={'/#/lcpayment/billtransact/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
-        case "开证行审核赎单":
+        case "开证行审核付款":
             return (<a href={'/#/lcpayment/closing/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
         case "闭卷":
             return (<a href={'/#/lcpayment/closing/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
@@ -55,7 +55,7 @@ const tagsFromServer = [
     "会签",
     "交单",
     "承兑",
-    "赎单",
+    "付款",
     "拒付",
     "闭卷"
 ];

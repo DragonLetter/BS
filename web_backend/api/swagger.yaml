@@ -3862,7 +3862,7 @@ definitions:
         type: "string"
       isAgreed:
         type: "string"
-  # 开证行，确认申请人付款赎单
+  # 开证行，确认申请人付款
   LCClosing:
     type: "object"
     properties:

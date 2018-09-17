@@ -221,7 +221,7 @@ class TodoList extends React.Component {
                 method: "POST",
                 body: values,
             }).then((data) => {
-                message.success("赎单成功!");
+                message.success("付款成功!");
                 this.setState({
                     retireBillModalVisible: false,
                 });

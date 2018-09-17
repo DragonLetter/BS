@@ -28,7 +28,7 @@ export const LC_ADVISING = '正本通知'
 export const LC_AMEND = '正本修改'
 export const LC_DOCS_APPROVED = '来单审核'
 export const LC_ACCEPTANCE = '承兑确认'
-export const LC_CLOSED = '赎单闭卷'
+export const LC_CLOSED = '付款闭卷'
 
 //信用证修改
 export const AMEND_TITLE = '国内信用证修改'

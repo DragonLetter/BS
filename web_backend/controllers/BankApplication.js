@@ -2,6 +2,7 @@
 
 var url = require('url');
 var ApplicationService = require('./BankApplicationService');
+var BankAmendRecordService = require('./BankAmendRecordService');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 
@@ -23,4 +24,5 @@ module.exports.getAmendState = function getAmendState(req, res, next) {
 module.exports.updateAmendState = function updateAmendState(req, res, next) {
   Logger.info("updateAmendState");
   ApplicationService.updateAmendState(req, res, next);
+  BankAmendRecordService.updateAmendStateRecord(req, res, next);
 };

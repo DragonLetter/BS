@@ -14,7 +14,7 @@ const RetireBillModal = Form.create()((props) => {
         applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
         deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
         amount = applicationForm.amount - deposit.commitAmount,
-        title = "赎单——" + record.lcNo;
+        title = "付款——" + record.lcNo;
 
     return (
         <Modal

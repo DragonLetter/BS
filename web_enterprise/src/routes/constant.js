@@ -8,7 +8,7 @@ exports.LC_STEPS = {
     AdvisingBankReceiveLCNoticeStep: "通知行收到信用证通知",
     BeneficiaryReceiveLCStep: "受益人接收信用证",
     ApplicantRetireBillsStep: "申请人付款",
-    IssuingBankReviewRetireBillsStep: "开证行审核赎单",
+    IssuingBankReviewRetireBillsStep: "开证行审核付款",
     IssuingBankCloseLCStep: "闭卷",
     LCEnd: "结束"
 };
@@ -51,8 +51,8 @@ exports.LC_HANDOVER_STEPS_SHOW = {
 exports.APPLICANT_PROCESSING_STEPS = ['保存', '填写信用证草稿', '申请人付款'];
 exports.BENEFICIARY_PROCESSING_STEPS = ["受益人接收信用证"];
 // 信用证修改处理流程
-exports.AMEND_PROCESSING_STEPS = ['通知行收到信用证通知', "受益人接收信用证", "申请人付款", "开证行审核赎单", "闭卷"];
+exports.AMEND_PROCESSING_STEPS = ['通知行收到信用证通知', "受益人接收信用证", "申请人付款", "开证行审核付款", "闭卷"];
 // 信用证交单处理流程
 exports.APPLICANT_HANDOVER_PROCESSING_STEPS = ["申请人付款"];
 
-exports.LC_STATUS = ["信用证申请", "信用证草稿", "信用证正本", "信用证正本修改", "信用证生效", "交单", "承兑", "赎单", "拒付", "闭卷"];
+exports.LC_STATUS = ["信用证申请", "信用证草稿", "信用证正本", "信用证正本修改", "信用证生效", "交单", "承兑", "付款", "拒付", "闭卷"];

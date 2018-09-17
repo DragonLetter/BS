@@ -202,7 +202,9 @@ const AddDraftForm = Form.create()(
                                     )}
                                 </FormItem>
                                 <div style={{ marginTop: -60, marginRight: 60, float: 'right' }} >
-                                    保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    {/* 保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} /> */}
+                                    保证金金额：<InputNumber id="EnsureAmount" 
                                         parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} />
                                 </div>
                             </Col>

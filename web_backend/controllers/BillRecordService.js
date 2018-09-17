@@ -84,7 +84,7 @@ exports.addBillStateRecord = function (req, res, next) {
     };
 
     Logger.debug("addBillStateRecord: Add record:" + JSON.stringify(dbVal));
-
+    console.log(JSON.stringify(dbVal));
     /**
      * Add a new operation record to the db
      **/

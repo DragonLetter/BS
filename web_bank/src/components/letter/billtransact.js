@@ -61,10 +61,10 @@ const BillDialog = Form.create()(
                     </Row>
                     <Row>
                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>编号</Col>
-                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={3}>{dataform.NO}</Col>
+                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={3}>{dataform.No}</Col>
                         <Col span={1}></Col>
                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单金额</Col>
-                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={3}>{dataform.ReceivedAmount}</Col>
+                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={3}>{dataform.HandoverAmount}</Col>
                         <Col span={1}></Col>
                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单时间</Col>
                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{dataform.ReceivedDate}</Col>
@@ -101,7 +101,7 @@ const BillDialog = Form.create()(
                     <FormItem {...formItemLayout} label="审核说明">
                     {
                         getFieldDecorator('comment', {
-                            initialValue: dataform ? dataform.suggestion : "",
+                            initialValue: data ? data.suggestion : "",
                             rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
                         })
                             (
@@ -121,7 +121,7 @@ const BillDialog = Form.create()(
                         <FormItem {...formItemLayout} label="承兑说明">
                         {
                             getFieldDecorator('comment', {
-                                initialValue: dataform ? dataform.suggestion : "",
+                                initialValue: data ? data.suggestion : "",
                                 rules: [{ required: true, message: '请填写承兑说明, 内容必须填写.' }],
                             })
                                 (
@@ -132,7 +132,7 @@ const BillDialog = Form.create()(
                         <FormItem label="承兑金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
                         {
                             getFieldDecorator('amount', {
-                                initialValue: dataform ? dataform.depositAmount : "",
+                                initialValue: data ? data.accAmount : "",
                                 rules: [{ required: true, message: '请填写正确的金额.' }],
                             })
                                 (
@@ -708,7 +708,7 @@ class LetterBill extends React.Component {
         // 合同及附件证明材料部分组件
         const billcolumns = [
             { title: '编号', dataIndex: 'No', key: 'No' },
-            { title: '到单金额', dataIndex: 'ReceivedAmount', key: 'ReceivedAmount' },
+            { title: '到单金额', dataIndex: 'HandoverAmount', key: 'HandoverAmount' },
             { title: '不符点', dataIndex: 'Discrepancy', key: 'Discrepancy' },
             { title: '到单状态', key: 'HandOverBillStep', render:(text,record,index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
             { title: '到单日期', dataIndex: 'ReceivedDate', key: 'ReceivedDate' },
@@ -766,7 +766,7 @@ class LetterBill extends React.Component {
                                 <div>
                                     <Row>
                                         <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>付款金额</Col>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>1000.00 RMB</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount}</Col>
                                     </Row>
                                 </div>
                             </div>
@@ -911,6 +911,7 @@ class LetterBill extends React.Component {
                     onApprove={this.billApprove}
                     onRejest={this.billRejest}
                     dataform={this.state.curBill}
+                    data={this.state.billState}
                     stateBill={this.state.stateBill}
                 />
                 <ApproveDialog

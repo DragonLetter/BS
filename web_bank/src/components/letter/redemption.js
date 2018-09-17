@@ -459,7 +459,7 @@ class LetterRedemption extends React.Component {
                                 <div>
                                     <Row>
                                         <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>付款金额</Col>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount + this.state.letters.LetterOfCredit.Currency}</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount}</Col>
                                     </Row>
                                 </div>
                             </div>

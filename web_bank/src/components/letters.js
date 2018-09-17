@@ -25,6 +25,8 @@ const columns = [
 
 var renderAction = function(params) {
     switch(params.status){
+        case "填写信用证草稿":
+            return (<a href={'/#/lcpayment/draft/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "银行确认":
             return (<a href={'/#/lcpayment/draft/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
         case "银行发证":
@@ -40,7 +42,7 @@ var renderAction = function(params) {
         case "申请人付款":
             return (<a href={'/#/lcpayment/billtransact/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "开证行审核付款":
-            return (<a href={'/#/lcpayment/closing/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
+            return (<a href={'/#/lcpayment/redemption/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "闭卷":
             return (<a href={'/#/lcpayment/closing/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
     }

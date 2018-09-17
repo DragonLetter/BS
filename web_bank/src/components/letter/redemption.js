@@ -448,7 +448,7 @@ class LetterRedemption extends React.Component {
                 <Content style={{ background: '#fff', padding: 0, margin: '0' }}>
 
                     <Tabs defaultActiveKey="1" onChange={this.tabsCallback} style={{ marginTop: '20px' }}>
-                        <TabPane tab="赎单审核" key="1">
+                        <TabPane tab="付款审核" key="1">
                             <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
                                 <div>
                                     <Row>
@@ -459,7 +459,7 @@ class LetterRedemption extends React.Component {
                                 <div>
                                     <Row>
                                         <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>赎单金额</Col>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>1000.00 RMB</Col>
+                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount+this.state.letters.LetterOfCredit.Currency}</Col>
                                     </Row>
                                 </div>
                             </div>

@@ -160,10 +160,6 @@ class Letters extends React.Component{
         this.getTxsData();
     }
 
-    componentDidMount = () => {
-        this.getTxsData();
-    }
-
     refreshPage = () => {
         // document.head.innerHTML += '<meta http-equiv="refresh" content="20">'
         //location.reload();

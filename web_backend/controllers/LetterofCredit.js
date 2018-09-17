@@ -33,3 +33,8 @@ module.exports.appliciantCheckBills = function appliciantCheckBills(req, res, ne
   Logger.info("appliciantCheckBills");
   LetterofCredit.appliciantCheckBills(req, res, next);
 }
+
+module.exports.beneficiaryOfAmendHandle = function beneficiaryOfAmendHandle(req, res, next) {
+  Logger.info("beneficiaryOfAmendHandle");
+  LetterofCredit.beneficiaryOfAmendHandle(req, res, next);
+}

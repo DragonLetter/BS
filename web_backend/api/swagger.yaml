@@ -167,6 +167,64 @@ paths:
         404:
           description: "Application not found"
       x-swagger-router-controller: "BankApplication"
+  /bank/Application/AmendState/{AFNo}:
+    get:
+      tags:
+      - "Bank Service: Application"
+      summary: "Get the state of this amend  "
+      description: "Returns Amend state"
+      operationId: "getAmendState"
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "AFNo"
+        in: "path"
+        description: "信用证ID"
+        required: true
+        type: "string"
+      - in: query
+        name: amendNo
+        description: "信用证修改编号"
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/AmendState"
+      x-swagger-router-controller: "BankApplication"
+    post:
+      tags:
+      - "Bank Service: Application"
+      summary: "更新信用证修改表状态(如果是新记录则生成，否则更新)"
+      description: ""
+      operationId: "updateAmendState"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "AFNo"
+        in: "path"
+        description: "信用证ID"
+        required: true
+        type: "string"
+      - in: query
+        name: amendNo
+        description: "信用证修改编号"
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "amend object that needs to be update to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/AmendState"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "BankApplication"
   /bank/transaction/{bankId}:
     get:
       tags: 
@@ -285,7 +343,7 @@ paths:
           description: OK
           schema:
             $ref: "#/definitions/LCTxProcessflow"
-      x-swagger-router-controller: "BankTransaction"
+      x-swagger-router-controller: "BankTransaction"  
   /bank/transaction/draft/{txId}:
     get:
       tags: 
@@ -503,6 +561,46 @@ paths:
         default:
           description: "OK"
       x-swagger-router-controller: "BankLetterofCredit"
+  /bank/LetterofCredit/issueLetterOfAmend:
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "开证行对发起修改同意或拒绝"
+      description: "开证行对发起修改同意或拒绝"
+      operationId: "issueLetterOfAmendHandle"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/IssueAmend"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit" 
+  /bank/LetterofCredit/advisingLetterOfAmend:
+    post:
+      tags: 
+      - "Bank Service: LetterofCredit"
+      summary: "通知行对发起修改同意或拒绝"
+      description: "通知行对发起修改同意或拒绝"
+      operationId: "advisingLetterOfAmendHandle"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/AdvisingAmend"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "BankLetterofCredit" 
   /bank/LetterofCredit/AmendCountersign:
     post:
       tags: 
@@ -743,6 +841,26 @@ paths:
         required: true
         schema:
             $ref: "#/definitions/LCAmendationForm"
+      responses:
+        default:
+          description: "OK"
+      x-swagger-router-controller: "LetterofCredit" 
+  /LetterofCredit/beneficiaryLetterOfAmend:
+    post:
+      tags: 
+      - "LetterofCredit"
+      summary: "受益人对发起修改同意或拒绝"
+      description: "受益人对发起修改同意或拒绝"
+      operationId: "beneficiaryOfAmendHandle"
+      produces: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+            $ref: "#/definitions/BeneficiaryAmend"
       responses:
         default:
           description: "OK"
@@ -1884,6 +2002,7 @@ paths:
         400:
           description: "Invalid name value"
       x-swagger-router-controller: "ApplicationForm"
+  
   /ApplicationForm/FindByBank/{bankNo}:
     get:
       tags:
@@ -3285,7 +3404,7 @@ definitions:
       LCAcceptance:
         $ref: "#/definitions/TransProgress"
       LCCLose:
-        $ref: "#/definitions/TransProgress"
+        $ref: "#/definitions/TransProgress"  
   LCTxDeposit:
     type: "object"
     properties:
@@ -3660,6 +3779,42 @@ definitions:
         type: "string"
       addedDepositAmt:
         type: "string"
+  # 信用证修改，开证行    
+  IssueAmend:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"
+  # 信用证修改，通知行    
+  AdvisingAmend:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"            
+  # 信用证修改，受益人    
+  BeneficiaryAmend:
+    type: "object"
+    properties:
+      no:
+        type: "string"
+      amendNo:
+        type: "string"
+      suggestion:
+        type: "string"
+      isAgreed:
+        type: "string"            
   # 信用证修改，开证行
   LCAmending:
     type: "object"
@@ -3850,6 +4005,34 @@ definitions:
       #办理过程备注
       backup:
         type: "string"
+  #信用证修改表状态
+  AmendState:
+    type: "object"
+    properties:
+      #信用证申请编号
+      AFNo:
+        type: "string"
+      #信用证修改编号
+      amendNo:
+        type: "string"
+      #步骤
+      step:
+        type: "string"
+      #状态
+      state:
+        type: "string"
+      #办理过程数据lcNo
+      lcNo:
+        type: "string"      
+      #办理过程数据suggestion
+      suggestion:
+        type: "string"
+      #办理过程数据isAgreed
+      isAgreed:
+        type: "string"
+      #办理过程备注
+      backup:
+        type: "string"        
   #信用证列表项
   LCListItem:
     type: "object"

@@ -45,6 +45,8 @@ var renderAction = function (params) {
             return (<a href={'/#/lcpayment/redemption/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "闭卷":
             return (<a href={'/#/lcpayment/closing/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
+        case "发起修改":
+            return (<a href={'/#/amendpayment/detail/' + params.no + "/" + params.amendno}>{CONSTANTS.COMM_DETAILIS}</a>);
     }
 }
 
@@ -123,22 +125,53 @@ class TobeProcessed extends React.Component {
     }
 
     expandedRowRender = (record) => {
-        fetch_get("/api/bank/transaction/processflow/" + record.key)
-            .then((res) => {
-                if (res.status >= 200 && res.status < 300) {
-                    res.json().then((data) => {
-                        let progressflow = data.TransProgressFlow;
-                        this.state.items = progressflow.map(progressflow =>
-                            <Timeline.Item color="red">
-                                <p><span style={{ fontWeight: 800 }}>{progressflow.Status}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
-                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
-                            </Timeline.Item>
-                        );
-                    });
-                }
-            });
+        if (record.flag == "0") {
+            alert("正本")
+            fetch_get("/api/bank/transaction/processflow/" + record.key)
+                .then((res) => {
+                    if (res.status >= 200 && res.status < 300) {
+                        res.json().then((data) => {
+                            let progressflow = data.TransProgressFlow;
+                            this.state.items = progressflow.map(progressflow =>
+                                <Timeline.Item color="red">
+                                    <p><span style={{ fontWeight: 800 }}>{progressflow.Status}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                    <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
+                                    <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
+                                </Timeline.Item>
+                            );
 
+                        });
+                    }
+
+                });
+        }
+        else if (record.flag == "1") {
+            alert("修改")
+            fetch_get("/api/bank/Application/" + record.no)
+                .then((res) => {
+                    if (res.status >= 200 && res.status < 300) {
+                        res.json().then((data) => {
+                            if (data.AmendFormFlow != null) {
+                                for (var i = 0; i < data.AmendFormFlow.length; i++) {
+                                    if (record.amendno == data.AmendFormFlow[i].amendNo) {                                     
+                                        //信用证修改进度
+                                        let progressflow = data.AmendFormFlow[i].AmendFormProgressFlow;
+                                        this.state.items = progressflow.map(progressflow =>
+                                            <Timeline.Item color="red">
+                                                <p><span style={{ fontWeight: 800 }}>{CONSTANTS.AMEND_PROCESS_FLOW_STEP[progressflow.Status]}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                                <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
+                                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
+                                            </Timeline.Item>
+                                        );
+
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+        }
         return (
             <Timeline>{this.state.items}</Timeline>
         );
@@ -183,6 +216,7 @@ class TobeProcessed extends React.Component {
 
     handleLetters = (data) => {
         const letters = [];
+        var index = 0;
         for (let i = 0; i < data.length; i++) {
             letters.push({
                 key: data[i].id,
@@ -193,8 +227,48 @@ class TobeProcessed extends React.Component {
                 advisingbank: data[i].advisingBank,
                 amount: data[i].amount + " " + data[i].currency,
                 status: data[i].status,
-                createdAt: data[i].issuseDate
+                createdAt: data[i].issuseDate,
+                flag: "0" //正本
             })
+
+            //信用证修改
+            if (data[i].amend != null) {
+                for (var j = 0; j < data[i].amend.length; j++) {
+                    // alert("data: "+ JSON.stringify(data[i].amend[j]));                     
+                    if ((sessionStorage.getItem("bankno") == data[i].issuingBankNo)
+                        && (data[i].amend[j].Status == "AmendIssuingBankAcceptStep")) {
+                        letters.push({
+                            key: index++,
+                            no: data[i].id,
+                            amendno: data[i].amend[j].amendNo,
+                            number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
+                            times: data[i].amend[j].amendTimes,
+                            status: "发起修改",
+                            applicant: data[i].applicant,
+                            beneficiary: data[i].beneficiary,
+                            amount: data[i].amount + " " + data[i].currency,
+                            createdAt: data[i].amend[j].AmendExpiryDate,
+                            flag: "1" //发起修改
+                        })
+                    } else if ((sessionStorage.getItem("bankno") == data[i].advisingBankNo)
+                        && (data[i].amend[j].Status == "AmendAdvisingBankAcceptStep")) {
+                        letters.push({
+                            key: index++,
+                            no: data[i].id,
+                            amendno: data[i].amend[j].amendNo,
+                            number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
+                            times: data[i].amend[j].amendTimes,
+                            status: "发起修改",
+                            applicant: data[i].applicant,
+                            beneficiary: data[i].beneficiary,
+                            amount: data[i].amount + " " + data[i].currency,
+                            createdAt: data[i].amend[j].AmendExpiryDate,
+                            flag: "1" //发起修改
+                        })
+                    }
+                }
+
+            }
         }
 
         this.setState({
@@ -277,7 +351,7 @@ class TobeProcessed extends React.Component {
                         <Table
                             className="components-table-demo-nested"
                             columns={columns}
-                            expandedRowRender={this.expandedRowRender}
+                            // expandedRowRender={this.expandedRowRender}
                             dataSource={this.state.letters}
                         />
                     </div>

@@ -72,6 +72,48 @@ exports.amendCountersign = function (req, res, next) {
 };
 
 /**
+ * 开证行：发起修改同意或拒绝
+ *
+ * Params：body
+ * return: nil
+ **/
+exports.issueLetterOfAmendHandle = function (req, res, next) {
+    var args = req.swagger.params;
+    var values = args.body.value, no = values.no, amendNo = values.amendNo,
+        suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
+
+    fabric.invoke(req, "issueLetterOfAmend", [no, amendNo, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            // writeAcceptancePdf(req, no, res)
+            res.end(JSON.stringify("审核通过"));
+        } else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+};
+
+/**
+ * 通知行：发起修改同意或拒绝
+ *
+ * Params：body
+ * return: nil
+ **/
+exports.advisingLetterOfAmendHandle = function (req, res, next) {
+    var args = req.swagger.params;
+    var values = args.body.value, no = values.no, amendNo = values.amendNo,
+        suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
+
+    fabric.invoke(req, "advisingLetterOfAmend", [no, amendNo, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            // writeAcceptancePdf(req, no, res)
+            res.end(JSON.stringify("审核通过"));
+        } else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+};
+
+/**
  * 通知行：确认交单
  *
  *

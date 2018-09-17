@@ -24,16 +24,20 @@ import LetterAcceptancebyAB from './components/letter/acceptancebyadvisingbank'
 import LetterRedemption from './components/letter/redemption'
 import LetterClosing from './components/letter/closing'
 
+//信用证发起修改
+import Amend from './components/amend.js'
+import AmendIssuingBank from './components/amend/amendDetail'
+
 ReactDom.render(
     (
         <Router history={hashHistory} >
             <Route path="/" >
-                <IndexRoute component={Login}/>
+                <IndexRoute component={Login} />
                 <Route path="login" component={Login} />
                 <Route path="register" component={Register} />
                 <Route path="lcpayment" component={BaseLayout}>
                     <Route path="index" component={Home} />
-                    <Route path="tobeprocessed" component={TobeProcessed} />                    
+                    <Route path="tobeprocessed" component={TobeProcessed} />
                     <Route path="letters" component={Letters} />
                     <Route path="clients" component={Clients} />
                     <Route path="clientlist" component={ClientList} />
@@ -47,6 +51,10 @@ ReactDom.render(
                     <Route path="acceptancebyadvisingbank(/:id)" component={LetterAcceptancebyAB} />
                     <Route path="redemption(/:id)" component={LetterRedemption} />
                     <Route path="closing(/:id)" component={LetterClosing} />
+                </Route>
+                <Route path="amendpayment" component={BaseLayout}>
+                    <Route path="amend" component={Amend} />                   
+                    <Route path="detail(/:id/:amendId)" component={AmendIssuingBank} />
                 </Route>
                 <Route path="browser" component={BaseLayout}>
                     <Route path="index" component={Explorer} />

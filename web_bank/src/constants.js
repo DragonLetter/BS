@@ -30,6 +30,33 @@ export const LC_DOCS_APPROVED = '来单审核'
 export const LC_ACCEPTANCE = '承兑确认'
 export const LC_CLOSED = '赎单闭卷'
 
+//信用证修改
+export const AMEND_TITLE = '国内信用证修改'
+export const AMEND_TIMES = '修改次数'
+export const AMEND_STATUS = '修改进度'
+
+//信用证修改当前操作
+export const AMEND_STEP = {	
+	"AmendApplicantSubmitStep" : "申请人发起修改",
+	"AmendIssuingBankAcceptStep" : "开证行审批",	
+	"AmendAdvisingBankAcceptStep" : "通知行审批",	
+	"AmendBeneficiaryAcceptStep" : "受益人审批",	
+	"AmendEnd": "结束"
+}
+
+//信用证修改进度操作
+export const AMEND_PROCESS_FLOW_STEP = {	
+	"AmendApplicantSubmitStep" : "申请人发起修改",
+	"AmendIssuingBankAcceptStep" : "开证行同意修改",
+	"AmendIssuingBankRejectStep" : "开证行拒绝修改",
+	"AmendAdvisingBankAcceptStep" : "通知行同意修改",
+	"AmendAdvisingBankRejectStep" : "通知行拒绝修改",
+	"AmendBeneficiaryAcceptStep" : "受益人同意修改",
+	"AmendBeneficiaryRejectStep" : "受益人拒绝修改",
+	"AmendEnd": "结束"
+}
+
+
 // common business name.
 export const DOMESTIC_LC = '国内信用证'
 

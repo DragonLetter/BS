@@ -14,3 +14,13 @@ module.exports.getApplicationById = function getApplicationById(req, res, next) 
   Logger.info("getApplicationById");
   ApplicationService.getApplicationById(req, res, next);
 };
+
+module.exports.getAmendState = function getAmendState(req, res, next) {
+  Logger.info("getAmendState");
+  ApplicationService.getAmendState(req, res, next);
+};
+
+module.exports.updateAmendState = function updateAmendState(req, res, next) {
+  Logger.info("updateAmendState");
+  ApplicationService.updateAmendState(req, res, next);
+};

@@ -22,22 +22,26 @@ class HandoverBillsModal extends React.Component {
             dataIndex: 'bolNo',
             width: '15%',
             render: (text, record) => this.renderColumns(text, record, 'bolNo'),
-        }, {
+        },
+        {
             title: '货物编号',
             dataIndex: 'goodsNo',
             width: '15%',
             render: (text, record) => this.renderColumns(text, record, 'goodsNo'),
-        }, {
+        },
+        {
             title: '货物信息',
             dataIndex: 'goodsInfo',
             width: '30%',
             render: (text, record) => this.renderColumns(text, record, 'goodsInfo'),
-        }, {
+        },
+        {
             title: '发货时间',
             dataIndex: 'shippingTime',
             width: '20%',
             render: (text, record) => this.renderColumns(text, record, 'shippingTime'),
-        }, {
+        },
+        {
             title: '操作',
             dataIndex: 'operation',
             width: '10%',
@@ -49,7 +53,6 @@ class HandoverBillsModal extends React.Component {
                             editable ?
                                 <span>
                                     <a onClick={() => this.save(record.key)}>保存</a>
-
                                 </span>
                                 :
                                 <span><a onClick={() => this.edit(record.key)}>编缉</a>
@@ -140,9 +143,9 @@ class HandoverBillsModal extends React.Component {
         const columns = this.columns;
         const { visible, onCancel, onSubmit, data, form, onFileChange } = this.props;
         const record = data ? data.detail.Record : [],
-            applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
-            deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
-            amount = applicationForm.amount - deposit.depositAmount,
+            // applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
+            // deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
+            // amount = applicationForm.amount - deposit.depositAmount,
             title = "交单——" + record.lcNo;
         function onDocumentChange(info) {
             let attachment = {};
@@ -192,7 +195,7 @@ class HandoverBillsModal extends React.Component {
                     <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }}>添加</Button>
                     <Table bordered dataSource={dataSource} columns={columns} />
                 </div>
-                <Row>
+                {/* <Row>
                     <Col style={{ marginBottom: '12px', fontSize: '15px', color: '#32325d' }} span={6}>附件</Col>
                 </Row>
                 <Row gutter={40} style={{ marginBottom: 10 }}>
@@ -203,7 +206,7 @@ class HandoverBillsModal extends React.Component {
                                     </Button>
                         </Upload>
                     </Col>
-                </Row>
+                </Row> */}
             </Modal>
         );
     }

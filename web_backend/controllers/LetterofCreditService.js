@@ -127,17 +127,53 @@ exports.beneficiaryHandoverBills = function (req, res, next) {
     let value = args.body.value,
         no = value.no,
         fabricArg = {
-            "BillOfLandings": value.billInfo,
         },
+        billLandings = [],
+        // "BillOfLandings": value.billinfo,
         fabricArg1 = value.billFile;
 
+    for (var i = 0; i < value.billinfo.length; i++) {
+        var billLanding = {};
+        billLanding.BolNO = value.billinfo[i].bolNo;
+        billLanding.GoodsNo = value.billinfo[i].goodsNo;
+        billLanding.GoodsDesc = value.billinfo[i].goodsInfo;
+        billLanding.ShippingTime = value.billinfo[i].shippingTime;
+        billLandings[i] = billLanding;
+    }
+    fabricArg.BillOfLandings = billLandings;
+
     Logger.debug("input args:" + inspect(args)
-        + "\n fabric arg:" + fabricArg
-        + "\n fabric arg1:" + fabricArg1);
+        + "\n fabric arg:" + JSON.stringify(fabricArg)
+        + "\n fabric arg1:" + JSON.stringify(fabricArg1));
 
     fabric.invoke(req, "handOverBills", [no, JSON.stringify(fabricArg), JSON.stringify(fabricArg1)], function (err, resp) {
         if (!err) {
             res.end(JSON.stringify("交单成功"));
+        } else {
+            res.end(JSON.stringify(err));
+        }
+    })
+}
+
+/**
+ * 申请人：检查交单
+ * 
+ * Params：body
+ * return: nil
+ **/
+exports.appliciantCheckBills = function (req, res, next) {
+    var args = req.swagger.params;
+    let value = args.body.value,
+        lcNo = value.lcNo,
+        billNo = value.billNo,
+        suggestion = value.suggestion,
+        isAgreed = value.isAgreed
+
+    Logger.debug("input args:" + inspect(args));
+
+    fabric.invoke(req, "appliantCheckBills", [lcNo, billNo, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            res.end(JSON.stringify("交单校验成功"));
         } else {
             res.end(JSON.stringify(err));
         }

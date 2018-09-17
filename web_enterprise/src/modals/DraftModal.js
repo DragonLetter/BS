@@ -1,29 +1,36 @@
 import React from 'react'
-import { Timeline, Tag, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
-const Step = Steps.Step;
+import { Timeline, Row, Layout, Table, Icon, Steps, Col, Modal } from 'antd'
+import { LC_STEPS, LC_HANDOVER_STEPS_SHOW } from '../routes/constant';
 
-const { Header, Content, Sider } = Layout;
+const { Content } = Layout;
 
 const DraftModal = (props) => {
+    // 外部传入数据
     const { visible, onCancel, onSubmit, data, form } = props;
-    const formItemLayout = {
-        labelCol: { span: 5 },
-        wrapperCol: { span: 19 },
-    }, attachmentColumns = [
+
+    // 表单结构定义：附件表和交单表
+    const attachmentColumns = [
         { title: '名称', dataIndex: 'FileName', key: 'FileName' },
         { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
-        { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
+        { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' }
     ],
-        record = data ? (data.Record ? data.Record : data.detail.Record) : [],
-        applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
+        handoverColumns = [
+            { title: '货运单号', dataIndex: 'BolNO', key: 'BolNO' },
+            { title: '货物编号', dataIndex: 'GoodsNo', key: 'GoodsNo' },
+            { title: '货物信息', dataIndex: 'GoodsDesc', key: 'GoodsDesc' },
+            { title: '发货时间', dataIndex: 'ShippingTime', key: 'ShippingTime' }
+        ];
+
+    // 获取的信用证全部数据
+    const record = data ? (data.Record ? data.Record : data.detail.Record) : [];
+
+    // 信用证基本数据展示部分
+    const applicationForm = record.ApplicationForm ? record.ApplicationForm : [],
         applicant = applicationForm.Applicant ? applicationForm.Applicant : [],
         beneficiary = applicationForm.Beneficiary ? applicationForm.Beneficiary : [],
-        issuingBank = applicationForm.IssuingBank ? applicationForm.IssuingBank : [],
-        advisingBank = applicationForm.AdvisingBank ? applicationForm.AdvisingBank : [],
         goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
         contract = applicationForm.Contract ? applicationForm.Contract : {},
         attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
-        depositInfo = record.LCTransDeposit ? record.LCTransDeposit : [],
         title = "国内信用证详情——" + (record.lcNo || '等待银行审核'),
         transport = (goodsInfo.allowPartialShipment === "1" ? "允许分批/分次 " : '') + (goodsInfo.allowTransShipment === "1" ? "允许转运/分期" : ''),
         isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
@@ -31,36 +38,59 @@ const DraftModal = (props) => {
         chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
         chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
         docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
-        Negotiate = applicationForm.Negotiate==="1"?"以下银行可议付":(applicationForm.Negotiate==="2"?"任意银行可议付":"不可议付"),
-        Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
-        Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
-        OverLow = "短装:"+applicationForm.Lowfill+"    溢装:"+applicationForm.Overfill,
-        transProgressFlow = record.TransProgressFlow ? record.TransProgressFlow : [],
+        Negotiate = applicationForm.Negotiate === "1" ? "以下银行可议付" : (applicationForm.Negotiate === "2" ? "任意银行可议付" : "不可议付"),
+        Transfer = applicationForm.Transfer === "1" ? "可转让" : "不可转让",
+        Confirmed = applicationForm.Confirmed === "1" ? "可保兑" : "不可保兑",
+        OverLow = "短装:" + applicationForm.Lowfill + "    溢装:" + applicationForm.Overfill;
+
+    // 信用证保证金数据展示部分
+    const depositInfo = record.LCTransDeposit ? record.LCTransDeposit : [];
+
+    // 信用证进度数据展示部分
+    const transProgressFlow = record.TransProgressFlow ? record.TransProgressFlow : [],
         timeItem = transProgressFlow.reverse().map((flow, index) => <Timeline.Item key={index} dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />} color="red">
             <p style={{ fontWeight: 800 }}>{flow.Status}</p>
             <p style={{ marginTop: 6 }}>{flow.time.split("T")[0] + " " + flow.Name + " " + flow.Status}</p>
             <p style={{ marginTop: 6 }}>{flow.Description}</p>
         </Timeline.Item>);
-        let depositDisplay = {display: "none"}, handoverDisplay = {display: "none"};
-    switch(record.CurrentStep){
-        case "银行发证":
-        case "通知行收到信用证通知":
-        case "受益人接收信用证":
-        case "申请人修改信用证":
-        case "多方会签":
-        case "受益人交单":
-            depositDisplay = {display: ""};
+
+    // 信用证交单数据展示部分
+    const handoverData = record.LCTransDocsReceive ? record.LCTransDocsReceive : [];
+
+    // 设置需要展示的内容
+    let depositDisplay = { display: "none" }, handoverDisplay = { display: "none" };
+    switch (record.CurrentStep) {
+        case LC_STEPS.BankIssueLCStep://"银行发证":
+        case LC_STEPS.AdvisingBankReceiveLCNoticeStep://"通知行收到信用证通知":
+        case LC_STEPS.BeneficiaryReceiveLCStep: //"受益人接收信用证":
+            depositDisplay = { display: "" };
             break;
-        case "通知行审核交单":
-        case "发证行承兑或拒付":
-        case "开证行审核赎单":
-        case "申请人赎单":
-        case "闭卷":
-        case "结束":
-            depositDisplay = {display: ""};
-            handoverDisplay = {display: ""};
+        case LC_STEPS.IssuingBankReviewRetireBillsStep: //"开证行审核赎单":
+        case LC_STEPS.ApplicantRetireBillsStep: //"申请人赎单":
+        case LC_STEPS.IssuingBankCloseLCStep: // "闭卷":
+        case LC_STEPS.LCEnd: // "结束":
+            depositDisplay = { display: "" };
+            handoverDisplay = { display: "" };
             break;
     }
+
+    // 构造交单列表
+    let handoverHtml = [];
+    if (handoverData.length > 0) {
+        for (var i = 0; i < handoverData.length; i++) {
+            handoverHtml[i] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData[i].No}</Col>
+                    <Col span={3}></Col>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{LC_HANDOVER_STEPS_SHOW[handoverData[i].HandOverBillStep]}</Col>
+                </Row>
+                <Table bordered dataSource={handoverData[i].BillOfLandings} columns={handoverColumns} pagination={false} />
+            </div>);
+        }
+    } else {
+        handoverHtml[0] = <div></div>
+    }
+
     return (
         <Modal
             visible={visible}
@@ -74,6 +104,7 @@ const DraftModal = (props) => {
         >
             <Layout style={{ padding: '1px 1px' }}>
                 <Content style={{ background: '#fff', padding: 0, margin: '0' }}>
+                    {/* 信用证基础信息 */}
                     <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1' }}>
                         <Row key={0}>
                             <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>申请人信息</Col>
@@ -123,7 +154,6 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}></Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{}</Col>
                         </Row>
-
                         <Row key={6}>
                             <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>详细信息</Col>
                         </Row>
@@ -155,7 +185,6 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>运输方式</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingWay}</Col>
                         </Row>
-
                         <Row key={11}>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>装运地点</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingPlace}</Col>
@@ -163,7 +192,6 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>目的地</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{goodsInfo.ShippingDestination}</Col>
                         </Row>
-
                         <Row key={12}>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>贸易性质</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{tradeType}</Col>
@@ -171,22 +199,17 @@ const DraftModal = (props) => {
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>溢短装</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{OverLow}</Col>
                         </Row>
-
                         <Row key={13}>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物描述</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={21}>{goodsInfo.GoodsDescription}</Col>
                         </Row>
-
                         <Row style={{ height: 70 }} key={14}>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
                             <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
                         </Row>
                     </div>
                     <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1', minHeight: 20 }}></div>
-
-                    {/**
-                    * 合同附件部分
-                */}
+                    {/* 合同附件部分 */}
                     <div style={{ margin: '12px 16px' }}>
                         <Row key={15}>
                             <Col style={{ marginTop: '5px', fontWeight: 800, fontSize: '13px', color: '#32325d' }} span={12}>合同附件</Col>
@@ -202,7 +225,7 @@ const DraftModal = (props) => {
                             showHeader={false}
                         />
                     </div>
-
+                    {/* 保证金信息 */}
                     <div style={depositDisplay}>
                         <div style={{ marginTop: '30px', marginLeft: '16px', marginRight: '16px', marginBottom: '15px' }}>
                             <Row key={16}>
@@ -232,7 +255,7 @@ const DraftModal = (props) => {
                             </div>
                         </div>
                     </div>
-
+                    {/* 交单信息 */}
                     <div style={handoverDisplay}>
                         <div style={{ marginTop: '30px', marginLeft: '16px', marginRight: '16px', marginBottom: '15px' }}>
                             <Row key={19}>
@@ -252,17 +275,10 @@ const DraftModal = (props) => {
                             <Row key={21}>
                                 <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>单据信息</Col>
                             </Row>
-                            <div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
-                                <Table
-                                    columns={attachmentColumns}
-                                    dataSource={contract.DepositDoc}
-                                    pagination={false}
-                                    showHeader={false}
-                                />
-                            </div>
+                            {handoverHtml}
                         </div>
                     </div>
-
+                    {/* 交易进度 */}
                     <div style={{ marginTop: '30px', marginLeft: '16px', marginRight: '16px', marginBottom: '15px' }}>
                         <Row key={22}>
                             <Col style={{ marginTop: '25px', fontWeight: 800, fontSize: '13px', color: '#32325d' }} span={9}>交易进度</Col>

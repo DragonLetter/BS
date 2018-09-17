@@ -29,6 +29,11 @@ module.exports.beneficiaryHandoverBills = function beneficiaryHandoverBills(req,
   LetterofCredit.beneficiaryHandoverBills(req, res, next);
 }
 
+module.exports.appliciantCheckBills = function appliciantCheckBills(req, res, next) {
+  Logger.info("appliciantCheckBills");
+  LetterofCredit.appliciantCheckBills(req, res, next);
+}
+
 module.exports.beneficiaryOfAmendHandle = function beneficiaryOfAmendHandle(req, res, next) {
   Logger.info("beneficiaryOfAmendHandle");
   LetterofCredit.beneficiaryOfAmendHandle(req, res, next);

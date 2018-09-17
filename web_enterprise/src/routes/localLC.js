@@ -3,11 +3,13 @@ import PDF from 'react-pdf-js';
 import { Popconfirm, Upload, Row, Layout, Breadcrumb, Collapse, InputNumber, Table, Badge, Timeline, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, message } from 'antd';
 import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/common';
 import DraftModal from '../modals/DraftModal';
+import HandoverBillsModal from '../modals/HandoverBillsModal';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
+
+const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
-
 const InputGroup = Input.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -200,7 +202,9 @@ const AddDraftForm = Form.create()(
                                     )}
                                 </FormItem>
                                 <div style={{ marginTop: -60, marginRight: 60, float: 'right' }} >
-                                    保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    {/* 保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} /> */}
+                                    保证金金额：<InputNumber id="EnsureAmount" 
                                         parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} />
                                 </div>
                             </Col>
@@ -457,6 +461,7 @@ class LocalLC extends React.Component {
             createDraftFromVisible: false,
             secondStepFromVisible: false,
             draftModalVisible: false,
+            handoverBillsModalVisible: false,
             LCs: [],
             banks: [],
             signedbanks: [],
@@ -464,6 +469,8 @@ class LocalLC extends React.Component {
             index: 0,
             LCData: [],
             loading: true,
+            handoverBillsInfo: [],
+            handoverBillsFile: [],
         }
     }
 
@@ -482,6 +489,7 @@ class LocalLC extends React.Component {
                 amount: data[i].Record.ApplicationForm.amount,
                 state: data[i].Record.CurrentStep,
                 applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
+                detail: data[i]
             })
         }
         this.setState({
@@ -586,6 +594,12 @@ class LocalLC extends React.Component {
         });
     }
 
+    closeHandoverBillsModal = () => {
+        this.setState({
+            handoverBillsModalVisible: false,
+        });
+    }
+
     showCreateDraftProtocol = () => {
         this.setState({
             createDraftProtocolVisible: true,
@@ -595,6 +609,7 @@ class LocalLC extends React.Component {
     saveCreateProtocolRef = (form) => {
         this.createProtocol = form;
     }
+
     saveCreateFormRef = (form) => {
         this.createForm = form;
     }
@@ -602,6 +617,7 @@ class LocalLC extends React.Component {
     saveSecondStepFormRef = (form) => {
         this.secondStepForm = form;
     }
+
     handleProtocolSubmit = () => {
         const form = this.createProtocol;
         form.validateFields((err, values) => {
@@ -614,6 +630,7 @@ class LocalLC extends React.Component {
             })
         });
     }
+
     handleSubmit = () => {
         const form = this.createForm;
         form.validateFields((err, values) => {
@@ -683,22 +700,21 @@ class LocalLC extends React.Component {
             request('/api/applicationform', {
                 method: "POST",
                 body: values,
-            })
-                .then((data) => {
-                    message.success("创建成功!");
-                    this.handleLCInfo(data);
-                    // No = data[data.length - 1].Key;
-                    let keyArray = [];
-                    for (let i in data) {
-                        keyArray.push(data[i].Key);
-                    }
-                    No = Math.max(...keyArray);
-                    this.setState({
-                        createDraftFromVisible: false,
-                        secondStepFromVisible: true,
-                        loading: false,
-                    });
+            }).then((data) => {
+                message.success("创建成功!");
+                this.handleLCInfo(data);
+                // No = data[data.length - 1].Key;
+                let keyArray = [];
+                for (let i in data) {
+                    keyArray.push(data[i].Key);
+                }
+                No = Math.max(...keyArray);
+                this.setState({
+                    createDraftFromVisible: false,
+                    secondStepFromVisible: true,
+                    loading: false,
                 });
+            });
         })
     }
 
@@ -728,6 +744,57 @@ class LocalLC extends React.Component {
         });
     }
 
+    // 交单相关处理逻辑
+    handoverBill = (index, text) => {
+        this.setState({
+            index: index,
+            handoverBillsModalVisible: true,
+        })
+    }
+    handleHandoverBillSubmit = () => {
+        // 获取交单基本信息
+        var billInfo = [];
+        for (let i = 0; i < this.state.handoverBillsInfo.length; i++) {
+            billInfo.push({
+                bolNo: this.state.handoverBillsInfo[i].bolNo,
+                goodsNo: this.state.handoverBillsInfo[i].goodsNo,
+                goodsInfo: this.state.handoverBillsInfo[i].goodsInfo,
+                shippingTime: this.state.handoverBillsInfo[i].shippingTime,
+            });
+        }
+
+        let values = {
+            no: this.state.LCData[this.state.index].Key,
+            billinfo: billInfo,
+            billFile: this.state.handoverBillsFile
+        };
+
+        request('/api/LetterofCredit/beneficiaryHandoverBills', {
+            method: "POST",
+            body: values,
+        }).then((data) => {
+            message.success("处理成功!");
+            this.setState({
+                handoverBillsModalVisible: false,
+            });
+        }).catch((error) => {
+            message.error("处理失败！");
+            this.setState({
+                handoverBillsModalVisible: false,
+            })
+        })
+    }
+    handleBillChange = (data) => {
+        this.setState({
+            handoverBillsInfo: data,
+        });
+    }
+    handleFileChange = (fileList) => {
+        this.setState({
+            handoverBillsFile: fileList,
+        })
+    }
+
     showDetailModal = (index, text) => {
         this.setState({
             index: index,
@@ -742,11 +809,30 @@ class LocalLC extends React.Component {
     render = () => {
         const columns = [
             { title: '信用证编号', dataIndex: 'lcNo', key: 'lcNo' },
-            { title: '受益人', dataIndex: 'applicant', key: 'applicant' },
+            { title: '申请人', dataIndex: 'applicant', key: 'applicant' },
             { title: '受益人', dataIndex: 'beneficiary', key: 'beneficiary' },
             { title: '开证金额', dataIndex: 'amount', key: 'amount' },
             { title: '当前进度', dataIndex: 'state', key: 'state' },
             { title: '发起日期', dataIndex: 'applyTime', key: 'applyTime' },
+            {
+                title: '交单',
+                dataIndex: 'handoverBill',
+                key: 'handoverBill',
+                render: (text, record, index) => {
+                    var userId = sessionStorage.getItem("userId");
+                    var data = record.detail.Record;
+                    if (constants.APPLICANT_HANDOVER_PROCESSING_STEPS.includes(data.CurrentStep)) {
+                        var beneficiaryID = data.LetterOfCredit.Beneficiary.No;
+                        if (userId == beneficiaryID) {
+                            return (
+                                <span>
+                                    <a onClick={() => this.handoverBill(index, text)}>交单</a>
+                                </span>
+                            )
+                        }
+                    }
+                }
+            },
             {
                 title: '操作',
                 dataIndex: 'id',
@@ -755,10 +841,6 @@ class LocalLC extends React.Component {
                     return (
                         <span>
                             <a onClick={() => this.showDetailModal(index, text)}>详情  </a>
-                            {/* <span className="ant-divider" />
-                            <Popconfirm title="确定提交该信用证至银行?" okText="确定" cancelText="取消" onConfirm={() => this.submitLc(index, text, record)}>
-                                <a href="#">提交</a>
-                            </Popconfirm> */}
                         </span>
                     )
                 }
@@ -812,6 +894,14 @@ class LocalLC extends React.Component {
                     onCancel={this.closeDraftModal}
                     data={this.state.LCData[this.state.index]}
                     onSubmit={this.closeDraftModal}
+                />
+                <HandoverBillsModal
+                    visible={this.state.handoverBillsModalVisible}
+                    onCancel={this.closeHandoverBillsModal}
+                    data={this.state.LCs[this.state.index]}
+                    onSubmit={this.handleHandoverBillSubmit}
+                    onBillChange={this.handleBillChange}
+                    onFileChange={this.handleFileChange}
                 />
             </PageHeaderLayout>
         )

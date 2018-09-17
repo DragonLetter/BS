@@ -29,6 +29,16 @@ module.exports.advisingBankDocsReceivedAudit = function advisingBankDocsReceived
   LetterofCreditService.advisingBankDocsReceivedAudit(req, res, next);
 };
 
+// 开证行：到单审查
+module.exports.billBankReceivedAudit = function billBankReceivedAudit(req, res, next) {
+  Logger.info("billBankReceivedAudit");
+  LetterofCreditService.billBankReceivedAudit(req, res, next);
+};
+// 开证行：承兑或者拒付
+module.exports.billAcceptancePayment = function billAcceptancePayment(req, res, next) {
+  Logger.info("billAcceptancePayment");
+  LetterofCreditService.billAcceptancePayment(req, res, next);
+};
 // 开证行：办理交单（拒绝之后，不符点修改）
 module.exports.issuingBankDocsReceivedAudit = function issuingBankDocsReceivedAudit(req, res, next) {
   Logger.info("issuingBankDocsReceivedAudit");

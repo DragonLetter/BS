@@ -38,9 +38,11 @@ var renderAction = function(params) {
         case "受益人接收信用证":
             return (<a href={'/#/lcpayment/original/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
         case "申请人赎单":
-            return (<a href={'/#/lcpayment/original/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);     
+            return (<a href={'/#/lcpayment/billtransact/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "开证行审核赎单":
             return (<a href={'/#/lcpayment/closing/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
+        case "闭卷":
+            return (<a href={'/#/lcpayment/closing/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
     }
 }
 

@@ -24,7 +24,7 @@ const columns = [
 ];
 
 var renderAction = function (params) { 
-    return (<a href={'/#/amendpayment/issuing/' + params.no + "/" + params.amendno}>{CONSTANTS.COMM_DETAILIS}</a>);
+    return (<a href={'/#/amendpayment/detail/' + params.no + "/" + params.amendno}>{CONSTANTS.COMM_DETAILIS}</a>);
 
     // switch (params.status) {
     //     case "开证行审批":            

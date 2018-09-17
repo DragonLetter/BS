@@ -25,7 +25,6 @@ import LetterClosing from './components/letter/closing'
 
 //信用证发起修改
 import Amend from './components/amend.js'
-import TodoAmend from './components/todoamend.js'
 import AmendIssuingBank from './components/amend/amendDetail'
 
 ReactDom.render(
@@ -52,9 +51,8 @@ ReactDom.render(
                     <Route path="closing(/:id)" component={LetterClosing} />
                 </Route>
                 <Route path="amendpayment" component={BaseLayout}>
-                    <Route path="amend" component={Amend} />
-                    <Route path="todoamend" component={TodoAmend} />
-                    <Route path="issuing(/:id/:amendId)" component={AmendIssuingBank} />
+                    <Route path="amend" component={Amend} />                   
+                    <Route path="detail(/:id/:amendId)" component={AmendIssuingBank} />
                 </Route>
                 <Route path="browser" component={BaseLayout}>
                     <Route path="index" component={Explorer} />

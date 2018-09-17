@@ -125,18 +125,11 @@ class BaseLayout extends React.Component {
                             defaultOpenKeys={['0']}
                             style={{ height: '100%', borderRight: 0 }}
                         >
-                            <SubMenu key="1" title={<span> <Link to="/lcpayment/tobeprocessed"><Icon type="user" /><span>待处理的任务</span></Link></span>}>
-                                <Menu.Item key="8">
-                                    <Link to="/amendpayment/todoamend">
-                                        <Icon type="user" />待处理的信用证修改
-                                    </Link>
-                                </Menu.Item>
-                            </SubMenu>
-                            {/* <Menu.Item key="1" style={{ marginTop: '20px' }}>
+                            <Menu.Item key="1" style={{ marginTop: '20px' }}>
                                 <Link to="/lcpayment/tobeprocessed">
                                     <Icon type="user" />待处理的任务
                                 </Link>
-                            </Menu.Item> */}
+                            </Menu.Item>
                             <SubMenu ey="2" title={<span> <Link to="/lcpayment/letters"><Icon type="home" /><span>国内信用证</span></Link></span>}>
                                 <Menu.Item key="7">
                                     <Link to="/amendpayment/amend">

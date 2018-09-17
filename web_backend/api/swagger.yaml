@@ -787,7 +787,7 @@ paths:
     post:
       tags: 
       - "LetterofCredit"
-      summary: "申请人赎单"
+      summary: "申请人付款"
       description: ""
       operationId: "retireShippingBills"
       produces: 
@@ -3437,6 +3437,8 @@ definitions:
     type: "object"
     properties:
       no:
+        type: "string"
+      amount:
         type: "string"
       billinfo:
         type: "array"

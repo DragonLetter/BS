@@ -126,6 +126,7 @@ exports.beneficiaryHandoverBills = function (req, res, next) {
     var args = req.swagger.params;
     let value = args.body.value,
         no = value.no,
+        amount = value.amount,
         fabricArg = {
         },
         billLandings = [],
@@ -140,6 +141,7 @@ exports.beneficiaryHandoverBills = function (req, res, next) {
         billLanding.ShippingTime = value.billinfo[i].shippingTime;
         billLandings[i] = billLanding;
     }
+    fabricArg.HandoverAmount = amount;
     fabricArg.BillOfLandings = billLandings;
 
     Logger.debug("input args:" + inspect(args)

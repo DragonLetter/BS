@@ -192,7 +192,16 @@ class HandoverBillsModal extends React.Component {
                 width="80%"
             >
                 <div>
-                    <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }}>添加</Button>
+                    <Row>
+                        <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>交单金额：<InputNumber
+                            id="handoverAmount"
+                            // formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                            placeholder="交单金额"
+                        />
+                            <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }} span={20}>添加</Button>
+                        </Col>
+                    </Row>
                     <Table bordered dataSource={dataSource} columns={columns} />
                 </div>
                 {/* <Row>

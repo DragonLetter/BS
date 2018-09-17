@@ -31,7 +31,7 @@ const STEP_ENUM = {
     "BeneficiaryHandOverBillsStep": "受益人交单",
     "AdvisingBankReviewBillsStep": "通知行审核交单信息",
     "IssuingBankAcceptOrRejectStep": "发证行承兑或拒付",   // 开证行面向受益人
-    "ApplicantRetireBillsStep": "申请人赎单",
+    "ApplicantRetireBillsStep": "申请人付款",
     "IssuingBankReviewRetireBillsStep": "开证行审核赎单",  // 开证行面向申请人
     "IssuingBankCloseLCStep": "闭卷",
     "LCEnd": "结束",

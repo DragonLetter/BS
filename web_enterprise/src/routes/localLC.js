@@ -751,7 +751,7 @@ class LocalLC extends React.Component {
             handoverBillsModalVisible: true,
         })
     }
-    handleHandoverBillSubmit = () => {
+    handleHandoverBillSubmit = (data) => {
         // 获取交单基本信息
         var billInfo = [];
         for (let i = 0; i < this.state.handoverBillsInfo.length; i++) {
@@ -765,6 +765,7 @@ class LocalLC extends React.Component {
 
         let values = {
             no: this.state.LCData[this.state.index].Key,
+            amount: document.getElementById("handoverAmount").value,
             billinfo: billInfo,
             billFile: this.state.handoverBillsFile
         };

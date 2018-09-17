@@ -66,7 +66,7 @@ const DraftModal = (props) => {
             depositDisplay = { display: "" };
             break;
         case LC_STEPS.IssuingBankReviewRetireBillsStep: //"开证行审核赎单":
-        case LC_STEPS.ApplicantRetireBillsStep: //"申请人赎单":
+        case LC_STEPS.ApplicantRetireBillsStep: //"申请人付款":
         case LC_STEPS.IssuingBankCloseLCStep: // "闭卷":
         case LC_STEPS.LCEnd: // "结束":
             depositDisplay = { display: "" };

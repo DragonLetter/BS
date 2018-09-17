@@ -204,7 +204,7 @@ class TodoList extends React.Component {
         });
     }
 
-    // 申请人赎单相关函数
+    // 申请人付款相关函数
     retireBillModalRef = (form) => {
         this.retireBillForm = form;
     }
@@ -217,7 +217,6 @@ class TodoList extends React.Component {
             }
 
             values.no = this.state.lcTransData.id;
-            message.error(JSON.stringify(values));
             request('/api/letterOfCredit/retire', {
                 method: "POST",
                 body: values,

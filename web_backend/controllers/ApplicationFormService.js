@@ -113,23 +113,6 @@ exports.addApplicationForm = function (req, res, next) {
       };
       fabric.invoke(req, "saveLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
         if (!err) {
-          models.Afstate.findOne({
-            'where': {
-              'AFNo': fabricArg1,
-            }
-          }).then(function (data) {
-            if (data == null) {
-              Logger.debug("query afstates:" + fabricArg1);
-              models.Afstate.create({
-                'AFNo': fabricArg1,
-                'step': 'BankConfirmApplyFormStep',
-                'state': '11',
-              }).then(function (data) {
-                Logger.debug("insert afstates");
-              }).catch(function (e) {
-              });
-            }
-          });
           submitApplicationFormByCorp(req, corpNo, fabricArg1, res, next);
         }
         else {
@@ -176,6 +159,18 @@ exports.getAFState = function (req, res, next) {
     if (data) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data.dataValues || {}, null, 2));
+    }else{
+      var dAf = {
+        'AFNo': fabricArg1,
+        'step': 'BankConfirmApplyFormStep',
+        'state': '11',
+      };
+      models.Afstate.create(dAf).then(function (data) {
+        Logger.debug("insert afstates");
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(dAf || {}, null, 2));
+        }).catch(function (e) {
+      });
     }
   });
 };

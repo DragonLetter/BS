@@ -162,7 +162,7 @@ exports.getAFState = function (req, res, next) {
       res.end(JSON.stringify(data.dataValues || {}, null, 2));
     }else{
       var dAf = {
-        'AFNo': fabricArg1,
+        'AFNo': args.AFNo.value,
         'step': 'BankConfirmApplyFormStep',
         'state': '11',
       };

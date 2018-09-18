@@ -5,6 +5,7 @@ import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/c
 import DraftModal from '../modals/DraftModal';
 import HandoverBillsModal from '../modals/HandoverBillsModal';
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
+import AmendationModal from '../modals/AmendationModal';
 
 const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
@@ -462,6 +463,7 @@ class LocalLC extends React.Component {
             secondStepFromVisible: false,
             draftModalVisible: false,
             handoverBillsModalVisible: false,
+            amendModalVisible: false,
             LCs: [],
             banks: [],
             signedbanks: [],
@@ -471,6 +473,7 @@ class LocalLC extends React.Component {
             loading: true,
             handoverBillsInfo: [],
             handoverBillsFile: [],
+            amendsInfo: [],
         }
     }
 
@@ -597,6 +600,12 @@ class LocalLC extends React.Component {
     closeHandoverBillsModal = () => {
         this.setState({
             handoverBillsModalVisible: false,
+        });
+    }
+
+    closeAmendModal = () => {
+        this.setState({
+            amendModalVisible: false,
         });
     }
 
@@ -790,6 +799,47 @@ class LocalLC extends React.Component {
             handoverBillsInfo: data,
         });
     }
+
+
+     // 信用证修改相关处理逻辑
+     amend = (index, text) => {
+        this.setState({
+            index: index,
+            amendModalVisible: true,
+        })
+    }
+
+    amendationModalRef = (form) => {
+        this.amendsInfo = form;
+    }
+
+    handleAmendSubmit = () => {
+        let form = this.amendsInfo;
+        form.validateFields((err, values) => {
+            if (err) {
+                return;
+            }
+            values.no = this.state.LCData[this.state.index].Key;
+            values.amendedAmt = "" + values.amendedAmt;
+            message.error("data:" + JSON.stringify(values));
+            request('/api/letterOfCredit/Amending', {
+                method: "POST",
+                body: values,
+            }).then((data) => {
+                message.success("修改成功!");
+                this.setState({
+                    amendModalVisible: false,
+                })
+            }).catch((error) => {
+                message.error("处理失败！");
+                this.setState({
+                    amendModalVisible: false,
+                })
+            })
+        });
+    }
+
+
     handleFileChange = (fileList) => {
         this.setState({
             handoverBillsFile: fileList,
@@ -828,6 +878,25 @@ class LocalLC extends React.Component {
                             return (
                                 <span>
                                     <a onClick={() => this.handoverBill(index, text)}>交单</a>
+                                </span>
+                            )
+                        }
+                    }
+                }
+            },
+            {
+                title: '修改',
+                dataIndex: 'amend',
+                key: 'amend',
+                render: (text, record, index) => {
+                    var userId = sessionStorage.getItem("userId");
+                    var data = record.detail.Record;      
+                    if (constants.AMEND_PROCESSING_STEPS.includes(data.CurrentStep)) {            
+                        var Applicant = data.LetterOfCredit.Applicant.No;
+                        if (userId == Applicant) {
+                            return (
+                                <span>
+                                    <a onClick={() => this.amend(index, text)}>修改</a>
                                 </span>
                             )
                         }
@@ -903,6 +972,13 @@ class LocalLC extends React.Component {
                     onSubmit={this.handleHandoverBillSubmit}
                     onBillChange={this.handleBillChange}
                     onFileChange={this.handleFileChange}
+                />
+                <AmendationModal
+                    visible={this.state.amendModalVisible}
+                    onCancel={this.closeAmendModal}
+                    data={this.state.LCs[this.state.index]}
+                    onSubmit={this.handleAmendSubmit}  
+                    ref={this.amendationModalRef}                 
                 />
             </PageHeaderLayout>
         )

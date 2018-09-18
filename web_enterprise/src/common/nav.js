@@ -25,8 +25,35 @@ export const getNavData = app => [
         name: '国内信用证',
         icon: 'credit-card',
         path: 'locallc',
-        component: dynamicWrapper(app, [], () => import('../routes/localLC')),
+        // component: dynamicWrapper(app, [], () => import('../routes/localLC')),       
+        children: [
+          {
+            name: '信用证',
+            icon: 'credit-card',
+            path: 'locallc',
+            component: dynamicWrapper(app, [], () => import('../routes/localLC')),
+          },
+          {
+            name: '信用证修改',
+            icon: 'credit-card',
+            path: 'amend',
+            component: dynamicWrapper(app, [], () => import('../routes/amend')),
+          }
+        ]
       },
+
+      // {
+      //   name: '国内信用证',
+      //   icon: 'credit-card',
+      //   path: 'locallc',
+      //   component: dynamicWrapper(app, [], () => import('../routes/localLC')),
+      //   children: [
+      //     name: '国内信用证修改',
+      //     icon: 'credit-card',
+      //     path: 'locallc',
+      //     component: dynamicWrapper(app, [], () => import('../routes/localLC')),
+      //   ]
+      // },
       {
         name: '签约银行',
         icon: 'bank',

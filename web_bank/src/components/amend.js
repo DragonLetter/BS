@@ -59,7 +59,7 @@ class Letters extends React.Component {
                 for (let j = 0; j < data[i].amend.length; j++) {
                     // alert("data: "+ JSON.stringify(data[i].amend[j]));                   
                     letters.push({
-                        key: index++,
+                        key: index,
                         no: data[i].id,
                         amendno: data[i].amend[j].amendNo,
                         number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
@@ -69,8 +69,10 @@ class Letters extends React.Component {
                         beneficiary: data[i].beneficiary,
                         amount: data[i].amount + " " + data[i].currency,
                     })
+                    index++;
                 }
             }
+            // index++;
         }
 
         this.setState({

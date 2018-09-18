@@ -45,6 +45,27 @@ exports.LC_HANDOVER_STEPS_SHOW = {
     "HandoverBillSuccStep": "受益人交单成功"
 };
 
+//信用证修改当前操作
+export const AMEND_STEP = {	
+	"AmendApplicantSubmitStep" : "申请人发起修改",
+	"AmendIssuingBankAcceptStep" : "开证行审批",	
+	"AmendAdvisingBankAcceptStep" : "通知行审批",	
+	"AmendBeneficiaryAcceptStep" : "受益人审批",	
+	"AmendEnd": "结束"
+}
+
+//信用证修改进度操作
+export const AMEND_PROCESS_FLOW_STEP = {	
+	"AmendApplicantSubmitStep" : "申请人发起修改",
+	"AmendIssuingBankAcceptStep" : "开证行同意修改",
+	"AmendIssuingBankRejectStep" : "开证行拒绝修改",
+	"AmendAdvisingBankAcceptStep" : "通知行同意修改",
+	"AmendAdvisingBankRejectStep" : "通知行拒绝修改",
+	"AmendBeneficiaryAcceptStep" : "受益人同意修改",
+	"AmendBeneficiaryRejectStep" : "受益人拒绝修改",
+	"AmendEnd": "结束"
+}
+
 
 // 3.企业可以参与处理的步骤
 // 信用证处理流程

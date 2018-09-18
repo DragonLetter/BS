@@ -9,6 +9,7 @@ import RetireBillModal from '../modals/RetireBillModal';
 import LCNoticeModal from '../modals/LCNoticeModal';
 import DraftModal from '../modals/DraftModal';
 import CheckBillsModal from '../modals/CheckBillsModal';
+import AmendDetailModal from '../modals/AmendDetailModal';
 
 const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
@@ -26,6 +27,8 @@ class TodoList extends React.Component {
             retireBillModalVisible: false,
             LCNoticeModalVisible: false,
             draftModalVisible: false,
+            draftModifyModalVisible: false,
+            draftHandoverModalVisible: false,
             checkBillModalVisible: false,
             transactions: [],
             handoverTrans: [],
@@ -71,7 +74,7 @@ class TodoList extends React.Component {
                 || (constants.BENEFICIARY_PROCESSING_STEPS.includes(data[i].Record.CurrentStep) && userId == beneficiaryID)) {
                 transactions.push({
                     id: data[i].Key,
-                    title: data[i].Record.lcNo || "尚未获得信用证编号",
+                    lcNo: data[i].Record.lcNo || "尚未获得信用证编号",
                     applicant: data[i].Record.ApplicationForm.Applicant.Name,
                     beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
                     amount: data[i].Record.LetterOfCredit.amount,
@@ -90,7 +93,7 @@ class TodoList extends React.Component {
                         && userId == applicantID) {
                         handoverTrans.push({
                             id: data[i].Key,
-                            title: data[i].Record.lcNo || "尚未获得信用证编号",
+                            lcNo: data[i].Record.lcNo || "尚未获得信用证编号",
                             billNo: data[i].Record.LCTransDocsReceive[j].No,
                             applicant: data[i].Record.ApplicationForm.Applicant.Name,
                             beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
@@ -105,6 +108,7 @@ class TodoList extends React.Component {
             }
 
             // 信用证修改流程数据
+            var index = 0;
             if (constants.AMEND_PROCESSING_STEPS.includes(data[i].Record.CurrentStep) &&
                 data[i].Record.AmendFormFlow) {
                 for (let j = 0; j < data[i].Record.AmendFormFlow.length; j++) {
@@ -112,17 +116,21 @@ class TodoList extends React.Component {
                     if (data[i].Record.AmendFormFlow[j].Status == constants.LC_MODIFY_STEPS.AmendBeneficiaryAcceptStep &&
                         userId == beneficiaryID) {
                         modifyTrans.push({
+                            key: index,
                             id: data[i].Key,
-                            title: data[i].Record.lcNo || "尚未获得信用证编号",
                             amendNo: data[i].Record.AmendFormFlow[j].amendNo,
+                            lcNo: data[i].Record.lcNo || "尚未获得信用证编号",
+                            times: data[i].Record.AmendFormFlow[j].amendTimes,
                             applicant: data[i].Record.ApplicationForm.Applicant.Name,
                             beneficiary: data[i].Record.LetterOfCredit.Beneficiary.Name,
                             amount: data[i].Record.LetterOfCredit.amount,
                             status: data[i].Record.CurrentStep,
+                            state: constants.AMEND_STEP[data[i].Record.AmendFormFlow[j].Status],
                             applyTime: data[i].Record.LetterOfCredit.applyTime.split("T")[0],
                             detail: data[i],
                             amendDetail: data[i].Record.AmendFormFlow[j]
                         })
+                        index++;
                     }
                 }
             }
@@ -276,25 +284,26 @@ class TodoList extends React.Component {
         if (1 == type) {
             this.setState({
                 lcTransData: transaction,
+                draftModalVisible: true
             });
         } else if (2 == type) {
             this.setState({
                 lcModifyTransData: transaction,
+                draftModifyModalVisible: true
             });
         } else if (3 == type) {
             this.setState({
                 lcHandoverTransData: transaction,
+                draftHandoverModalVisible: true
             });
         }
-
-        this.setState({
-            draftModalVisible: true,
-        });
     }
 
     closeDraftModal = () => {
         this.setState({
             draftModalVisible: false,
+            draftModifyModalVisible: false,
+            draftHandoverModalVisible: false
         });
     }
 
@@ -382,9 +391,9 @@ class TodoList extends React.Component {
                         grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
                         dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
                         renderItem={
-                            item => (item.title ? (
+                            item => (item.lcNo ? (
                                 <List.Item key={item.id}>
-                                    <Card title={item.title}
+                                    <Card title={item.lcNo}
                                         actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>立即处理</a>]}>
                                         <span style={{ display: "block" }}>申请人：{item.applicant}</span>
                                         <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
@@ -411,9 +420,9 @@ class TodoList extends React.Component {
                         grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
                         dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
                         renderItem={
-                            item => (item.title ? (
+                            item => (item.lcNo ? (
                                 <List.Item key={item.id}>
-                                    <Card title={item.title}
+                                    <Card title={item.lcNo}
                                         actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>修改审核</a>]}>
                                         <span style={{ display: "block" }}>申请人：{item.applicant}</span>
                                         <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
@@ -440,9 +449,9 @@ class TodoList extends React.Component {
                         grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
                         dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
                         renderItem={
-                            item => (item.title ? (
+                            item => (item.lcNo ? (
                                 <List.Item key={item.id}>
-                                    <Card title={<span> {item.title}---交单号:{item.billNo} </span>}
+                                    <Card title={<span> {item.lcNo}---交单号:{item.billNo} </span>}
                                         actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>申请人审单</a>]}>
                                         <span style={{ display: "block" }}>申请人：{item.applicant}</span>
                                         <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
@@ -533,6 +542,18 @@ class TodoList extends React.Component {
                 <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
                     <Spin spinning={this.state.loading} delay={500} >{container}</Spin>
                 </Content>
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证修改</Col>
+                </Row>
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >{containerModify}</Spin>
+                </Content>
+                <Row>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证交单</Col>
+                </Row>
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
+                </Content>
                 <ConfirmDraftModal
                     ref={this.saveCreateFormRef}
                     selectOptions={options}
@@ -562,20 +583,6 @@ class TodoList extends React.Component {
                     onSubmit={this.handleLcNoticeSubmit}
                     onCancel={this.closeLcNoticeModal}
                 />
-                <DraftModal
-                    visible={this.state.draftModalVisible}
-                    data={this.state.lcTransData}
-                    onSubmit={this.closeDraftModal}
-                    onCancel={this.closeDraftModal}
-                />
-                {/* </TabPane>
-                    <TabPane tab="信用证修改" key="2"> */}
-                <Row>
-                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证修改</Col>
-                </Row>
-                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                    <Spin spinning={this.state.loading} delay={500} >{containerModify}</Spin>
-                </Content>
                 <AmendationModal
                     ref={this.amendationModalRef}
                     visible={this.state.amendationModalVisible}
@@ -583,14 +590,6 @@ class TodoList extends React.Component {
                     onSubmit={this.handleAmendSubmit}
                     onCancel={this.closeAmendationModal}
                 />
-                {/* </TabPane>
-                    <TabPane tab="信用证交单" key="3"> */}
-                <Row>
-                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证交单</Col>
-                </Row>
-                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                    <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
-                </Content>
                 <CheckBillsModal
                     ref={this.checkBillsModalRef}
                     visible={this.state.checkBillModalVisible}
@@ -598,8 +597,24 @@ class TodoList extends React.Component {
                     onOk={this.acceptCheckBills}
                     onCancel={this.cancelCheckBills}
                 />
-                {/* </TabPane> */}
-                {/* </Tabs> */}
+                <DraftModal
+                    visible={this.state.draftModalVisible}
+                    data={this.state.lcTransData}
+                    onSubmit={this.closeDraftModal}
+                    onCancel={this.closeDraftModal}
+                />
+                <AmendDetailModal
+                    visible={this.state.draftModifyModalVisible}
+                    data={this.state.lcModifyTransData}
+                    onSubmit={this.closeDraftModal}
+                    onCancel={this.closeDraftModal}
+                />
+                <DraftModal
+                    visible={this.state.draftHandoverModalVisible}
+                    data={this.state.lcHandoverTransData}
+                    onSubmit={this.closeDraftModal}
+                    onCancel={this.closeDraftModal}
+                />
             </PageHeaderLayout >
         )
     }

@@ -199,10 +199,10 @@ class HandoverBillsModal extends React.Component {
                             parser={value => value.replace(/\$\s?|(,*)/g, '')}
                             placeholder="交单金额"
                         />
-                            <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }} span={20}>添加</Button>
                         </Col>
                     </Row>
                     <Table bordered dataSource={dataSource} columns={columns} />
+                    <Button className="editable-add-btn" onClick={this.handleAdd} style={{ marginBottom: 8 }} span={20}>添加</Button>
                 </div>
                 {/* <Row>
                     <Col style={{ marginBottom: '12px', fontSize: '15px', color: '#32325d' }} span={6}>附件</Col>

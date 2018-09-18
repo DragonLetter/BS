@@ -29,6 +29,7 @@ const CheckBillsModal = Form.create()(
             handoverHtml[0] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
                 <Row>
                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{billData.No}</Col>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>交单金额：{billData.HandoverAmount}</Col>
                 </Row>
                 <Table bordered dataSource={billData.BillOfLandings} columns={Columns} pagination={false} />
             </div>);

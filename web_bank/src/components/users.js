@@ -156,16 +156,12 @@ class Users extends React.Component {
         values.affiliation = 'org1.example.com';
         values.attrs = [{'hf.Registrar.Roles':'client,orderer,peer,user',
         'hf.Registrar.DelegateRoles':'client,orderer,peer,user'}];
-        message.error(JSON.stringify(values));
         fetch_ca_post("/api/v1/register",values)
         .then((res) => {
-            message.error(res);
             if( res.status >= 200 && res.status<300 ){
                 alert(JSON.stringify(res));
-                message.error(res);
                 res.json().then((data) => {
                     alert(data);
-                    message.error(data);
                 });
             }
         })
@@ -224,7 +220,6 @@ class Users extends React.Component {
             values.userStatus = 0;
             values.domain = user.domain;
             values.userType = parseInt(values.userType);
-            message.error(values);
             fetch_post("/api/user/um/update/"+password,values)
             .then((res) => {
                 if(res.status >= 200 && res.status < 300){

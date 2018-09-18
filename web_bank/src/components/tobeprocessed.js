@@ -247,7 +247,7 @@ class TobeProcessed extends React.Component {
                             applicant: data[i].applicant,
                             beneficiary: data[i].beneficiary,
                             amount: data[i].amount + " " + data[i].currency,
-                            createdAt: data[i].amend[j].AmendExpiryDate,
+                            createdAt: data[i].amend[j].amendDate,
                             flag: "1" //发起修改
                         })
                     } else if ((sessionStorage.getItem("bankno") == data[i].advisingBankNo)
@@ -262,7 +262,7 @@ class TobeProcessed extends React.Component {
                             applicant: data[i].applicant,
                             beneficiary: data[i].beneficiary,
                             amount: data[i].amount + " " + data[i].currency,
-                            createdAt: data[i].amend[j].AmendExpiryDate,
+                            createdAt: data[i].amend[j].amendDate,
                             flag: "1" //发起修改
                         })
                     }

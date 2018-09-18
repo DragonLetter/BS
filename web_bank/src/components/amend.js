@@ -54,10 +54,10 @@ class Letters extends React.Component {
     handleLetters = (data) => {
         const letters = [];
         var index = 0;
-        for (let i = 0; i < data.length; i++) {
+        // alert("data: "+ JSON.stringify(data)); 
+        for (let i = 0; i < data.length; i++) {            
             if (data[i].amend != null) {
-                for (let j = 0; j < data[i].amend.length; j++) {
-                    // alert("data: "+ JSON.stringify(data[i].amend[j]));                   
+                for (let j = 0; j < data[i].amend.length; j++) {                                   
                     letters.push({
                         key: index,
                         no: data[i].id,

@@ -361,8 +361,7 @@ function chaincodeTx2ViewTx(chaincodeTx) {
     //增加信用证发起修改信息    
     var amend = [];    
     if (chaincodeTx.Record.AmendFormFlow != null) {
-        for (var i = 0; i < chaincodeTx.Record.AmendFormFlow.length; i++) {
-           
+        for (var i = 0; i < chaincodeTx.Record.AmendFormFlow.length; i++) {                     
             amend[i] = chaincodeTx.Record.AmendFormFlow[i];            
         }
     }

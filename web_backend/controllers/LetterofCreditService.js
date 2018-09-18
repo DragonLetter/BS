@@ -30,7 +30,7 @@ exports.lcAmendation = function (req, res, next) {
         + "\n fabric req:" + JSON.stringify(fabricArg));
     // console.log(JSON.stringify(fabricArg))
     fabric.invoke(req, "lcAmendSubmit", [no, JSON.stringify(fabricArg)], function (err, resp) {
-        if (!err) {
+        if (!err) {            
             res.end(JSON.stringify("处理成功"));
         } else {
             Logger.error(err);

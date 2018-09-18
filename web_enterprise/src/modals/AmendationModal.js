@@ -25,6 +25,12 @@ const AmendationtModal = Form.create()((props) => {
         // deposit = record.LCTransDeposit ? record.LCTransDeposit : [],
         title = "信用证修改——" + record.lcNo;
 
+    var amendTimes = 1;
+    if (record.AmendFormFlow != null)
+    {
+        amendTimes = record.AmendFormFlow.length + 1;
+    }
+        
     return (
         <Modal
             visible={visible}
@@ -41,9 +47,10 @@ const AmendationtModal = Form.create()((props) => {
                         <Col span={12} key={0}>
                             <FormItem {...formItemLayout} label={`修改次数`}>
                                 {getFieldDecorator('amendTimes', {
+                                    initialValue: amendTimes + "",
                                     rules: [{ required: true, message: '请输入修改次数!' }],
                                 })(
-                                    <Input placeholder="修改次数" />
+                                    <Input disabled={true} placeholder="修改次数" />
                                     )}
                             </FormItem>
                         </Col>

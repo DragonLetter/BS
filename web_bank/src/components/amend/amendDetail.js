@@ -110,7 +110,8 @@ class AmendIssuing extends React.Component {
             depositDoc: {},
             amendState: {},
             letters: {},
-            amend: {}
+            amend: {},
+            rejectForm: {}
         }
     }
 
@@ -328,21 +329,43 @@ class AmendIssuing extends React.Component {
         //  if (!isFileUploaded) { return; }
         var result = {
             no: this.props.params.id,
+            amendNo: this.props.params.amendId,
             suggestion: values.comment,
             isAgreed: "false",
-            depositDoc: lcAttachment
         };
-        fetch_post("/api/bank/letterofcredit/bankissuing", result).then((res) => {
-            if (res.status >= 200 && res.status < 300) {
-                res.json().then((data) => {
-                    this.closeRejectDialog();
-                    this.rejectUpdateAmendState();
-                    message.success("审核完成, 已驳回重新处理。.");
-                });
-            } else {
-                message.error("交易执行失败，请检查审核信息.");
-            }
-        });
+
+        if ((sessionStorage.getItem("bankno") == this.state.letters.IssuingBank.No)
+            && (this.state.amend.Status == "AmendIssuingBankAcceptStep")) //开证行
+        {
+            fetch_post("/api/bank/LetterofCredit/issueLetterOfAmend", result).then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        this.closeApproveDialog();
+                        this.rejectUpdateAmendState(values.commen);
+                        message.success("审核完成, 等待企业确认.");
+
+                    });
+                } else {
+                    message.error("交易执行失败，请检查审核信息.");
+                }
+            });
+        }
+        else if ((sessionStorage.getItem("bankno") == this.state.letters.AdvisingBank.No)
+            && (this.state.amend.Status == "AmendAdvisingBankAcceptStep")) //通知行
+        {
+            fetch_post("/api/bank/LetterofCredit/advisingLetterOfAmend", result).then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        this.closeApproveDialog();
+                        this.rejectUpdateAmendState(values.commen);
+                        message.success("审核完成, 等待企业确认.");
+
+                    });
+                } else {
+                    message.error("交易执行失败，请检查审核信息.");
+                }
+            });
+        }
     }
 
     handleApprove = () => {
@@ -362,7 +385,7 @@ class AmendIssuing extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                this.closeApproveDialog();
+                                this.closeRejectDialog();
                                 this.closeRejectDialog();
                                 message.success("经办审核完成, 等待复核确认.");
                             });
@@ -381,7 +404,7 @@ class AmendIssuing extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                this.closeApproveDialog();
+                                this.closeRejectDialog();
                                 this.closeRejectDialog();
                                 message.success("复核审核完成, 等待授权确认.");
                             });
@@ -449,11 +472,11 @@ class AmendIssuing extends React.Component {
         });
     }
 
-    rejectUpdateAmendState = () => {
+    rejectUpdateAmendState = (suggestion) => {
         var amendState = this.state.amendState;
         amendState.state = '11';//初始化身份--经办
         amendState.step = '' //流程到银行确认
-        amendState.suggestion = values.comment;
+        amendState.suggestion = suggestion;
         amendState.isAgreed = "false";
         fetch_post("/api/bank/Application/AmendState/" + this.props.params.id + "?amendNo=" + this.props.params.amendId, amendState)
             .then((res) => {

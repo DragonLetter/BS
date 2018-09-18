@@ -205,7 +205,7 @@ const AddDraftForm = Form.create()(
                                 <div style={{ marginTop: -60, marginRight: 60, float: 'right' }} >
                                     {/* 保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                         parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} /> */}
-                                    保证金金额：<InputNumber id="EnsureAmount" 
+                                    保证金金额：<InputNumber id="EnsureAmount"
                                         parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} />
                                 </div>
                             </Col>
@@ -480,20 +480,28 @@ class LocalLC extends React.Component {
     handleLCInfo = (data) => {
         const lcs = [];
         No = "";
+        var index = 0;
         for (let i = 0; i < data.length; i++) {
-            lcs.push({
-                key: i,
-                id: data[i].Key,
-                lcNo: data[i].Record.lcNo || "等待银行审核",
-                beneficiary: data[i].Record.ApplicationForm.Beneficiary.Name,
-                applicant: data[i].Record.ApplicationForm.Applicant.Name,
-                advisingBank: data[i].Record.ApplicationForm.AdvisingBank.Name,
-                issuingBank: data[i].Record.ApplicationForm.IssuingBank.Name,
-                amount: data[i].Record.ApplicationForm.amount,
-                state: data[i].Record.CurrentStep,
-                applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
-                detail: data[i]
-            })
+            if (data[i].Record.AmendFormFlow != null) {
+                for (let j = 0; j < data[i].Record.AmendFormFlow.length; j++) {
+                    lcs.push({
+                        key: index,
+                        amendno: data[i].Record.AmendFormFlow[j].amendNo,
+                        id: data[i].Key,
+                        lcNo: data[i].Record.lcNo || "等待银行审核",
+                        beneficiary: data[i].Record.ApplicationForm.Beneficiary.Name,
+                        applicant: data[i].Record.ApplicationForm.Applicant.Name,
+                        advisingBank: data[i].Record.ApplicationForm.AdvisingBank.Name,
+                        issuingBank: data[i].Record.ApplicationForm.IssuingBank.Name,
+                        amount: data[i].Record.ApplicationForm.amount,
+                        state: data[i].Record.CurrentStep,
+                        applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
+                        detail: data[i],
+                        amendDetail: data[i].Record.AmendFormFlow[j]
+                    })
+                    index++;
+                }
+            }
         }
         this.setState({
             LCs: lcs,
@@ -801,8 +809,8 @@ class LocalLC extends React.Component {
     }
 
 
-     // 信用证修改相关处理逻辑
-     amend = (index, text) => {
+    // 信用证修改相关处理逻辑
+    amend = (index, text) => {
         this.setState({
             index: index,
             amendModalVisible: true,
@@ -819,7 +827,7 @@ class LocalLC extends React.Component {
             if (err) {
                 return;
             }
-            values.no = this.state.LCData[this.state.index].Key;
+            values.no = this.state.LCs[this.state.index].id;
             values.amendedAmt = "" + values.amendedAmt;
             message.error("data:" + JSON.stringify(values));
             request('/api/letterOfCredit/Amending', {
@@ -890,8 +898,8 @@ class LocalLC extends React.Component {
                 key: 'amend',
                 render: (text, record, index) => {
                     var userId = sessionStorage.getItem("userId");
-                    var data = record.detail.Record;      
-                    if (constants.AMEND_PROCESSING_STEPS.includes(data.CurrentStep)) {            
+                    var data = record.detail.Record;
+                    if (constants.AMEND_PROCESSING_STEPS.includes(data.CurrentStep)) {
                         var Applicant = data.LetterOfCredit.Applicant.No;
                         if (userId == Applicant) {
                             return (
@@ -977,8 +985,8 @@ class LocalLC extends React.Component {
                     visible={this.state.amendModalVisible}
                     onCancel={this.closeAmendModal}
                     data={this.state.LCs[this.state.index]}
-                    onSubmit={this.handleAmendSubmit}  
-                    ref={this.amendationModalRef}                 
+                    onSubmit={this.handleAmendSubmit}
+                    ref={this.amendationModalRef}
                 />
             </PageHeaderLayout>
         )

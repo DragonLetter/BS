@@ -325,7 +325,7 @@ class TodoList extends React.Component {
             values.no = this.state.lcModifyTransData.id;
             values.amendNo = this.state.lcModifyTransData.amendNo;
             values.isAgreed += '';
-            alert(JSON.stringify(values));
+            // alert(JSON.stringify(values));
             request('/api/LetterofCredit/beneficiaryLetterOfAmend', {
                 method: "POST",
                 body: values,

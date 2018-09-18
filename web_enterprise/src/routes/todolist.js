@@ -4,17 +4,16 @@ import { List, Spin, Card, Layout, Select, message, Tabs, Row, Col } from 'antd'
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
 import ConfirmDraftModal from '../modals/ConfirmDraftModal';
 import DepositModal from '../modals/DepositModal';
-import AmendationModal from '../modals/AmendationModal';
 import RetireBillModal from '../modals/RetireBillModal';
 import LCNoticeModal from '../modals/LCNoticeModal';
 import DraftModal from '../modals/DraftModal';
 import CheckBillsModal from '../modals/CheckBillsModal';
+import AmendOperations from '../modals/AmendOperations';
 import AmendDetailModal from '../modals/AmendDetailModal';
 
 const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
 const Option = Select.Option
-const TabPane = Tabs.TabPane;
 
 class TodoList extends React.Component {
     constructor(props) {
@@ -37,6 +36,7 @@ class TodoList extends React.Component {
             lcModifyTransData: null,
             lcHandoverTransData: null,
             corps: [],
+            amendInfo: [],
         }
     }
 
@@ -309,23 +309,30 @@ class TodoList extends React.Component {
 
     // 信用证修改相关函数
     amendationModalRef = (form) => {
-        this.amendForm = form;
+        this.amendInfo = form;
     }
 
     handleAmendSubmit = () => {
-        let form = this.amendForm;
+        let form = this.amendInfo;
         form.validateFields((err, values) => {
             if (err) {
                 return;
             }
 
             values.no = this.state.lcModifyTransData.id;
-            values.amendedAmt = "" + values.amendedAmt;
-            request('/api/letterOfCredit/Amending', {
+            values.amendNo = this.state.lcModifyTransData.amendNo;
+            values.isAgreed += '';
+            alert(JSON.stringify(values));
+            request('/api/LetterofCredit/beneficiaryLetterOfAmend', {
                 method: "POST",
                 body: values,
             }).then((data) => {
                 message.success("修改成功!");
+                this.setState({
+                    amendationModalVisible: false,
+                })
+            }).catch((error) => {
+                message.error("处理失败！");
                 this.setState({
                     amendationModalVisible: false,
                 })
@@ -583,11 +590,11 @@ class TodoList extends React.Component {
                     onSubmit={this.handleLcNoticeSubmit}
                     onCancel={this.closeLcNoticeModal}
                 />
-                <AmendationModal
+                <AmendOperations
                     ref={this.amendationModalRef}
                     visible={this.state.amendationModalVisible}
                     data={this.state.lcModifyTransData}
-                    onSubmit={this.handleAmendSubmit}
+                    onOk={this.handleAmendSubmit}
                     onCancel={this.closeAmendationModal}
                 />
                 <CheckBillsModal

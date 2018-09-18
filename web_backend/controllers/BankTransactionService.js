@@ -8,14 +8,12 @@ var inspect = require('util').inspect;
 var STATUS_ENUM = [
     "企业申请",
     "草稿审核",
+    "正本",
     "正本开立",
-    "正本修改",
-    "会签共识",
-    "交单",
-    "承兑",
     "付款",
-    "拒付",
-    "闭卷"
+    "闭卷",
+    "正本修定",
+    "到单"
 ];
 
 const STEP_ENUM = {
@@ -359,13 +357,12 @@ exports.getProcessingTxByBankId = function (req, res, next) {
  **/
 function chaincodeTx2ViewTx(chaincodeTx) {
     //增加信用证发起修改信息    
-    var amend = [];    
+    var amend = []; 
     if (chaincodeTx.Record.AmendFormFlow != null) {
         for (var i = 0; i < chaincodeTx.Record.AmendFormFlow.length; i++) {                     
             amend[i] = chaincodeTx.Record.AmendFormFlow[i];            
         }
     }
-
     var tx = {
         "id": chaincodeTx.Key,
         "no": chaincodeTx.Record.lcNo,
@@ -381,7 +378,8 @@ function chaincodeTx2ViewTx(chaincodeTx) {
         "issuseDate": chaincodeTx.Record.LetterOfCredit.applyTime,
         "issuingBankNo": chaincodeTx.Record.LetterOfCredit.IssuingBank.No,
         "advisingBankNo": chaincodeTx.Record.LetterOfCredit.AdvisingBank.No,
-        "amend": amend
+        "amend": amend,
+        "billState": chaincodeTx.Record.LCTransDocsReceive?chaincodeTx.Record.LCTransDocsReceive.length:0
     };
     return tx;
 }

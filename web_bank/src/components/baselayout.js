@@ -69,7 +69,7 @@ class BaseLayout extends React.Component {
         const userCenter = (
             <div>
                 {/* <p style={{borderBottom: "1px solid #ececec", width: 130, padding: 5, textAlign: 'center'}}><a target="_blank" rel="noopener noreferrer" href="#">个人账户</a></p> */}
-                <p style={{ borderBottom: "1px solid #ececec", width: 130, padding: 5, textAlign: 'center' }}><a target="_blank" rel="noopener noreferrer" href="#">退出系统</a></p>
+                <p style={{ borderBottom: "1px solid #ececec", width: 130, padding: 5, textAlign: 'center' }}><a target="_parent" rel="noopener noreferrer" href="#">退出系统</a></p>
             </div>
         );
 

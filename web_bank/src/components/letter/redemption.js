@@ -139,7 +139,7 @@ class LetterRedemption extends React.Component {
     }
 
     getLCDraftDetail = () => {
-        fetch_get("/api/bank/transaction/draft/" + this.props.params.id)
+        fetch_get("/api/ApplicationForm/" + this.props.params.id)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
                     res.json().then((data) => {
@@ -234,7 +234,7 @@ class LetterRedemption extends React.Component {
             if (sessionStorage.getItem('userType') == 11) {
                 var afstate = this.state.afstate;
                 afstate.state = '12';
-                afstate.lcNo = this.state.letters.LCNo;
+                afstate.lcNo = this.state.letters.lcNo;
                 afstate.suggestion = values.comment;
                 afstate.isAgreed = "true";
                 afstate.step = 'IssuingBankReviewRetireBillsStep';
@@ -289,7 +289,7 @@ class LetterRedemption extends React.Component {
             if (sessionStorage.getItem('userType') == 12) {
                 var afstate = this.state.afstate;
                 afstate.state = '11';
-                afstate.lcNo = this.state.letters.LCNo;
+                afstate.lcNo = this.state.letters.lcNo;
                 afstate.suggestion = values.comment;
                 afstate.isAgreed = "false";
                 afstate.step = 'IssuingBankReviewRetireBillsStep';
@@ -398,17 +398,17 @@ class LetterRedemption extends React.Component {
     }
 
     // printPdf = () => {
-    //     window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    //     window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.lcNo + ".pdf");
 
     // }
 
     // printAcceptancePdf = () => {
-    //     window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
+    //     window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.lcNo + ".pdf");
 
     // }
 
     render() {
-        let data = this.state.letters ? this.state.letters : [],
+        let data = this.state.letters.LetterOfCredit ? this.state.letters.LetterOfCredit : [],
             applicant = data.Applicant ? data.Applicant : [],
             beneficiary = data.Beneficiary ? data.Beneficiary : [],
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
@@ -437,8 +437,8 @@ class LetterRedemption extends React.Component {
             btnDivHtml = (<div></div>);
         }
 
-        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-        let pdfAcceptancePath = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.lcNo + ".pdf";
+        let pdfAcceptancePath = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.lcNo + ".pdf";
         return (
             <Layout style={{ padding: '1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', fontSize: 13, fontWeight: 800, background: '#F3F1EF' }}>
@@ -453,7 +453,7 @@ class LetterRedemption extends React.Component {
                                 <div>
                                     <Row>
                                         <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>信用证编号</Col>
-                                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#6b7c93', fontWeight: 'bold' }} span={3}>{this.state.letters.LCNo}</Col>
+                                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#6b7c93', fontWeight: 'bold' }} span={3}>{this.state.letters.lcNo}</Col>
                                     </Row>
                                 </div>
                                 <div>

@@ -45,8 +45,8 @@ const BillDialog = Form.create()(
                 width='800'
                 footer={stateBill==1?[
                     <Button type="default" onClick={onCancel}>关闭</Button>,
-                    <Button type="primary" onClick={onApprove}>通过</Button>,
-                    <Button type="danger" onClick={onRejest}>拒绝</Button>,
+                    <Button type="primary" onClick={onApprove}>确认</Button>,
+                    // <Button type="danger" onClick={onRejest}>拒绝</Button>,
                   ]:stateBill==2?[
                     <Button type="default" onClick={onCancel}>关闭</Button>,
                     <Button type="primary" onClick={onApprove}>承兑</Button>,
@@ -71,7 +71,7 @@ const BillDialog = Form.create()(
                     </Row>
                     <Row>
                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>到单描述</Col>
-                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={18}>{dataform.ReceivedAmount}</Col>
+                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#32325d' }} span={18}>{dataform.Discrepancy}</Col>
                     </Row>
                 </div>
 
@@ -441,6 +441,7 @@ class LetterBill extends React.Component {
             if (res.status >= 200 && res.status < 300) {
                 res.json().then((data) => {
                     this.closeBillDialog();
+                    message.success("您已完成审核.");
                 });
             } else {
                 message.error(CONSTANTS.ERROR_SIGNED_FORM_AUDIT);
@@ -450,9 +451,8 @@ class LetterBill extends React.Component {
     billToProgress = (values, isAgreed) => {
         var billState = this.state.billState;
         var billVals = {};
+        var urlcc = '/api/bank/LetterofCredit/BillAcceptancePayment';
         var tocc = false;
-        if( isAgreed=='fasle')
-            tocc = true;
         billState.isAgreed = isAgreed;
         billState.suggestion = values.comment;
         if( this.state.stateBill==2 ){
@@ -464,12 +464,6 @@ class LetterBill extends React.Component {
         else if( sessionStorage.getItem('userType')==12 )
             billState.state = '13';
         else if( sessionStorage.getItem('userType')==13 ){
-            billVals.no = billState.AFNo;
-            billVals.bno = billState.No;
-            billVals.suggestion = billState.suggestion;
-            billVals.isAgreed = billState.isAgreed;
-            billState.state = '11';
-            var urlcc;
             if(this.state.stateBill==1)
             {
                 billState.step = 'IssuingBankAcceptanceStep';
@@ -482,22 +476,30 @@ class LetterBill extends React.Component {
             }
             tocc = true;
         }
-        if( tocc )
+        if( isAgreed == 'false' )
+            tocc = true;
+        if( tocc ){
+            billVals.no = billState.AFNo;
+            billVals.bno = billState.No;
+            billVals.suggestion = billState.suggestion;
+            billVals.isAgreed = billState.isAgreed;
+            billState.state = '11';
             this.billToChainCode(urlcc, billVals);
+        }
         this.billToDataBase('/api/BillRecord/UpdateBState', billState);
     }
     billApprove = (value) => {
         const form = this.billForm;
         form.validateFields((err, values) => {
             if (err) { return; }
-            this.billToProgress(values, 'true')
+            this.billToProgress(values, "true");
         });
     }
     billRejest = (value) => {
         const form = this.billForm;
         form.validateFields((err, values) => {
             if (err) { return; }
-            this.billToProgress(values, 'false')
+            this.billToProgress(values, "false");
         });
     }
     handleApprove = (value) => {
@@ -776,7 +778,7 @@ class LetterBill extends React.Component {
                         </TabPane>
 
                         ]:[]}
-                        <TabPane tab="到单" key="1">
+                        <TabPane tab="到单处理" key="1">
                             <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
                                 <div>
                                     <Row>

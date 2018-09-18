@@ -153,7 +153,7 @@ exports.billBankReceivedAudit = function (req, res, next) {
 exports.billAcceptancePayment = function (req, res, next) {
     var args = req.swagger.params;
     var values = args.body.value, no = values.no, bno = values.bno, amount = values.amount.toString(),
-        suggestion = values.suggestion, isAgreed = values.isAgreed.toString();
+        suggestion = values.suggestion, isAgreed = values.isAgreed;
 
     fabric.invoke(req, "lcAcceptOrReject", [no, bno, amount, suggestion, isAgreed], function (err, resp) {
         if (!err) {

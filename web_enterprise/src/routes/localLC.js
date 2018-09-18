@@ -465,6 +465,7 @@ class LocalLC extends React.Component {
             handoverBillsModalVisible: false,
             amendModalVisible: false,
             LCs: [],
+            lcAmends: [],
             banks: [],
             signedbanks: [],
             corporations: [],
@@ -479,12 +480,30 @@ class LocalLC extends React.Component {
 
     handleLCInfo = (data) => {
         const lcs = [];
+        const lcAmends = [];
         No = "";
         var index = 0;
         for (let i = 0; i < data.length; i++) {
+            lcs.push({
+                key: i,              
+                id: data[i].Key,
+                lcNo: data[i].Record.lcNo || "等待银行审核",
+                beneficiary: data[i].Record.ApplicationForm.Beneficiary.Name,
+                applicant: data[i].Record.ApplicationForm.Applicant.Name,
+                advisingBank: data[i].Record.ApplicationForm.AdvisingBank.Name,
+                issuingBank: data[i].Record.ApplicationForm.IssuingBank.Name,
+                amount: data[i].Record.ApplicationForm.amount,
+                state: data[i].Record.CurrentStep,
+                applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
+                detail: data[i],
+               
+            })
+        }
+
+        for (let i = 0; i < data.length; i++) {
             if (data[i].Record.AmendFormFlow != null) {
                 for (let j = 0; j < data[i].Record.AmendFormFlow.length; j++) {
-                    lcs.push({
+                    lcAmends.push({
                         key: index,
                         amendno: data[i].Record.AmendFormFlow[j].amendNo,
                         id: data[i].Key,
@@ -505,6 +524,7 @@ class LocalLC extends React.Component {
         }
         this.setState({
             LCs: lcs,
+            lcAmends: lcAmends,
             LCData: data,
         });
     }
@@ -827,7 +847,7 @@ class LocalLC extends React.Component {
             if (err) {
                 return;
             }
-            values.no = this.state.LCs[this.state.index].id;
+            values.no = this.state.lcAmends[this.state.index].id;
             values.amendedAmt = "" + values.amendedAmt;
             message.error("data:" + JSON.stringify(values));
             request('/api/letterOfCredit/Amending', {
@@ -984,7 +1004,7 @@ class LocalLC extends React.Component {
                 <AmendationModal
                     visible={this.state.amendModalVisible}
                     onCancel={this.closeAmendModal}
-                    data={this.state.LCs[this.state.index]}
+                    data={this.state.lcAmends[this.state.index]}
                     onSubmit={this.handleAmendSubmit}
                     ref={this.amendationModalRef}
                 />

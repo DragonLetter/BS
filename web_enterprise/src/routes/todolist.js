@@ -199,6 +199,7 @@ class TodoList extends React.Component {
                 body: values,
             }).then((data) => {
                 message.success("提交保证金成功!");
+                this.getTransInfo();
                 this.setState({
                     depositModalVisible: false,
                 });
@@ -230,6 +231,7 @@ class TodoList extends React.Component {
                 body: values,
             }).then((data) => {
                 message.success("付款成功!");
+                this.getTransInfo();
                 this.setState({
                     retireBillModalVisible: false,
                 });
@@ -261,6 +263,7 @@ class TodoList extends React.Component {
                 body: values,
             }).then((data) => {
                 message.success("处理成功!");
+                this.getTransInfo();
                 this.setState({
                     LCNoticeModalVisible: false,
                 })
@@ -328,6 +331,7 @@ class TodoList extends React.Component {
                 body: values,
             }).then((data) => {
                 message.success("修改成功!");
+                this.getTransInfo();
                 this.setState({
                     amendationModalVisible: false,
                 })
@@ -367,6 +371,7 @@ class TodoList extends React.Component {
                 body: req,
             }).then((data) => {
                 message.success("处理成功!");
+                this.getTransInfo();
                 this.setState({
                     checkBillModalVisible: false,
                 });

@@ -81,7 +81,7 @@ const DraftModal = (props) => {
             handoverHtml[i] = (<div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
                 <Row>
                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>交单编号：{handoverData[i].No}</Col>
-                    <Col span={3}></Col>
+                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>交单金额：{handoverData[i].HandoverAmount}</Col>
                     <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>状态：{LC_HANDOVER_STEPS_SHOW[handoverData[i].HandOverBillStep]}</Col>
                 </Row>
                 <Table bordered dataSource={handoverData[i].BillOfLandings} columns={handoverColumns} pagination={false} />

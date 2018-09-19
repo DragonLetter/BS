@@ -26,11 +26,10 @@ const AmendationtModal = Form.create()((props) => {
         title = "信用证修改——" + record.lcNo;
 
     var amendTimes = 1;
-    if (record.AmendFormFlow != null)
-    {
+    if (record.AmendFormFlow != null) {
         amendTimes = record.AmendFormFlow.length + 1;
     }
-        
+
     return (
         <Modal
             visible={visible}
@@ -43,7 +42,7 @@ const AmendationtModal = Form.create()((props) => {
         >
             <Layout style={{ padding: '1px 1px' }}>
                 <Form style={{ margin: '0px 16px', borderTop: '1px solid #e6ebf1' }}>
-                    <Row gutter={40} style={{marginTop: 20}}>
+                    <Row gutter={40} style={{ marginTop: 20 }}>
                         <Col span={12} key={0}>
                             <FormItem {...formItemLayout} label={`修改次数`}>
                                 {getFieldDecorator('amendTimes', {
@@ -51,7 +50,7 @@ const AmendationtModal = Form.create()((props) => {
                                     rules: [{ required: true, message: '请输入修改次数!' }],
                                 })(
                                     <Input disabled={true} placeholder="修改次数" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={1}>
@@ -59,8 +58,11 @@ const AmendationtModal = Form.create()((props) => {
                                 {getFieldDecorator('amendedCurrency', {
                                     rules: [{ required: true, message: '请输入修改货币!' }],
                                 })(
-                                    <Input placeholder="修改货币" />
-                                    )}
+                                    <Select>
+                                        <Option value="CNY">人民币</Option>
+                                        <Option value="USD">美元</Option>
+                                    </Select>
+                                )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={2}>
@@ -74,7 +76,7 @@ const AmendationtModal = Form.create()((props) => {
                                         placeholder="修改金额"
                                         style={{ width: "100%" }}
                                     />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={3}>
@@ -83,7 +85,7 @@ const AmendationtModal = Form.create()((props) => {
                                     rules: [{ required: true, message: '请输入期限增减!' }],
                                 })(
                                     <Input placeholder="期限增减" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={4}>
@@ -92,7 +94,7 @@ const AmendationtModal = Form.create()((props) => {
                                     rules: [{ required: true, message: '请输入有效日期！' }],
                                 })(
                                     <DatePicker placeholder="有效日期" style={{ width: '100%' }} />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={5}>
@@ -101,7 +103,7 @@ const AmendationtModal = Form.create()((props) => {
                                     rules: [{ required: true, message: '请输入发货地修改！' }],
                                 })(
                                     <Input placeholder="发货地修改" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={6}>
@@ -110,7 +112,7 @@ const AmendationtModal = Form.create()((props) => {
                                     rules: [{ required: true, message: '请输入保证金增减！' }],
                                 })(
                                     <Input placeholder="保证金增减" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                     </Row>

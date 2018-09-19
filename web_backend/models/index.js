@@ -22,8 +22,8 @@ fs
     db[model.name] = model;
   });
 
-db["SignedBank"].belongsTo(db["Bank"], { as: 'Bank', constraints: false });
-db["SignedBank"].belongsTo(db["Corporation"], { as: 'Corporation', constraints: false });
+// db["SignedBank"].belongsTo(db["Bank"], { as: 'Bank', constraints: false });
+// db["SignedBank"].belongsTo(db["Corporation"], { as: 'Corporation', constraints: false });
 db["CorpPartnership"].belongsTo(db["Corporation"], { as: 'Corporation', constraints: false });
 
 Object.keys(db).forEach(function (modelName) {

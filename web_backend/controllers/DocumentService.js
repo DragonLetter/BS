@@ -57,7 +57,7 @@ exports.uploadFile = function (req, res, next) {
   var signture = sign.sign(privateKey);
   var currentUser = req.session.user;
 
-  getCertificateId(req).then(certId => {
+  // getCertificateId(req).then(certId => {
     var doc = {
       "fileName": fileName,
       "mime": mime,
@@ -65,7 +65,7 @@ exports.uploadFile = function (req, res, next) {
       "content": content,
       "hash": hash,
       "signature": Buffer.from(signture).toString("hex"),
-      "certId": certId
+      "certId": 1 //certId
     };
     models.Document.create(doc).then(function (data) {
       var result = {
@@ -83,7 +83,7 @@ exports.uploadFile = function (req, res, next) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(result));
     });
-  });
+  // });
 }
 
 function getCertificateId(req) {

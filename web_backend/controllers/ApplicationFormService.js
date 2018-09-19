@@ -24,22 +24,22 @@ exports.addApplicationForm = function (req, res, next) {
     p2 = models.Corporation.findById(values.BeneficiaryId),
     p3 = models.Bank.findById(values.IssueBankId),
     p4 = models.Bank.findById(values.AdvisingBankId),
-    p5 = models.SignedBank.find({
-      where: {
-        corporationId: values.ApplyCorpId,
-        bankId: values.IssueBankId,
-      }
-    }),
-    p6 = models.SignedBank.find({
-      where: {
-        corporationId: values.BeneficiaryId,
-        bankId: values.AdvisingBankId,
-      }
-    }),
+    // p5 = models.SignedBank.find({
+    //   where: {
+    //     corporationId: values.ApplyCorpId,
+    //     bankId: values.IssueBankId,
+    //   }
+    // }),
+    // p6 = models.SignedBank.find({
+    //   where: {
+    //     corporationId: values.BeneficiaryId,
+    //     bankId: values.AdvisingBankId,
+    //   }
+    // }),
     lcId = sequenceHelper.GenerateNewId("LC"),
     applyId = sequenceHelper.GenerateNewId("LCApplication"), corpNo;
 
-  Promise.all([p1, p2, p3, p4, p5, p6, lcId, applyId]).then(
+  Promise.all([p1, p2, p3, p4, p1, p2, lcId, applyId]).then(
     function ([applicant, beneficiary, issueBank, advisingBank, applicantSign, beneficiarySign, lcIdNumber, applyIdNumber]) {
       var fabricArg1 = values.No ? values.No.toString() : lcIdNumber.toString();
       corpNo = applicant.id.toString();
@@ -66,18 +66,18 @@ exports.addApplicationForm = function (req, res, next) {
           "Name": issueBank.name,
           "Domain": issueBank.domain,
           "Address": issueBank.address,
-          "AccountNo": applicantSign.accountNo,
-          "AccountName": applicantSign.accountName,
-          "Remark": applicantSign.remark,
+          "AccountNo": applicantSign.account,
+          "AccountName": applicantSign.name,
+          "Remark": "",
         },
         "AdvisingBank": {
           "No": advisingBank.no,
           "Name": advisingBank.name,
           "Domain": advisingBank.domain,
           "Address": advisingBank.address,
-          "AccountNo": beneficiarySign.accountNo,
-          "AccountName": beneficiarySign.accountName,
-          "Remark": beneficiarySign.remark,
+          "AccountNo": beneficiarySign.account,
+          "AccountName": beneficiarySign.name,
+          "Remark": "",
         },
         "ExpiryDate": values.ExpiryDate,
         "ExpiryPlace": values.ExpiryPlace,

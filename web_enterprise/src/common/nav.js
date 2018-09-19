@@ -66,12 +66,12 @@ export const getNavData = app => [
         path: 'clientlist',
         component: dynamicWrapper(app, [], () => import('../routes/clientList')),
       },
-      {
-        name: '业务设置',
-        icon: 'setting',
-        path: 'settings',
-        component: dynamicWrapper(app, [], () => import('../routes/settings')),
-      },
+      // {
+      //   name: '业务设置',
+      //   icon: 'setting',
+      //   path: 'settings',
+      //   component: dynamicWrapper(app, [], () => import('../routes/settings')),
+      // },
     ],
   },
 ];

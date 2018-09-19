@@ -55,13 +55,11 @@ const tagsFromServer = [
     "企业申请",
     "草稿审核",
     "正本开立",
-    "正本修改",
-    "会签",
-    "交单",
-    "承兑",
+    "正本生效",
     "付款",
-    "拒付",
-    "闭卷"
+    "闭卷",
+    "正本修定",
+    "到单"
 ];
 var status_value = "";
 class HotTags extends React.Component {
@@ -218,6 +216,18 @@ class TobeProcessed extends React.Component {
         const letters = [];
         var index = 0;
         for (let i = 0; i < data.length; i++) {
+            var flag = false;
+            if( this.state.tags=="到单" ){
+                if( data[i].billState > 0 )
+                    flag = true;
+            } 
+            else if( this.state.tags=="正本修定" ){
+                if( data[i].amend.length>0 )
+                    flag = true;
+            }else
+                flag = true;
+            if( flag == false )
+                continue;
             letters.push({
                 key: data[i].id,
                 number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
@@ -284,6 +294,10 @@ class TobeProcessed extends React.Component {
             startData = arr[0];
             endData = arr[1];
         }
+        var tags = this.state.tags;
+        if( this.state.tags=="正本修定" || this.state.tags=="到单" ){
+            tags = "";
+        }
         // alert(sessionStorage.getItem("bankno") 
         // + "?status=" + this.state.tags
         // + "&lcNo=" +document.getElementById("lcno").value 
@@ -291,7 +305,7 @@ class TobeProcessed extends React.Component {
         // + "&beneficiary=" +document.getElementById("letter_beneficiary").value 
         // + "&startDate=" + startData + "&endDate=" + endData);
         fetch_get("/api/bank/transaction/processing/" + sessionStorage.getItem("bankno")
-            + "?status=" + this.state.tags
+            + "?status=" + tags
             + "&lcNo=" + document.getElementById("lcno").value
             + "&applicant=" + document.getElementById("letter_applicant").value
             + "&beneficiary=" + document.getElementById("letter_beneficiary").value

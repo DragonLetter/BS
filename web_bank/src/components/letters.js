@@ -52,8 +52,8 @@ const CheckableTag = Tag.CheckableTag;
 const tagsFromServer = [
     "企业申请",
     "草稿审核",
-    "正本",
     "正本开立",
+    "正本生效",
     "付款",
     "闭卷",
     "正本修定",
@@ -129,8 +129,8 @@ class Letters extends React.Component{
         for(let i = 0; i < data.length; i++){
             var flag = false;
             if( this.state.tags=="到单" ){
-                if( data[i].billState!=0 )
-                    flag = tue;
+                if( data[i].billState > 0 )
+                    flag = true;
             } 
             else if( this.state.tags=="正本修定" ){
                 if( data[i].amend.length>0 )
@@ -151,7 +151,6 @@ class Letters extends React.Component{
                 createdAt: data[i].issuseDate                              
             })
         }
-
         this.setState({
             letters: letters,
         });
@@ -204,7 +203,6 @@ class Letters extends React.Component{
             endData = arr[1];
         }
         var tags = this.state.tags;
-        message.error(tags);
         if( this.state.tags=="正本修定" || this.state.tags=="到单" ){
             tags = "";
         }

@@ -8,8 +8,8 @@ var inspect = require('util').inspect;
 var STATUS_ENUM = [
     "企业申请",
     "草稿审核",
-    "正本",
     "正本开立",
+    "正本生效",
     "付款",
     "闭卷",
     "正本修定",
@@ -363,6 +363,7 @@ function chaincodeTx2ViewTx(chaincodeTx) {
             amend[i] = chaincodeTx.Record.AmendFormFlow[i];            
         }
     }
+    var lctdr = chaincodeTx.Record.LCTransDocsReceive?chaincodeTx.Record.LCTransDocsReceive.length:0;
     var tx = {
         "id": chaincodeTx.Key,
         "no": chaincodeTx.Record.lcNo,
@@ -379,7 +380,7 @@ function chaincodeTx2ViewTx(chaincodeTx) {
         "issuingBankNo": chaincodeTx.Record.LetterOfCredit.IssuingBank.No,
         "advisingBankNo": chaincodeTx.Record.LetterOfCredit.AdvisingBank.No,
         "amend": amend,
-        "billState": chaincodeTx.Record.LCTransDocsReceive?chaincodeTx.Record.LCTransDocsReceive.length:0
+        "billState": lctdr
     };
     return tx;
 }

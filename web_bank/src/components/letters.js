@@ -56,7 +56,7 @@ const tagsFromServer = [
     "正本生效",
     "付款",
     "闭卷",
-    "正本修定",
+//    "正本修定",
     "到单"
 ];
 var status_value="";

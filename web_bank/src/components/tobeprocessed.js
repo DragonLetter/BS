@@ -222,8 +222,43 @@ class TobeProcessed extends React.Component {
                     flag = true;
             } 
             else if( this.state.tags=="正本修定" ){
-                if( data[i].amend.length>0 )
-                    flag = true;
+                if( data[i].amend.length>0 )   {
+                    for (var j = 0; j < data[i].amend.length; j++) {
+                        // alert("data: "+ JSON.stringify(data[i].amend[j]));                     
+                        if ((sessionStorage.getItem("bankno") == data[i].issuingBankNo)
+                            && (data[i].amend[j].Status == "AmendIssuingBankAcceptStep")) {
+                            letters.push({
+                                key: index++,
+                                no: data[i].id,
+                                amendno: data[i].amend[j].amendNo,
+                                number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
+                                times: data[i].amend[j].amendTimes,
+                                status: "发起修改",
+                                applicant: data[i].applicant,
+                                beneficiary: data[i].beneficiary,
+                                amount: data[i].amount + " " + data[i].currency,
+                                createdAt: data[i].amend[j].amendDate,
+                                flag: "1" //发起修改
+                            })
+                        } else if ((sessionStorage.getItem("bankno") == data[i].advisingBankNo)
+                            && (data[i].amend[j].Status == "AmendAdvisingBankAcceptStep")) {
+                            letters.push({
+                                key: index++,
+                                no: data[i].id,
+                                amendno: data[i].amend[j].amendNo,
+                                number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
+                                times: data[i].amend[j].amendTimes,
+                                status: "发起修改",
+                                applicant: data[i].applicant,
+                                beneficiary: data[i].beneficiary,
+                                amount: data[i].amount + " " + data[i].currency,
+                                createdAt: data[i].amend[j].amendDate,
+                                flag: "1" //发起修改
+                            })
+                        }
+                    }
+                }
+                continue;
             }else
                 flag = true;
             if( flag == false )
@@ -240,45 +275,6 @@ class TobeProcessed extends React.Component {
                 createdAt: data[i].issuseDate,
                 flag: "0" //正本
             })
-
-            //信用证修改
-            if (data[i].amend != null) {
-                for (var j = 0; j < data[i].amend.length; j++) {
-                    // alert("data: "+ JSON.stringify(data[i].amend[j]));                     
-                    if ((sessionStorage.getItem("bankno") == data[i].issuingBankNo)
-                        && (data[i].amend[j].Status == "AmendIssuingBankAcceptStep")) {
-                        letters.push({
-                            key: index++,
-                            no: data[i].id,
-                            amendno: data[i].amend[j].amendNo,
-                            number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
-                            times: data[i].amend[j].amendTimes,
-                            status: "发起修改",
-                            applicant: data[i].applicant,
-                            beneficiary: data[i].beneficiary,
-                            amount: data[i].amount + " " + data[i].currency,
-                            createdAt: data[i].amend[j].amendDate,
-                            flag: "1" //发起修改
-                        })
-                    } else if ((sessionStorage.getItem("bankno") == data[i].advisingBankNo)
-                        && (data[i].amend[j].Status == "AmendAdvisingBankAcceptStep")) {
-                        letters.push({
-                            key: index++,
-                            no: data[i].id,
-                            amendno: data[i].amend[j].amendNo,
-                            number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
-                            times: data[i].amend[j].amendTimes,
-                            status: "发起修改",
-                            applicant: data[i].applicant,
-                            beneficiary: data[i].beneficiary,
-                            amount: data[i].amount + " " + data[i].currency,
-                            createdAt: data[i].amend[j].amendDate,
-                            flag: "1" //发起修改
-                        })
-                    }
-                }
-
-            }
         }
 
         this.setState({

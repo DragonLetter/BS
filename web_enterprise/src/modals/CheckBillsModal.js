@@ -20,7 +20,7 @@ const CheckBillsModal = Form.create()(
         var billData, title;
         if (data) {
             billData = data.billDetail;
-            title = "信用证编号—" + data.title;
+            title = "信用证编号—" + data.lcNo;
         }
 
         // 构造交单列表

@@ -385,7 +385,7 @@ class AmendIssuing extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                this.closeRejectDialog();
+                                this.closeApproveDialog();
                                 this.closeRejectDialog();
                                 message.success("经办审核完成, 等待复核确认.");
                             });
@@ -404,7 +404,7 @@ class AmendIssuing extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                this.closeRejectDialog();
+                                this.closeApproveDialog();
                                 this.closeRejectDialog();
                                 message.success("复核审核完成, 等待授权确认.");
                             });

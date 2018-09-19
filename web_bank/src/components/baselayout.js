@@ -144,7 +144,7 @@ class BaseLayout extends React.Component {
                                 </Link>
 
                             </Menu.Item> */}
-                            <Menu.Item key="3">
+                            {/* <Menu.Item key="3">
                                 <Link to="/lcpayment/clients">
                                     <Icon type="user" />客户管理
                                 </Link>
@@ -153,7 +153,7 @@ class BaseLayout extends React.Component {
                                 <Link to="/lcpayment/settings">
                                     <Icon type="home" />业务设置
                                 </Link>
-                            </Menu.Item>
+                            </Menu.Item> */}
                             <Menu.Item key="5">
                                 <Link to="/lcpayment/clientList">
                                     <Icon type="user" />签约企业

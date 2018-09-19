@@ -40,7 +40,8 @@ const AddClientForm = Form.create()(
                 onCancel={onCancel}
                 onOk={curUser? onUpdate:onCreate}
                 footer={curUser?
-                    [<Popconfirm title="Sure to delete?" onConfirm={() => {onReset}}><a>重置</a></Popconfirm>,
+                    [
+                    // <Popconfirm title="Sure to delete?" onConfirm={() => {onReset}}><a>重置</a></Popconfirm>,
                     <Button key="back" onClick={onCancel}>取消</Button>,
                     <Button key="submit" onClick={onUpdate}>保存</Button>,]  :
                     [<Button key="back" onClick={onCancel}>取消</Button>,

@@ -232,7 +232,7 @@ class Bank extends React.Component {
                 body: req,
             }).then((data) => {
                 // 获取签约银行信息
-                this.getSignedBank();
+                this.getSignedBankList();
             }).catch((error) => {
                 message.error("创建失败！");
             });

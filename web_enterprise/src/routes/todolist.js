@@ -1,5 +1,5 @@
 import React from 'react'
-import { request, getFileUploadOptions } from '../utils/common';
+import { fetch_get, request, getFileUploadOptions } from '../utils/common';
 import { List, Spin, Card, Layout, Select, message, Tabs, Row, Col } from 'antd'
 import PageHeaderLayout from '../layouts/PageHeaderLayout';
 import ConfirmDraftModal from '../modals/ConfirmDraftModal';
@@ -46,11 +46,32 @@ class TodoList extends React.Component {
     }
 
     getTransInfo = () => {
-        const userId = sessionStorage.getItem("userId");
-        request("/api/transaction/corp/processing/" + userId)
-            .then((data) => {
-                this.handleTransInfo(data);
+        var userId = sessionStorage.getItem("userId");
+        if (null == userId) {
+            fetch_get("/api/user/current").then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    res.json().then((data) => {
+                        userId = sessionStorage.getItem("userId");
+                        if (null == userId) {
+                            sessionStorage.setItem("userId", data.corp.id);
+                            sessionStorage.setItem("user", data.username);
+                            sessionStorage.setItem("domain", data.domain);
+                            sessionStorage.setItem("corp", data.corp.name);
+                            userId = sessionStorage.getItem("userId");
+                        }
+                        request("/api/transaction/corp/processing/" + userId)
+                            .then((data) => {
+                                this.handleTransInfo(data);
+                            });
+                    });
+                }
             });
+        } else {
+            request("/api/transaction/corp/processing/" + userId)
+                .then((data) => {
+                    this.handleTransInfo(data);
+                });
+        }
     }
 
     handleTransInfo = (data) => {

@@ -33,18 +33,21 @@ log4js.configure({
             type: 'dateFile',
             filename: logPath + 'req',
             pattern: "-yyyyMMdd.log",
+            backups: 5,
             alwaysIncludePattern: true
         },
         be: {
             type: 'dateFile',
             filename: logPath + 'be',
             pattern: "-yyyyMMdd.log",
+            backups: 5,
             alwaysIncludePattern: true
         },
         err: {
             type: 'dateFile',
             filename: logPath + 'err',
             pattern: '-yyyyMMdd.log',
+            backups: 5,
             alwaysIncludePattern: true
         }
     },

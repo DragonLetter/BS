@@ -42,7 +42,6 @@ const DraftModal = (props) => {
         Transfer = applicationForm.Transfer === "1" ? "可转让" : "不可转让",
         Confirmed = applicationForm.Confirmed === "1" ? "可保兑" : "不可保兑",
         OverLow = "短装:" + applicationForm.Lowfill + "    溢装:" + applicationForm.Overfill;
-
     // 信用证保证金数据展示部分
     const depositInfo = record.LCTransDeposit ? record.LCTransDeposit : [];
 

@@ -75,17 +75,17 @@ class Home extends React.Component{
                             <Col style={{ marginTop: '20px', marginBottom:10, textAlign:'center'}} span={6}>
                                 <span style={{ fontSize:'14px', color:'#004a7c'}}>开证量（笔）</span>
                                 <div style={{margin:'25px'}}>
-                                    <a href="/charts/market-price" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
+                                    <a href="" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
                                     <span style={{fontSize: 30 }}><span id="market-price">{this.state.LCNumbers}</span></span>
                                     </a>
                                 </div>
                                 <div><span style={{ fontSize:'12px', color:'black'}}>2017年度信用证业务总笔数</span></div>
                             </Col>
                             <Col style={{ marginTop: '20px', marginBottom:10, fontSize:'14px', color:'#004a7c', textAlign:'center'}} span={6}>
-                                <span style={{ fontSize:'14px', color:'#004a7c'}}>开证金额（百万人民币）</span>
+                                <span style={{ fontSize:'14px', color:'#004a7c'}}>开证金额（万人民币）</span>
                                 <div style={{margin:'25px'}}>
-                                    <a href="/charts/market-price" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
-                                        <span style={{fontSize: 30 }}><span id="market-price">{this.state.LCAmount} {this.state.currency}</span></span>
+                                    <a href="" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
+                                        <span style={{fontSize: 30 }}><span id="market-price">{this.state.LCAmount/10000.0} {this.state.currency}</span></span>
                                     </a>
                                 </div>
                                 <div><span style={{ fontSize:'12px', color:'black'}}>2017年度信用证业务总金额</span></div>                                
@@ -93,17 +93,17 @@ class Home extends React.Component{
                             <Col style={{ marginTop: '20px', marginBottom:10, fontSize:'14px', color:'#004a7c', textAlign:'center'}} span={6}>
                                 <span style={{ fontSize:'14px', color:'#004a7c'}}>客户数量（个）</span>
                                 <div style={{margin:'25px'}}>
-                                    <a href="/charts/market-price" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
+                                    <a href="" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
                                     <span style={{fontSize: 30 }}><span id="market-price">{this.state.customers}</span></span>
                                     </a>
                                 </div>
                                 <div><span style={{ fontSize:'12px', color:'black'}}>2017年度新增客户总数量</span></div>                                
                             </Col>
                             <Col style={{ marginTop: '20px', marginBottom:10, fontSize:'14px', color:'#004a7c', textAlign:'center'}} span={6}>
-                                <span style={{ fontSize:'14px', color:'#004a7c'}}>平均每笔金额（百万人民币）</span>
+                                <span style={{ fontSize:'14px', color:'#004a7c'}}>平均每笔金额（万人民币）</span>
                                 <div style={{margin:'25px'}}>
-                                    <a href="/charts/market-price" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
-                                    <span style={{fontSize: 30 }}><span id="market-price">{this.state.AverageAmount} {this.state.currency}</span></span>
+                                    <a href="" style={{ outline: '0', cursor:'pointer', color:'#10ADE4'}}>
+                                    <span style={{fontSize: 30 }}><span id="market-price">{this.state.AverageAmount/10000.0} {this.state.currency}</span></span>
                                     </a>
                                 </div>
                                 <div><span style={{ fontSize:'12px', color:'black'}}>通过开证总量和总金额计算出来的平均值</span></div>                                

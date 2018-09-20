@@ -715,7 +715,7 @@ class LetterBill extends React.Component {
             { title: '到单金额', dataIndex: 'HandoverAmount', key: 'HandoverAmount' },
             { title: '不符点', dataIndex: 'Discrepancy', key: 'Discrepancy' },
             { title: '到单状态', key: 'HandOverBillStep', render:(text,record,index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
-            { title: '到单日期', dataIndex: 'ReceivedDate', key: 'ReceivedDate' },
+            { title: '到单日期', key: 'ReceivedDate', render:(text,record,index) =><div>{record.ReceivedDate.substr(0, record.ReceivedDate.indexOf('.')).replace('T', ' ')}</div> },
             { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.billDetail(index)}>详情</a></span>,}
         ];
         let data = this.state.letters ? this.state.letters : [],

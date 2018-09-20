@@ -60,7 +60,7 @@ const AmendationtModal = Form.create()((props) => {
                                 })(
                                     <Select>
                                         <Option value="CNY">人民币</Option>
-                                        <Option value="USD">美元</Option>
+                                        {/* <Option value="USD">美元</Option> */}
                                     </Select>
                                 )}
                             </FormItem>

@@ -20,7 +20,7 @@ const columns = [
     { title: CONSTANTS.LETTER_APPLICANT, dataIndex: 'applicant', key: 'applicant' },
     { title: CONSTANTS.LETTER_BENEFICIARY, dataIndex: 'beneficiary', key: 'beneficiary' },
     { title: CONSTANTS.LETTER_AMOUNT, dataIndex: 'amount', key: 'amount' },
-    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('T'))}</span> }
+    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('.')).replace('T', ' ')}</span> }
   ];
 
 var renderAction = function(params) {
@@ -251,7 +251,7 @@ class Letters extends React.Component{
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.LETTER_NUMBER}</strong>
                                 <Input id = "lcno" onKeyPress={(event) => {if (event.key === "Enter") {this.handleselect()}}} style={{width: 200, marginRight: '15px'}} placeholder="信用证编号" />
                                 <strong style={{marginRight: '15px'}}>{CONSTANTS.COMM_SELECT_DATE}</strong>
-                                <RangePicker name = "datepickers" onChange={ this.handleSelectedDate }/>                                  
+                                <RangePicker id='datapicker' name = "datepickers" onChange={ this.handleSelectedDate }/>                                  
                             </Col>      
                         </Row>
                         <Row>         

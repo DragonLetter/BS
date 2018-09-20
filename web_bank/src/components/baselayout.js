@@ -18,6 +18,7 @@ class BaseLayout extends React.Component {
         this.state = {
             current: '',
             username: '',
+            usertype: 0,
             notice: '',
             lcnumber: '',
             documents: ''
@@ -42,6 +43,7 @@ class BaseLayout extends React.Component {
                         sessionStorage.setItem("bankno", data.bank.no);
                         sessionStorage.setItem("bankid", data.bank.id);
                         sessionStorage.setItem("userid", data.id);
+                        this.setState({usertype:data.userType});
                     });
                 }
                 if (res.status === 401) {
@@ -159,11 +161,13 @@ class BaseLayout extends React.Component {
                                     <Icon type="user" />签约企业
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="6" display={sessionStorage.getItem('domain') == 10 ? true : false}>
+                            {this.state.usertype==10?[
+                                <Menu.Item key="6" display={sessionStorage.getItem('domain') == 10 ? true : false}>
                                 <Link to="/lcpayment/users">
                                     <Icon type="user" />用户管理
                                 </Link>
-                            </Menu.Item>
+                                </Menu.Item>
+                            ]:[]}
                         </Menu>
                     </Sider>
                     <Layout style={{ minHeight: 500, marginTop: '20px' }}>

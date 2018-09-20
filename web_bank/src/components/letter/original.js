@@ -170,6 +170,8 @@ class LetterDraft extends React.Component {
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
                     res.json().then((data) => {
+                        data.expiryDate = data.expiryDate.substr(0, data.expiryDate.indexOf('.')).replace('T', ' ');
+                        data.GoodsInfo.latestShipmentDate = data.GoodsInfo.latestShipmentDate.substr(0, data.GoodsInfo.latestShipmentDate.indexOf('.')).replace('T', ' ');
                         this.setState({
                             letters: data,
                         });

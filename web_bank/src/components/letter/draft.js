@@ -222,6 +222,8 @@ class LetterDraft extends React.Component {
     }
 
     handleApplicationFrom = (data) => {
+        data.ApplicationForm.expiryDate = data.ApplicationForm.expiryDate.substr(0, data.ApplicationForm.expiryDate.indexOf('.')).replace('T', ' ');
+        data.ApplicationForm.GoodsInfo.latestShipmentDate = data.ApplicationForm.GoodsInfo.latestShipmentDate.substr(0, data.ApplicationForm.GoodsInfo.latestShipmentDate.indexOf('.')).replace('T', ' ');
         this.setState({
             letter: data,
         });
@@ -427,7 +429,7 @@ class LetterDraft extends React.Component {
                     .then((res) => {
                         if (res.status >= 200 && res.status < 300) {
                             res.json().then((data) => {
-                                message.error("审核完成, 已驳回企业重新处理。");
+                                message.success("审核完成, 已驳回企业重新处理。");
                                 this.closeRejectDialog();
                                 this.rejectUpdateAfState();
                             });

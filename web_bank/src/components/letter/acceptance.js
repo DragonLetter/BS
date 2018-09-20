@@ -509,7 +509,7 @@ class LetterDraft extends React.Component {
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{deposit.commitAmount}{data.Currency}</Col>
                                         <Col span={3}></Col>
-                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日期</Col>
+                                        <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#6b7c93' }} span={3}>到期日</Col>
                                         <Col style={{ marginTop: '5px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>{data.expiryDate}</Col>
                                     </Row>
                                 </div>

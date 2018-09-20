@@ -175,7 +175,7 @@ const AddDraftForm = Form.create()(
                                     })(
                                         <Select>
                                             <Option value="CNY">人民币</Option>
-                                            <Option value="USD">美元</Option>
+                                            {/* <Option value="USD">美元</Option> */}
                                         </Select>
                                     )}
                                 </FormItem>
@@ -495,6 +495,8 @@ class LocalLC extends React.Component {
                 applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
                 detail: data[i],
             })
+            data[i].Record.ApplicationForm.expiryDate = data[i].Record.ApplicationForm.expiryDate.substr(0, data[i].Record.ApplicationForm.expiryDate.indexOf('.')).replace('T', ' ');
+            data[i].Record.ApplicationForm.GoodsInfo.latestShipmentDate = data[i].Record.ApplicationForm.GoodsInfo.latestShipmentDate.substr(0, data[i].Record.ApplicationForm.GoodsInfo.latestShipmentDate.indexOf('.')).replace('T', ' ');
         }
 
         this.setState({

@@ -9,9 +9,6 @@ import AmendationModal from '../modals/AmendationModal';
 
 const constants = require("./constant");
 const { Header, Content, Sider } = Layout;
-const Step = Steps.Step;
-const Panel = Collapse.Panel;
-const InputGroup = Input.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
@@ -22,15 +19,7 @@ let contract = {}, attachments = [], formValues, No;
 
 const AddDraftProtocol = Form.create()(
     (props) => {
-        const options = [
-            { label: '', value: '' },
-        ];
         const { visible, onCancel, onSubmit, data, form } = props;
-        const { getFieldDecorator } = form;
-        const formItemLayout = {
-            labelCol: { span: 5 },
-            wrapperCol: { span: 19 },
-        };
 
         return (
             <Modal
@@ -51,11 +40,9 @@ const AddDraftProtocol = Form.create()(
         );
     }
 );
+
 const AddDraftForm = Form.create()(
     (props) => {
-        const options = [
-            { label: '', value: '' },
-        ];
         const { visible, onCancel, onSubmit, data, form, corpOptions, bankOptions } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = {
@@ -198,16 +185,25 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('Amount', {
                                         rules: [{ required: true, message: '请输入信用证金额!' }],
                                     })(
-                                        <InputNumber formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                            parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="信用证金额" style={{ width: "32%" }} />
+                                        <InputNumber
+                                            min={1}
+                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                            placeholder="信用证金额" style={{ width: "32%" }}
+                                        />
+                                    )}
+                                    <span style={{ marginTop: 0, marginLeft: 0 }} >保证金金额:</span>
+                                    {getFieldDecorator('EnsureAmount', {
+                                        rules: [{ required: true, message: '请输入保证金金额!' }],
+                                    })(
+                                        <InputNumber
+                                            min={1}
+                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                            placeholder="保证金金额" style={{ width: "32%" }}
+                                        />
                                     )}
                                 </FormItem>
-                                <div style={{ marginTop: -60, marginRight: 60, float: 'right' }} >
-                                    {/* 保证金金额：<InputNumber id="EnsureAmount" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                        parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} /> */}
-                                    保证金金额：<InputNumber id="EnsureAmount"
-                                        parser={value => value.replace(/\$\s?|(,*)/g, '')} placeholder="保证金金额" style={{ width: 120 }} />
-                                </div>
                             </Col>
                             <Col span={12} key={2}>
                                 <FormItem {...formItemLayout} label={`到期日`}>
@@ -239,7 +235,7 @@ const AddDraftForm = Form.create()(
                                     )}
                                 </FormItem>
                                 <div style={{ marginTop: -62, marginRight: 160, float: 'right' }} >
-                                    <InputNumber id="afterSightDay" style={{ width: 60 }} />日后
+                                    <InputNumber id="afterSightDay" style={{ width: 60 }} min={0} />日后
                                 </div>
                             </Col>
                             <Col span={12} key={5}>
@@ -324,7 +320,15 @@ const AddDraftForm = Form.create()(
                                         rules: [{ required: false, message: '请输入溢短装!' }],
                                     })(
                                         <span style={{ marginTop: 0, marginLeft: 0 }} >
-                                            短装 <InputNumber id="Lowfill" style={{ width: 80 }} />    溢装 <InputNumber id="Overfill" style={{ width: 80 }} />
+                                            短装 <InputNumber
+                                                id="Lowfill"
+                                                style={{ width: 80 }}
+                                                min={0}
+                                                max={100} />    溢装 <InputNumber
+                                                id="Overfill"
+                                                style={{ width: 80 }}
+                                                min={0}
+                                                max={100} />
                                         </span>
                                     )}
                                 </FormItem>
@@ -353,13 +357,16 @@ const AddDraftForm = Form.create()(
                                     <span>承担</span>
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
+                                    <span>4. 单据必须自运输单据签发日</span>
                                     {getFieldDecorator('DocDelay', {
-                                        rules: [{ required: true, message: '请填写提交期限!' }],
+                                        rules: [{ required: false, message: '请填写提交期限!' }],
                                     })(
-                                        <div>
-                                            <span>4. 单据必须自运输单据签发日<Input style={{ width: 32 }} />日内提交，且不能低于信用证有效期</span>
-                                        </div>
+                                        <InputNumber
+                                            min={0}
+                                            style={{ width: "6%" }}
+                                        />
                                     )}
+                                    <span>日内提交，且不能低于信用证有效期</span>
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
                                     <span>5. 发起日期不能早于开证日期</span>
@@ -375,15 +382,7 @@ const AddDraftForm = Form.create()(
 
 const SecondStepForm = Form.create()(
     (props) => {
-        const options = [
-            { label: '', value: '' },
-        ];
         const { visible, onCancel, onSubmit, data, form } = props;
-        const { getFieldDecorator } = form;
-        const formItemLayout = {
-            labelCol: { span: 5 },
-            wrapperCol: { span: 19 },
-        };
 
         function onContractChange(info) {
             contract.FileName = info.file.name;
@@ -495,7 +494,6 @@ class LocalLC extends React.Component {
                 state: data[i].Record.CurrentStep,
                 applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
                 detail: data[i],
-
             })
         }
 
@@ -701,7 +699,7 @@ class LocalLC extends React.Component {
             }
             values.Overfill = document.getElementById("Overfill").value;
             values.Lowfill = document.getElementById("Lowfill").value;
-            values.EnsureAmount = document.getElementById("EnsureAmount").value;
+            values.EnsureAmount = parseInt(values.EnsureAmount);
             values.BeneficiaryId = parseInt(values.BeneficiaryId);
             values.IssueBankId = parseInt(values.IssueBankId);
             values.AdvisingBankId = parseInt(values.AdvisingBankId);
@@ -825,7 +823,6 @@ class LocalLC extends React.Component {
             }
             values.no = this.state.LCs[this.state.index].id;
             values.amendedAmt = "" + values.amendedAmt;
-            // message.error("data:" + JSON.stringify(values));
             request('/api/letterOfCredit/Amending', {
                 method: "POST",
                 body: values,
@@ -947,8 +944,6 @@ class LocalLC extends React.Component {
                     ref={this.saveCreateFormRef}
                     visible={this.state.createDraftFromVisible}
                     onCancel={this.closeForm}
-                    //data={this.state.tData[this.state.index]}
-                    //onEdit={this.handleEdit}
                     onSubmit={this.handleSubmit}
                     corpOptions={corpOptions}
                     bankOptions={bankOptions}
@@ -958,12 +953,8 @@ class LocalLC extends React.Component {
                     visible={this.state.secondStepFromVisible}
                     onCancel={this.closeSecondStepForm}
                     onSubmit={this.handleSecondSubmit}
-                //data={data}
-                //data={this.state.tData[this.state.index]}
-                //onEdit={this.handleEdit}
                 />
                 <DraftModal
-                    //ref={this.saveFormRef}
                     visible={this.state.draftModalVisible}
                     onCancel={this.closeDraftModal}
                     data={this.state.LCData[this.state.index]}

@@ -195,6 +195,7 @@ class HandoverBillsModal extends React.Component {
                     <Row>
                         <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>交单金额：<InputNumber
                             id="handoverAmount"
+                            min={1}
                             // formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             parser={value => value.replace(/\$\s?|(,*)/g, '')}
                             placeholder="交单金额"

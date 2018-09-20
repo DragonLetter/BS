@@ -97,7 +97,7 @@ exports.addApplicationForm = function (req, res, next) {
         "DocumentRequire": values.DocumentRequire.toString(),
         "Currency": values.Currency,
         "Amount": values.Amount.toString(),
-        "EnsureAmount": values.EnsureAmount,
+        "EnsureAmount": values.EnsureAmount.toString(),
         "Negotiate": values.Negotiate.toString(),
         "Transfer": values.Transfer.toString(),
         "Confirmed": values.Confirmed.toString(),

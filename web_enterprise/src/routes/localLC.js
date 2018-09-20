@@ -319,7 +319,7 @@ const AddDraftForm = Form.create()(
                             </Col>
                             <Col span={24} key={13} style={{ marginLeft: "-10%" }}>
                                 <FormItem {...formItemLayout} label={`其它条款`}>
-                                    <span>[ ]溢短装比例:</span>
+                                    <span>1. 溢短装比例:</span>
                                     {getFieldDecorator('fill', {
                                         rules: [{ required: false, message: '请输入溢短装!' }],
                                     })(
@@ -329,7 +329,7 @@ const AddDraftForm = Form.create()(
                                     )}
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
-                                    <span>[ ]在开证行产生的费用，由</span>
+                                    <span>2. 在开证行产生的费用，由</span>
                                     {getFieldDecorator('ChargeInIssueBank', {
                                         rules: [{ required: true, message: '请选择费用承担方!' }],
                                     })(
@@ -338,10 +338,10 @@ const AddDraftForm = Form.create()(
                                             <Radio value={2}>受益人</Radio>
                                         </RadioGroup>
                                     )}
-                                    <span>承担。</span>
+                                    <span>承担</span>
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
-                                    <span>[ ]在开证行外产生的费用，由</span>
+                                    <span>3. 在开证行外产生的费用，由</span>
                                     {getFieldDecorator('ChargeOutIssueBank', {
                                         rules: [{ required: true, message: '请选择费用承担方!' }],
                                     })(
@@ -350,17 +350,19 @@ const AddDraftForm = Form.create()(
                                             <Radio value={2}>受益人</Radio>
                                         </RadioGroup>
                                     )}
-                                    <span>承担。</span>
+                                    <span>承担</span>
                                 </FormItem>
                                 <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
                                     {getFieldDecorator('DocDelay', {
                                         rules: [{ required: true, message: '请填写提交期限!' }],
                                     })(
                                         <div>
-                                            <span>[ ]单据必须自运输单据签发日<Input style={{ width: 32 }} />日内提交，且不能低于信用证有效期</span><br />
-                                            <span>[ ]发起日期不能早于开证日期</span>
+                                            <span>4. 单据必须自运输单据签发日<Input style={{ width: 32 }} />日内提交，且不能低于信用证有效期</span>
                                         </div>
                                     )}
+                                </FormItem>
+                                <FormItem {...formItemLayout} label={``} style={{ marginLeft: 226, marginTop: -5 }}>
+                                    <span>5. 发起日期不能早于开证日期</span>
                                 </FormItem>
                             </Col>
                         </Row>
@@ -464,7 +466,7 @@ class LocalLC extends React.Component {
             draftModalVisible: false,
             handoverBillsModalVisible: false,
             amendModalVisible: false,
-            LCs: [],          
+            LCs: [],
             banks: [],
             signedbanks: [],
             corporations: [],
@@ -478,11 +480,11 @@ class LocalLC extends React.Component {
     }
 
     handleLCInfo = (data) => {
-        const lcs = [];       
-        No = "";       
+        const lcs = [];
+        No = "";
         for (let i = 0; i < data.length; i++) {
             lcs.push({
-                key: i,              
+                key: i,
                 id: data[i].Key,
                 lcNo: data[i].Record.lcNo || "等待银行审核",
                 beneficiary: data[i].Record.ApplicationForm.Beneficiary.Name,
@@ -493,12 +495,12 @@ class LocalLC extends React.Component {
                 state: data[i].Record.CurrentStep,
                 applyTime: data[i].Record.ApplicationForm.applyTime.split("T")[0],
                 detail: data[i],
-               
+
             })
         }
-      
+
         this.setState({
-            LCs: lcs,           
+            LCs: lcs,
             LCData: data,
         });
     }

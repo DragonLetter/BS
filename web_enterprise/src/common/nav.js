@@ -24,7 +24,7 @@ export const getNavData = app => [
       {
         name: '国内信用证',
         icon: 'credit-card',
-        path: 'locallc',
+        path: '',
         // component: dynamicWrapper(app, [], () => import('../routes/localLC')),       
         children: [
           {
@@ -60,12 +60,12 @@ export const getNavData = app => [
         path: 'bankList',
         component: dynamicWrapper(app, [], () => import('../routes/bankList')),
       },
-      {
-        name: '客户管理',
-        icon: 'user',
-        path: 'clientlist',
-        component: dynamicWrapper(app, [], () => import('../routes/clientList')),
-      },
+      // {
+      //   name: '客户管理',
+      //   icon: 'user',
+      //   path: 'clientlist',
+      //   component: dynamicWrapper(app, [], () => import('../routes/clientList')),
+      // },
       // {
       //   name: '业务设置',
       //   icon: 'setting',

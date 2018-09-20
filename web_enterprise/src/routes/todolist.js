@@ -37,6 +37,7 @@ class TodoList extends React.Component {
             lcHandoverTransData: null,
             corps: [],
             amendInfo: [],
+            selectType: 'lcAll',
         }
     }
 
@@ -412,103 +413,127 @@ class TodoList extends React.Component {
     }
 
     // 设置信用证开证、信用证修改、信用证交单三类
-    getContainerByType(type) {
-        var listLC, container;
-        // 1:信用证流程 2:信用证修改 3:信用证交单
-        if (1 == type) {
-            listLC = this.state.transactions;
-            container = (
-                <div>
-                    <List
-                        rowKey="id"
-                        grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
-                        dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
-                        renderItem={
-                            item => (item.lcNo ? (
-                                <List.Item key={item.id}>
-                                    <Card title={item.lcNo}
-                                        actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>立即处理</a>]}>
-                                        <span style={{ display: "block" }}>申请人：{item.applicant}</span>
-                                        <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
-                                        <span style={{ display: "block" }}>开证金额：{item.amount}</span>
-                                        <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
-                                        <span style={{ display: "block" }}>当前状态：{item.status}</span>
-                                    </Card>
-                                </List.Item>
-                            ) : (
-                                    <List.Item key={item.id}>
-                                        <span>暂无任何待处理事件</span>
-                                    </List.Item>
-                                )
-                            )}
-                    />
-                </div>
+    getContainer = (type) => {
+        var listLC = this.state.transactions,
+            listLCAmend = this.state.modifyTrans,
+            listLCHandover = this.state.handoverTrans,
+            container = [],
+            index = 0;
+
+        // 没有任何事件显示
+        if (('lcAll' == type && 0 == listLC.length && 0 == listLCAmend.length && 0 == listLCHandover.length) ||
+            ('lcCommon' == type && 0 == listLC.length) ||
+            ('lcAmend' == type && 0 == listLCAmend.length) ||
+            ('lcHandover' == type && 0 == listLCHandover.length)) {
+            return (
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >
+                        {/* <List.Item key={item.id}><span>暂无任何待处理事件</span></List.Item></Spin> */}
+                        <span>暂无任何待处理事件</span></Spin>
+                </Content>
             );
-        } else if (2 == type) {
-            listLC = this.state.modifyTrans;
-            container = (
-                <div>
-                    <List
-                        rowKey="id"
-                        grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
-                        dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
-                        renderItem={
-                            item => (item.lcNo ? (
-                                <List.Item key={item.id}>
-                                    <Card title={item.lcNo}
-                                        actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>修改审核</a>]}>
-                                        <span style={{ display: "block" }}>申请人：{item.applicant}</span>
-                                        <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
-                                        <span style={{ display: "block" }}>开证金额：{item.amount}</span>
-                                        <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
-                                        <span style={{ display: "block" }}>当前状态：{item.status}</span>
-                                    </Card>
-                                </List.Item>
-                            ) : (
-                                    <List.Item key={item.id}>
-                                        <span>暂无任何待处理事件</span>
-                                    </List.Item>
-                                )
-                            )}
-                    />
-                </div>
+        }
+
+        // 1:信用证流程
+        if (('lcAll' == type || 'lcCommon' == type) &&
+            (0 < listLC.length)) {
+            container[index] = (
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >
+                        <div>
+                            <List
+                                rowKey="id"
+                                grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
+                                dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
+                                renderItem={
+                                    item => (
+                                        <List.Item key={item.id}>
+                                            <Card title={item.lcNo}
+                                                actions={[<a onClick={() => this.showDetail(1, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(1, item)}>立即处理</a>]}>
+                                                <span style={{ display: "block" }}>申请人：{item.applicant}</span>
+                                                <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
+                                                <span style={{ display: "block" }}>开证金额：{item.amount}</span>
+                                                <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
+                                                <span style={{ display: "block" }}>当前状态：{item.status}</span>
+                                            </Card>
+                                        </List.Item>
+                                    )}
+                            />
+                        </div>
+                    </Spin>
+                </Content>
             );
-        } else if (3 == type) {
-            listLC = this.state.handoverTrans;
-            container = (
-                <div>
-                    <List
-                        rowKey="id"
-                        grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
-                        dataSource={listLC.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLC]}
-                        renderItem={
-                            item => (item.lcNo ? (
-                                <List.Item key={item.id}>
-                                    <Card title={<span> {item.lcNo}---交单号:{item.billNo} </span>}
-                                        actions={[<a onClick={() => this.showDetail(type, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(type, item)}>申请人审单</a>]}>
-                                        <span style={{ display: "block" }}>申请人：{item.applicant}</span>
-                                        <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
-                                        <span style={{ display: "block" }}>开证金额：{item.amount}</span>
-                                        <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
-                                        <span style={{ display: "block" }}>当前状态：{item.status}</span>
-                                    </Card>
-                                </List.Item>
-                            ) : (
-                                    <List.Item key={item.id}>
-                                        <span>暂无任何待处理事件</span>
-                                    </List.Item>
-                                )
-                            )}
-                    />
-                </div>
+            index++;
+        }
+
+        // 2:信用证修改
+        if (('lcAll' == type || 'lcAmend' == type) &&
+            (0 < listLCAmend.length)) {
+            container[index] = (
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >
+                        <div>
+                            <List
+                                rowKey="id"
+                                grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
+                                dataSource={listLCAmend.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLCAmend]}
+                                renderItem={
+                                    item => (
+                                        <List.Item key={item.id}>
+                                            <Card title={item.lcNo}
+                                                actions={[<a onClick={() => this.showDetail(2, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(2, item)}>修改审核</a>]}>
+                                                <span style={{ display: "block" }}>申请人：{item.applicant}</span>
+                                                <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
+                                                <span style={{ display: "block" }}>开证金额：{item.amount}</span>
+                                                <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
+                                                <span style={{ display: "block" }}>当前状态：{item.status}</span>
+                                            </Card>
+                                        </List.Item>
+                                    )}
+                            />
+                        </div>
+                    </Spin>
+                </Content>
             );
+            index++;
+        }
+
+        // 3:信用证交单
+        if (('lcAll' == type || 'lcHandover' == type) &&
+            (0 < listLCHandover.length)) {
+            container[index] = (
+                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
+                    <Spin spinning={this.state.loading} delay={500} >
+                        <div>
+                            <List
+                                rowKey="id"
+                                grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
+                                dataSource={listLCHandover.length === 0 ? [{ "id": 0, title: "", description: "" }] : [...listLCHandover]}
+                                renderItem={
+                                    item => (
+                                        <List.Item key={item.id}>
+                                            <Card title={<span> {item.lcNo}---交单号:{item.billNo} </span>}
+                                                actions={[<a onClick={() => this.showDetail(3, item)}>查看详情</a>, <a onClick={() => this.handleTransaction(3, item)}>申请人审单</a>]}>
+                                                <span style={{ display: "block" }}>申请人：{item.applicant}</span>
+                                                <span style={{ display: "block" }}>受益人：{item.beneficiary}</span>
+                                                <span style={{ display: "block" }}>开证金额：{item.amount}</span>
+                                                <span style={{ display: "block" }}>申请时间：{item.applyTime}</span>
+                                                <span style={{ display: "block" }}>当前状态：{item.status}</span>
+                                            </Card>
+                                        </List.Item>
+                                    )}
+                            />
+                        </div>
+                    </Spin>
+                </Content >
+            );
+            index++;
         }
 
         return container;
     }
 
     handleTransaction = (type, transaction) => {
-        // alert(transaction.id);
         // 1:信用证流程 2:信用证修改 3:信用证交单
         if (1 == type) {
             this.setState({
@@ -559,34 +584,28 @@ class TodoList extends React.Component {
         }
     }
 
+    onSelectChange = (value) => {
+        // 重新获取数据
+        this.getTransInfo();
+        this.setState({
+            loading: false,
+            selectType: value,
+        });
+    }
+
     render() {
         const options = this.state.corps.map(corp => <Option key={corp.id}>{corp.name}</Option>);
-        const container = this.getContainerByType(1),
-            containerModify = this.getContainerByType(2),
-            containerHandover = this.getContainerByType(3);
+        const container = this.getContainer(this.state.selectType);
 
         return (
             <PageHeaderLayout title="待办事项">
-                {/* <Tabs defaultActiveKey="1" onChange={this.tabsCallback} style={{ marginTop: '20px' }}> */}
-                {/* <TabPane tab="信用证开证" key="1"> */}
-                <Row>
-                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证开证</Col>
-                </Row>
-                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                    <Spin spinning={this.state.loading} delay={500} >{container}</Spin>
-                </Content>
-                <Row>
-                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证修改</Col>
-                </Row>
-                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                    <Spin spinning={this.state.loading} delay={500} >{containerModify}</Spin>
-                </Content>
-                <Row>
-                    <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={5}>信用证交单</Col>
-                </Row>
-                <Content style={{ background: '#fff', padding: 16, margin: 0, minHeight: 280 }}>
-                    <Spin spinning={this.state.loading} delay={500} >{containerHandover}</Spin>
-                </Content>
+                <Select style={{ width: 200 }} defaultValue='lcAll' onChange={(value) => { this.onSelectChange(value) }}>
+                    <Option value="lcAll" >全部</Option>
+                    <Option value="lcCommon">信用证开证</Option>
+                    <Option value="lcAmend">信用证修改</Option>
+                    <Option value="lcHandover">信用证交单</Option>
+                </Select>
+                {container}
                 <ConfirmDraftModal
                     ref={this.saveCreateFormRef}
                     selectOptions={options}

@@ -132,7 +132,12 @@ class BaseLayout extends React.Component {
                                     <Icon type="user" />待处理的任务
                                 </Link>
                             </Menu.Item>
-                            <SubMenu ey="2" title={<span> <Link to="/lcpayment/letters"><Icon type="home" /><span>国内信用证</span></Link></span>}>
+                            <SubMenu key="2" title={<span><Icon type="home" /><span>国内信用证</span></span>}>
+                                <Menu.Item key="8">
+                                    <Link to="/lcpayment/letters">
+                                        <Icon type="home" />国内信用证
+                                    </Link>
+                                </Menu.Item>
                                 <Menu.Item key="7">
                                     <Link to="/amendpayment/amend">
                                         <Icon type="home" />信用证修改

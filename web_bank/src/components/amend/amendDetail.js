@@ -591,7 +591,7 @@ class AmendIssuing extends React.Component {
                                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={6}>{this.state.amend.addedDays}</Col>
                                         <Col span={3}></Col>
                                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>修改有效日期</Col>
-                                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={6}>{this.state.amend.AmendExpiryDate}</Col>
+                                        <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={6}>{(this.state.amend.AmendExpiryDate + "").substr(0, (this.state.amend.AmendExpiryDate + "").indexOf('T'))}</Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ margin: '6px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>货物发货目的地</Col>

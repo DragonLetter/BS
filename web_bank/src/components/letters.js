@@ -39,7 +39,8 @@ var renderAction = function(params) {
             return (<a href={'/#/lcpayment/acceptancebyadvisingbank/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
         case "受益人接收信用证":
             return (<a href={'/#/lcpayment/original/' + params.key}>{ CONSTANTS.COMM_DETAILIS }</a>);
-        case "申请人付款":
+        case "结束":
+        case "申请人付款":            
             return (<a href={'/#/lcpayment/billtransact/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
         case "开证行审核付款":
             return (<a href={'/#/lcpayment/redemption/' + params.key}>{CONSTANTS.COMM_DETAILIS}</a>);
@@ -152,7 +153,6 @@ class Letters extends React.Component{
                 createdAt: issDate                              
             })
         }
-        message.error(JSON.stringify(letters));
         this.setState({
             letters: letters,
         });

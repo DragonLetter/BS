@@ -20,8 +20,7 @@ const columns = [
     { title: CONSTANTS.LETTER_APPLICANT, dataIndex: 'applicant', key: 'applicant' },
     { title: CONSTANTS.LETTER_BENEFICIARY, dataIndex: 'beneficiary', key: 'beneficiary' },
     { title: CONSTANTS.LETTER_AMOUNT, dataIndex: 'amount', key: 'amount' },
-    // { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('+')).replace('T', ' ')}</span> },
-    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('T'))}</span> },
+    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, 19)}</span> },
     { title: CONSTANTS.COMM_OPERATION, key: 'operation', render: (text, record, index) => renderAction(record) },
 ];
 
@@ -134,7 +133,7 @@ class TobeProcessed extends React.Component {
                                 <Timeline.Item color="red">
                                     <p><span style={{ fontWeight: 800 }}>{progressflow.Status}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                     <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
-                                    <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
+                                    <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, 19).replace('T', ' ')}</p>
                                 </Timeline.Item>
                             );
 
@@ -158,7 +157,7 @@ class TobeProcessed extends React.Component {
                                             <Timeline.Item color="red">
                                                 <p><span style={{ fontWeight: 800 }}>{CONSTANTS.AMEND_PROCESS_FLOW_STEP[progressflow.Status]}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                                 <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
-                                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
+                                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, 19).replace('T', ' ')}</p>
                                             </Timeline.Item>
                                         );
 

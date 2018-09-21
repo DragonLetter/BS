@@ -20,7 +20,7 @@ const columns = [
     { title: CONSTANTS.LETTER_APPLICANT, dataIndex: 'applicant', key: 'applicant' },
     { title: CONSTANTS.LETTER_BENEFICIARY, dataIndex: 'beneficiary', key: 'beneficiary' },
     { title: CONSTANTS.LETTER_AMOUNT, dataIndex: 'amount', key: 'amount' },
-    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('.')).replace('T', ' ')}</span> }
+    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt'}
   ];
 
 var renderAction = function(params) {
@@ -139,6 +139,7 @@ class Letters extends React.Component{
                 flag = true;
             if( flag == false )
                 continue;
+            var issDate = data[i].issuseDate.substr(0, 19).replace('T', ' ');
             letters.push({
                 key: data[i].id,
                 number: data[i].LCNumbers === "" ? "当前未生成" : data[i].LCNumbers,
@@ -148,9 +149,10 @@ class Letters extends React.Component{
                 advisingbank: data[i].advisingBank,
                 amount: data[i].amount + " " + data[i].currency,
                 status: data[i].status,
-                createdAt: data[i].issuseDate                              
+                createdAt: issDate                              
             })
         }
+        message.error(JSON.stringify(letters));
         this.setState({
             letters: letters,
         });

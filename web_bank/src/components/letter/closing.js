@@ -53,13 +53,6 @@ const ApproveDialog = Form.create()(
     }
 );
 
-// 合同及附件证明材料部分组件
-const columns = [
-    { title: '名称', dataIndex: 'FileName', key: 'FileName' },
-    { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
-    { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-];
-
 class LetterCLosing extends React.Component {
     constructor(props) {
         super(props);
@@ -155,7 +148,7 @@ class LetterCLosing extends React.Component {
                             <Timeline.Item color="red">
                                 <p><span style={{ fontWeight: 800 }}>{progressflow.Status}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                 <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
-                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
+                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, 19).replace('T', ' ')}</p>
                             </Timeline.Item>
                         );
                         this.setState({ flowItems: items });
@@ -272,17 +265,16 @@ class LetterCLosing extends React.Component {
         this.getDepositData();
     }
 
-    // printPdf = () => {
-    //     window.open(serverBackEnd + "/zb_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
-
-    // }
-
-    // printAcceptancePdf = () => {
-    //     window.open(serverBackEnd + "/cd_"+ this.props.params.id + "_" + this.state.letters.LCNo + ".pdf");
-
-    // }
-
+    fileDetail = (key) => {
+        
+    }
     render() {
+        const columns = [
+            { title: '名称', dataIndex: 'FileName', key: 'FileName' },
+            { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
+            { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
+            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>,}
+        ];
         let data = this.state.letters ? this.state.letters : [],
             applicant = data.Applicant ? data.Applicant : [],
             beneficiary = data.Beneficiary ? data.Beneficiary : [],

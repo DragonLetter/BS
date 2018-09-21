@@ -378,7 +378,7 @@ class LetterBill extends React.Component {
                             <Timeline.Item color="red">
                                 <p><span style={{ fontWeight: 800 }}>{progressflow.Status}</span>&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                 <p style={{ marginTop: 6 }}>Description：<span>{progressflow.Description}</span> </p>
-                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, progressflow.time.indexOf('.')).replace('T', ' ')}</p>
+                                <p style={{ marginTop: 6 }}>From: {progressflow.Name} &nbsp;&nbsp;&nbsp;&nbsp;{progressflow.time.substr(0, 19).replace('T', ' ')}</p>
                             </Timeline.Item>
                         );
                         this.setState({ flowItems: items });
@@ -702,12 +702,15 @@ class LetterBill extends React.Component {
         this.getDepositData();
     }
 
+    fileDetail = (key) => {
+        
+    }
     render() {
-        // 合同及附件证明材料部分组件
         const columns = [
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
+            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>,}
         ];
         // 合同及附件证明材料部分组件
         const billcolumns = [
@@ -715,7 +718,7 @@ class LetterBill extends React.Component {
             { title: '到单金额', dataIndex: 'HandoverAmount', key: 'HandoverAmount' },
             { title: '不符点', dataIndex: 'Discrepancy', key: 'Discrepancy' },
             { title: '到单状态', key: 'HandOverBillStep', render:(text,record,index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
-            { title: '到单日期', key: 'ReceivedDate', render:(text,record,index) =><div>{record.ReceivedDate.substr(0, record.ReceivedDate.indexOf('.')).replace('T', ' ')}</div> },
+            { title: '到单日期', key: 'ReceivedDate', render:(text,record,index) =><div>{record.ReceivedDate.substr(0, 19).replace('T', ' ')}</div> },
             { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.billDetail(index)}>详情</a></span>,}
         ];
         let data = this.state.letters ? this.state.letters : [],

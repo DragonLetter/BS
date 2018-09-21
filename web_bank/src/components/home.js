@@ -29,9 +29,9 @@ class Home extends React.Component{
         var lcAmount = data.LCAmount/10000.0;
         var avgAmount = data.AverageAmount/10000.0;
         var lcamount = lcAmount.toString();
-        lcamount = lcamount.substr(0, lcamount.indexOf('.')+2);
+        lcamount = lcamount.substr(0, lcamount.indexOf('.')+3);
         var avgamount = avgAmount.toString();
-        avgamount = avgamount.substr(0, avgamount.indexOf('.')+2);
+        avgamount = avgamount.substr(0, avgamount.indexOf('.')+3);
         this.setState({
             customers : data.Customers,
             LCNumbers : data.LCNumbers,

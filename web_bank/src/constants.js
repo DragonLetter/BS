@@ -70,6 +70,7 @@ export const COMM_TB_PROCESSED = '待处理的任务'
 export const COMM_IM_PROCESSING_ = '立即处理'
 export const COMM_ALREADY_TRANS_TIME = '已交易时间'
 export const COMM_TRANSING = '交易进行中'
+export const COMM_OP_FILE = '下载查看'
 
 // error message
 export const ERROR_LOGIN = '用户名密码错误，请重新登录！'

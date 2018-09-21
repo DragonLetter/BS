@@ -191,10 +191,10 @@ class BasicLayout extends React.PureComponent {
   getPageTitle() {
     const { location, getRouteData } = this.props;
     const { pathname } = location;
-    let title = '龙账本数字信用证';
+    let title = '龙帐本企业链系统';
     getRouteData('BasicLayout').forEach((item) => {
       if (item.path === pathname) {
-        title = `${item.name} - 龙账本数字信用证`;
+        title = `${item.name} - 龙帐本企业链系统`;
       }
     });
     return title;
@@ -296,7 +296,7 @@ class BasicLayout extends React.PureComponent {
           <div className={styles.logo}>
             <Link to="/">
               <img src={logo} alt="logo" />
-              <h1>龙账本数字信用证</h1>
+              <h1>龙帐本企业链系统</h1>
             </Link>
           </div>
           <Menu

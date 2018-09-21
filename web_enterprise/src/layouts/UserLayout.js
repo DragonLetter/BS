@@ -30,10 +30,10 @@ class UserLayout extends React.PureComponent {
   getPageTitle() {
     const { getRouteData, location } = this.props;
     const { pathname } = location;
-    let title = '龙账本数字信用证';
+    let title = '龙帐本企业链系统';
     getRouteData('UserLayout').forEach((item) => {
       if (item.path === pathname) {
-        title = `${item.name} - 龙账本数字信用证`;
+        title = `${item.name} - 龙帐本企业链系统`;
       }
     });
     return title;
@@ -48,10 +48,10 @@ class UserLayout extends React.PureComponent {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="" className={styles.logo} src="https://gw.alipayobjects.com/zos/rmsportal/NGCCBOENpgTXpBWUIPnI.svg" />
-                <span className={styles.title}>龙账本数字信用证</span>
+                <span className={styles.title}>龙帐本企业链系统</span>
               </Link>
             </div>
-            <div className={styles.desc}>龙账本数字信用证企业端登录</div>
+            <div className={styles.desc}>龙帐本企业链系统企业端登录</div>
           </div>
           {
             getRouteData('UserLayout').map(item =>

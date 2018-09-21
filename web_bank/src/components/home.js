@@ -32,7 +32,6 @@ class Home extends React.Component{
         lcamount = lcamount.substr(0, lcamount.indexOf('.')+2);
         var avgamount = avgAmount.toString();
         avgamount = avgamount.substr(0, avgamount.indexOf('.')+2);
-        message.error("Hand:"+lcamount+"---"+avgamount);
         this.setState({
             customers : data.Customers,
             LCNumbers : data.LCNumbers,

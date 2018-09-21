@@ -1,4 +1,7 @@
 import React from 'react'
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
 import { Timeline, Tag, Upload, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
 const Step = Steps.Step;
 
@@ -30,6 +33,18 @@ const AmendationtModal = Form.create()((props) => {
         amendTimes = record.AmendFormFlow.length + 1;
     }
 
+    var currency, amount, docDelay, expiryDate, shippingPlace, ensureAmount;
+    if (record.LetterOfCredit != null) {
+        // message.error(JSON.stringify(record.LetterOfCredit));
+        currency  = record.LetterOfCredit.Currency;
+        amount = record.LetterOfCredit.amount;
+        docDelay = record.LetterOfCredit.docDelay;
+        expiryDate = record.LetterOfCredit.expiryDate.substr(0, record.LetterOfCredit.expiryDate.indexOf('T'));
+        shippingPlace = record.LetterOfCredit.GoodsInfo.ShippingPlace;
+        ensureAmount = record.LetterOfCredit.EnsureAmount;    
+    }
+
+    
     return (
         <Modal
             visible={visible}
@@ -56,6 +71,7 @@ const AmendationtModal = Form.create()((props) => {
                         <Col span={12} key={1}>
                             <FormItem {...formItemLayout} label={`修改货币`}>
                                 {getFieldDecorator('amendedCurrency', {
+                                    initialValue :currency,
                                     rules: [{ required: true, message: '请输入修改货币!' }],
                                 })(
                                     <Select>
@@ -68,6 +84,7 @@ const AmendationtModal = Form.create()((props) => {
                         <Col span={12} key={2}>
                             <FormItem {...formItemLayout} label={`修改金额`}>
                                 {getFieldDecorator('amendedAmt', {
+                                    initialValue :amount,                                    
                                     rules: [{ required: true, message: '请输入修改金额!' }],
                                 })(
                                     <InputNumber
@@ -83,6 +100,8 @@ const AmendationtModal = Form.create()((props) => {
                         <Col span={12} key={3}>
                             <FormItem {...formItemLayout} label={`期限增减`}>
                                 {getFieldDecorator('addedDays', {
+                                    // initialValue :docDelay,
+                                    initialValue :"0",
                                     rules: [{ required: true, message: '请输入期限增减!' }],
                                 })(
                                     <Input placeholder="期限增减" />
@@ -92,15 +111,17 @@ const AmendationtModal = Form.create()((props) => {
                         <Col span={12} key={4}>
                             <FormItem {...formItemLayout} label={`有效日期`}>
                                 {getFieldDecorator('amendExpiryDate', {
+                                    initialValue :moment(expiryDate),
                                     rules: [{ required: true, message: '请输入有效日期！' }],
                                 })(
-                                    <DatePicker placeholder="有效日期" style={{ width: '100%' }} />
+                                    <DatePicker defaultValue = {moment(expiryDate)} placeholder="有效日期" style={{ width: '100%' }} />
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={12} key={5}>
                             <FormItem {...formItemLayout} label={`发货地修改`}>
                                 {getFieldDecorator('transPortName', {
+                                    initialValue :shippingPlace,
                                     rules: [{ required: true, message: '请输入发货地修改！' }],
                                 })(
                                     <Input placeholder="发货地修改" />
@@ -110,6 +131,8 @@ const AmendationtModal = Form.create()((props) => {
                         <Col span={12} key={6}>
                             <FormItem {...formItemLayout} label={`保证金增减`}>
                                 {getFieldDecorator('addedDepositAmt', {
+                                    // initialValue :ensureAmount,
+                                    initialValue:"0",
                                     rules: [{ required: true, message: '请输入保证金增减！' }],
                                 })(
                                     <Input placeholder="保证金增减" />

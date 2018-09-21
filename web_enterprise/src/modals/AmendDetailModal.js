@@ -103,7 +103,7 @@ const AmendDetailModal = (props) => {
             amendedCurrency = data.amendDetail.AmendedCurrency,
             amendedAmt = data.amendDetail.amendedAmt,
             amendAddedDays = data.amendDetail.addedDays,
-            amendExpiryDate = data.amendDetail.AmendExpiryDate,
+            amendExpiryDate = data.amendDetail.AmendExpiryDate.toString().substr(0, data.amendDetail.AmendExpiryDate.toString().indexOf('T')),
             amendTransPortName = data.amendDetail.TransPortName,
             amendAddedDepositAmt = data.amendDetail.addedDepositAmt;
 

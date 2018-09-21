@@ -825,6 +825,7 @@ class LocalLC extends React.Component {
             }
             values.no = this.state.LCs[this.state.index].id;
             values.amendedAmt = "" + values.amendedAmt;
+            // alert(JSON.stringify(values));
             request('/api/letterOfCredit/Amending', {
                 method: "POST",
                 body: values,

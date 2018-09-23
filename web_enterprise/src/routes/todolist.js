@@ -599,7 +599,7 @@ class TodoList extends React.Component {
 
         return (
             <PageHeaderLayout title="待办事项">
-                <Select style={{ width: 200 }} defaultValue='lcAll' onChange={(value) => { this.onSelectChange(value) }}>
+                <Select style={{ width: 200, marginBottom:20 }} defaultValue='lcAll' onChange={(value) => { this.onSelectChange(value) }}>
                     <Option value="lcAll" >全部</Option>
                     <Option value="lcCommon">信用证开证</Option>
                     <Option value="lcAmend">信用证修改</Option>

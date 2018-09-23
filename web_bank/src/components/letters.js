@@ -13,14 +13,18 @@ const Panel = Collapse.Panel;
 const TabPane = Tabs.TabPane;
 const { MonthPicker, RangePicker } = DatePicker;
 
-const columns = [
-    { title: CONSTANTS.COMM_OPERATION, key: 'operation', render: (text, record, index) => renderAction(record)},
+const columns = [    
     { title: CONSTANTS.LETTER_NUMBER, dataIndex: 'number', key: 'number' },
     { title: CONSTANTS.LETTER_STATUS, key: 'status', dataIndex: 'status', render: (text, record) => <Tag>{ record.status }</Tag>},
     { title: CONSTANTS.LETTER_APPLICANT, dataIndex: 'applicant', key: 'applicant' },
     { title: CONSTANTS.LETTER_BENEFICIARY, dataIndex: 'beneficiary', key: 'beneficiary' },
     { title: CONSTANTS.LETTER_AMOUNT, dataIndex: 'amount', key: 'amount' },
+<<<<<<< Updated upstream
     { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt'}
+=======
+    { title: CONSTANTS.LETTER_APPLICANT_DATE, dataIndex: 'createdAt', key: 'createdAt', render: (text, record) => <span>{record.createdAt.substr(0, record.createdAt.indexOf('.')).replace('T', ' ')}</span> },
+    { title: CONSTANTS.COMM_OPERATION, key: 'operation', render: (text, record, index) => renderAction(record)}
+>>>>>>> Stashed changes
   ];
 
 var renderAction = function(params) {

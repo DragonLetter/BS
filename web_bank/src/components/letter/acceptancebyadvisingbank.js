@@ -433,8 +433,7 @@ class AcceptanceByAdvisingBank extends React.Component {
             btnDivHtml = (<div></div>);
         }
 
-        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-        let pdfAcceptancePath = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";       
         return (
             <Layout style={{ padding: '1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', fontSize: 13, fontWeight: 800, background: '#F3F1EF' }}>

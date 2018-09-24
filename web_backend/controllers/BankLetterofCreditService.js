@@ -158,7 +158,7 @@ exports.billAcceptancePayment = function (req, res, next) {
     fabric.invoke(req, "lcAcceptOrReject", [no, bno, amount, suggestion, isAgreed], function (err, resp) {
         if (!err) {
             writeBillPdf(req, no, res);
-            writeAcceptancePdf(req, no, res);
+            writeAcceptancePdf(req, no, bno, isAgreed, res);
             // res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -191,7 +191,7 @@ exports.acceptancePayment = function (req, res, next) {
 
     fabric.invoke(req, "lcAcceptOrReject", [no, amount, dismatchPoints, suggestion, isAgreed], function (err, resp) {
         if (!err) {
-            writeAcceptancePdf(req, no, res)
+            // writeAcceptancePdf(req, no, res)
             // res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -252,7 +252,7 @@ function writePdf(req, id, resw) {
             return;
         }
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
-
+        var issuingBankName = resultObj.IssuingBank.Name;
         var afterSight = resultObj.afterSight === undefined || resultObj.afterSight === "" ? "________" : resultObj.afterSight;
         var datetmp = new Date(resultObj.applyTime.substr(0, (resultObj.applyTime).indexOf('T')));
         var applyTime_year = datetmp.getFullYear();
@@ -368,7 +368,7 @@ function writePdf(req, id, resw) {
             '<body bgcolor=white lang=ZH-CN style=" margin-left:30pt; margin-right:30pt; font-size:10pt;">' +
             '<div style="layout-grid:15.6pt">' +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<p class=MsoNormal align=center style='text-align:center;'><b><span lang=EN-US style='font-size:16.0pt;font-family:宋体'>XX</span></b><b><span style='font-size:16.0pt;font-family:宋体'>银行国内信用证</span></b></p>" +
+            "<p class=MsoNormal align=center style='text-align:center;'><b><span lang=EN-US style='font-size:16.0pt;font-family:宋体'>" + issuingBankName + "</span></b><b><span style='font-size:16.0pt;font-family:宋体'>国内信用证</span></b></p>" +
             "<span style='font-family:宋体'>开证日期：" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_year + "&nbsp;</span></u>年" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_month + "&nbsp;</span></u>月" +
@@ -590,11 +590,11 @@ function writePdf(req, id, resw) {
  * return: 
  **/
 function writeBillPdf(req, id, resw) {
-    console.log("----writeHtml id:%s\n",id);
+    // console.log("----writeHtml id:%s\n", id);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         if (resp == null || resp.result == null) {
             // console.log("1-----resp result is null!!!!");
-            resw.end();
+            // resw.end();
             return;
         }
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
@@ -949,7 +949,7 @@ function writeBillPdf(req, id, resw) {
             "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>" +
             "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>经办人签字</span></p></td>" +
             "</tr>" +
-             billHtmlTabs +
+            billHtmlTabs +
             "</table>" +
             "</div>"
         "</body>" +
@@ -972,11 +972,12 @@ function writeBillPdf(req, id, resw) {
  * Params：id:lcNo
  * return: 
  **/
-function writeAcceptancePdf(req, id, resw) {
-    // console.log("----writeAcceptanceHtml id:%s\n",id);
+function writeAcceptancePdf(req, id, bno, isAgree, resw) {
+    // console.log("----writeAcceptanceHtml id:%s bno:%s\n", id, bno);
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         if (resp == null || resp.result == null) {
             resw.end();
+            // console.log("----error id:%s bno:%s\n", id, bno);
             return;
         }
 
@@ -993,6 +994,40 @@ function writeAcceptancePdf(req, id, resw) {
         var beneficiaryAccountNo = resultObj.AdvisingBank.AccountNo;
         var beneficiaryAccountName = resultObj.AdvisingBank.Name;
 
+        var resultBill = JSON.parse(resp.result).LCTransDocsReceive;
+        var k;
+        var handoverAmount = "";
+        var receiveData = "";
+        var desp = "";
+        if (resultBill != null) {
+            // console.log("le: "+JSON.stringify(resultBill));
+            for (k = 0; k < resultBill.length; k++) {
+                if (bno == resultBill[k].No) {
+                    handoverAmount = resultBill[k].HandoverAmount;
+                    receiveData = resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T'));
+                    desp = resultBill[k].Discrepancy;
+                    break;
+                }
+            }
+        }
+
+        var isAgreeText = "";
+        if (isAgree == "true") {
+            isAgreeText = ("（<span>√</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
+                "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+                "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>" +
+                "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
+                "<p class=MsoNormal style='text-indent:3em;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>");
+        }
+        else {
+            isAgreeText = ("（<span lang=EN-US>&nbsp;</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
+                "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
+                "（<span >√</span>）由于以下不符点拒绝承付。</span></p>" +
+                "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
+                "<p class=MsoNormal style='text-indent:8em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" 
+                + desp
+                +"</span></p>");
+        }
 
         var htmlStr = '<html>' +
             '<head>' +
@@ -1011,13 +1046,13 @@ function writeAcceptancePdf(req, id, resw) {
             "致：" + issuingBank + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%;'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>信用证号：" +
             lcNo + "</span>" + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
-            "来单编号：" + "" + "</span></p>" +
+            "来单编号：" + bno + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>到单日期：" +
             "" + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
             "合同号：" + "" + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>到单金额：" +
-            "" + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
-            "承付到期日：" + "" + "</span></p>" +
+            handoverAmount + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
+            "承付到期日：" + receiveData + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>单据清单：" +
             "" + "</span></p>" +
 
@@ -1045,14 +1080,8 @@ function writeAcceptancePdf(req, id, resw) {
 
             "<p class=MsoNormal style='line-height:150%'><span lang=EN-US style='font-size:10.0pt;line-height:150%;font-family:仿宋'>&nbsp;&nbsp;&nbsp; </span><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>上述信用证项下来单通知书业已收悉，我司</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
-            "（<span lang=EN-US>&nbsp;</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
-            "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
-            "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>" +
-            "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
-
-            "<p class=MsoNormal style='text-indent:3em;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>" +
-
-            "<p class=MsoNormal style='line-height:150%;text-align:right;padding-right:6em'>申请人预留印鉴章及公章</p>" +
+            isAgreeText
+            + "<p class=MsoNormal style='line-height:150%;text-align:right;padding-right:6em'>申请人预留印鉴章及公章</p>" +
             "</div>"
         "</body>" +
             "</html>"
@@ -1060,7 +1089,7 @@ function writeAcceptancePdf(req, id, resw) {
         var path = require('path');
 
         var filePath = path.resolve(__dirname, '../pdf/');
-        createPdf(htmlStr, filePath + '/cd_' + id + "_" + resultObj.LCNo + '.pdf', resw);
+        createPdf(htmlStr, filePath + '/cd_' + id + "_" + resultObj.LCNo + "_" + bno + '.pdf', resw);
 
     });
 }

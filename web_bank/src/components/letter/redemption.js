@@ -429,8 +429,7 @@ class LetterRedemption extends React.Component {
             btnDivHtml = (<div></div>);
         }
 
-        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.lcNo + ".pdf";
-        let pdfAcceptancePath = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.lcNo + ".pdf";
+        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.lcNo + ".pdf";      
         return (
             <Layout style={{ padding: '1px 1px' }}>
                 <Breadcrumb style={{ padding: '12px 16px', fontSize: 13, fontWeight: 800, background: '#F3F1EF' }}>
@@ -569,13 +568,7 @@ class LetterRedemption extends React.Component {
 
                             </iframe>
 
-                        </TabPane>
-                        <TabPane tab="面函(承兑)" key="5" >
-                            <iframe src={pdfAcceptancePath} width="100%" height="400">
-
-                            </iframe>
-
-                        </TabPane>
+                        </TabPane>                        
                     </Tabs>
 
                 </Content>

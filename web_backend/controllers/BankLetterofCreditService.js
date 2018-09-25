@@ -999,6 +999,8 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
         var handoverAmount = "";
         var receiveData = "";
         var desp = "";
+        var billOfLandingsHtmlTabs = "";
+        var j;
         if (resultBill != null) {
             // console.log("le: "+JSON.stringify(resultBill));
             for (k = 0; k < resultBill.length; k++) {
@@ -1006,29 +1008,73 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
                     handoverAmount = resultBill[k].HandoverAmount;
                     receiveData = resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T'));
                     desp = resultBill[k].Discrepancy;
+                    
+                    var resultBillOfLandings  = resultBill[k].BillOfLandings;
+                    // console.log("resultBillOfLandings: " + JSON.stringify(resultBillOfLandings));
+                    if (resultBillOfLandings.length != 0) {
+                        // console.log("le: "+resultBill.length);
+                        billOfLandingsHtmlTabs += (                            
+                            "<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 style='margin-left:20pt;border-collapse:collapse;border:none;font-size:10pt'>" +
+                            "<tr>" +
+                            "<td width=103 style='width:77.35pt;border:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>" +
+                            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>货运单号</span></p></td>" +
+                            "<td width=103 style='width:77.35pt;border:solid black 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>" +
+                            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>货物编号</span></p></td>" +
+                            "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none; padding:0cm 5.4pt 0cm 5.4pt'>" +
+                            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>货物描述</span></p></td>" +
+                            "<td width=103 style='width:77.4pt;border:solid black 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>" +
+                            "<p class=MsoNormal align=center style='text-align:center'><span style='font-family:宋体'>发货时间</span></p></td>" +
+                            "</tr>"
+
+                            // "</table>"
+                        );
+
+                        for (j = 0; j < resultBillOfLandings.length; j++) {
+                            // console.log("no"+resultBill[k].No);
+                            // console.log(resultBill[k].HandoverAmount);
+                            // console.log(resultObj.IssuingBank.Name);
+                            // console.log(resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T')));
+                            billOfLandingsHtmlTabs += (
+                                "<tr>" +
+                                "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                                "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBillOfLandings[j].BolNO + "</span></p></td>" +
+                                "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                                "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBillOfLandings[j].GoodsNo + "</span></p></td>" +
+                                "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                                "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBillOfLandings[j].GoodsDesc + "</span></p></td>" +
+                                "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                                "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBillOfLandings[j].ShippingTime + "</span></p></td>" +
+                                // "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBillOfLandings[j].ShippingTime.substr(0, (resultBillOfLandings[j].ShippingTime).indexOf('T')) + "</span></p></td>" +
+                                "</tr>"
+                            );
+                        }
+
+                        billOfLandingsHtmlTabs += ("</table>");
+                    }
                     break;
                 }
             }
         }
 
+       
         var isAgreeText = "";
         if (isAgree == "true") {
             isAgreeText = ("（<span>√</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
                 "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
                 "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>" +
                 "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
-                "<p class=MsoNormal style='text-indent:8em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" 
+                "<p class=MsoNormal style='text-indent:8em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>"
                 + desp
-                +"</span></p>");
+                + "</span></p>");
         }
         else {
             isAgreeText = ("（<span lang=EN-US>&nbsp;</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
                 "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
                 "（<span >√</span>）由于以下不符点拒绝承付。</span></p>" +
                 "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
-                "<p class=MsoNormal style='text-indent:8em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" 
+                "<p class=MsoNormal style='text-indent:8em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>"
                 + desp
-                +"</span></p>");
+                + "</span></p>");
         }
 
         var htmlStr = '<html>' +
@@ -1057,7 +1103,7 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
             "承付到期日：" + receiveData + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>单据清单：" +
             "" + "</span></p>" +
-
+            billOfLandingsHtmlTabs +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'></span></p>" +
 
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>付款人名称：" +
@@ -1095,6 +1141,7 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
 
     });
 }
+
 
 /**
  * 生成html

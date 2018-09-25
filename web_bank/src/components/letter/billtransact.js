@@ -774,7 +774,7 @@ class LetterBill extends React.Component {
             lcdata[0] = data.Contract;
         let btnDivHtml;
         let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-      
+
         if (this.state.curStep == "IssuingBankReviewRetireBillsStep" && parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>

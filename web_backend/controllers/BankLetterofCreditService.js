@@ -598,7 +598,7 @@ function writeBillPdf(req, id, resw) {
             return;
         }
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
-
+        var issuingBankName = resultObj.IssuingBank.Name;
         var afterSight = resultObj.afterSight === undefined || resultObj.afterSight === "" ? "________" : resultObj.afterSight;
         var datetmp = new Date(resultObj.applyTime.substr(0, (resultObj.applyTime).indexOf('T')));
         var applyTime_year = datetmp.getFullYear();
@@ -776,7 +776,7 @@ function writeBillPdf(req, id, resw) {
             '<body bgcolor=white lang=ZH-CN style=" margin-left:30pt; margin-right:30pt; font-size:10pt;">' +
             '<div style="layout-grid:15.6pt">' +
             "<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p></td>" +
-            "<p class=MsoNormal align=center style='text-align:center;'><b><span lang=EN-US style='font-size:16.0pt;font-family:宋体'>XX</span></b><b><span style='font-size:16.0pt;font-family:宋体'>银行国内信用证</span></b></p>" +
+            "<p class=MsoNormal align=center style='text-align:center;'><b><span lang=EN-US style='font-size:16.0pt;font-family:宋体'>" + issuingBankName + "</span></b><b><span style='font-size:16.0pt;font-family:宋体'>银行国内信用证</span></b></p>" +
             "<span style='font-family:宋体'>开证日期：" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_year + "&nbsp;</span></u>年" +
             "<u><span lang=EN-US>&nbsp;" + applyTime_month + "&nbsp;</span></u>月" +
@@ -1017,7 +1017,9 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
                 "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" +
                 "（<span lang=EN-US>&nbsp;</span>）由于以下不符点拒绝承付。</span></p>" +
                 "<p class=MsoNormal style='text-indent:4em;line-height:150%'>不符点：</p>" +
-                "<p class=MsoNormal style='text-indent:3em;line-height:150%'><span style='font-size:14.0pt;line-height:150%;font-family:仿宋'></span></p>");
+                "<p class=MsoNormal style='text-indent:8em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>" 
+                + desp
+                +"</span></p>");
         }
         else {
             isAgreeText = ("（<span lang=EN-US>&nbsp;</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +

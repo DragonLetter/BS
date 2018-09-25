@@ -17,17 +17,17 @@ var nodeConf = require('../../../config/nodeconf.json');
 const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 
 const colGoods = [
-    { title: '货运单号', key: 'BolNO', dataIndex:'BolNO'},
-    { title: '货物编号', key: 'GoodsNo', dataIndex:'GoodsNo'},
-    { title: '货物描述', key: 'GoodsDesc', dataIndex:'GoodsDesc'},
-    { title: '发货时间', key: 'ShippingTime', dataIndex:'ShippingTime'}
+    { title: '货运单号', key: 'BolNO', dataIndex: 'BolNO' },
+    { title: '货物编号', key: 'GoodsNo', dataIndex: 'GoodsNo' },
+    { title: '货物描述', key: 'GoodsDesc', dataIndex: 'GoodsDesc' },
+    { title: '发货时间', key: 'ShippingTime', dataIndex: 'ShippingTime' }
 ];
 const colDocs = [
-    { title: '文件名', key: 'FileName', dataIndex:'FileName'},
-    { title: '文件哈希', key: 'FileHash', dataIndex:'FileHash'},
-    { title: '文件路径', key: 'FileUri', dataIndex:'FileUri'},
-    { title: '文件上传人', key: 'Uploader', dataIndex:'Uploader'}
-  ];
+    { title: '文件名', key: 'FileName', dataIndex: 'FileName' },
+    { title: '文件哈希', key: 'FileHash', dataIndex: 'FileHash' },
+    { title: '文件路径', key: 'FileUri', dataIndex: 'FileUri' },
+    { title: '文件上传人', key: 'Uploader', dataIndex: 'Uploader' }
+];
 
 const BillDialog = Form.create()(
     (props) => {
@@ -43,17 +43,17 @@ const BillDialog = Form.create()(
                 onCancel={onCancel}
                 onOk={onApprove}
                 width='800'
-                footer={stateBill==1?[
+                footer={stateBill == 1 ? [
                     <Button type="default" onClick={onCancel}>关闭</Button>,
                     <Button type="primary" onClick={onApprove}>确认</Button>,
                     // <Button type="danger" onClick={onRejest}>拒绝</Button>,
-                  ]:stateBill==2?[
+                ] : stateBill == 2 ? [
                     <Button type="default" onClick={onCancel}>关闭</Button>,
                     <Button type="primary" onClick={onApprove}>承兑</Button>,
                     <Button type="danger" onClick={onRejest}>拒付</Button>,
-                  ]:[
-                    <Button type="default" onClick={onCancel}>关闭</Button>,
-                  ]}
+                ] : [
+                            <Button type="default" onClick={onCancel}>关闭</Button>,
+                        ]}
             >
                 <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
                     <Row>
@@ -92,62 +92,85 @@ const BillDialog = Form.create()(
                         pagination={false}
                     />
                 </div>
-                {stateBill==1?[
-                <div style={{ margin: '15px 5px', marginLeft: '20px', display:{stateBill} }}>
-                <Row>
-                    <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单审核</Col>
-                </Row>
-                <Form>
-                    <FormItem {...formItemLayout} label="审核说明">
-                    {
-                        getFieldDecorator('comment', {
-                            initialValue: data ? data.suggestion : "",
-                            rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
-                        })
-                            (
-                            <TextArea rows={4} placeholder="请填写审核说明,如有不符点详细写明，内容必须填写。" />
-                            )
-                    }
-                    </FormItem>
-                </Form>
-                </div>]:[]
+                {stateBill == 1 ? [
+                    <div style={{ margin: '15px 5px', marginLeft: '20px', display: { stateBill } }}>
+                        <Row>
+                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单审核</Col>
+                        </Row>
+                        <Form>
+                            <FormItem {...formItemLayout} label="审核说明">
+                                {
+                                    getFieldDecorator('comment', {
+                                        initialValue: data ? data.suggestion : "",
+                                        rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
+                                    })
+                                        (
+                                        <TextArea rows={4} placeholder="请填写审核说明,如有不符点详细写明，内容必须填写。" />
+                                        )
+                                }
+                            </FormItem>
+                        </Form>
+                    </div>] : []
                 }
-                {stateBill==2?[
-                <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
-                    <Row>
-                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单承兑</Col>
-                    </Row>
-                    <Form>
-                        <FormItem {...formItemLayout} label="承兑说明">
-                        {
-                            getFieldDecorator('comment', {
-                                initialValue: data ? data.suggestion : "",
-                                rules: [{ required: true, message: '请填写承兑说明, 内容必须填写.' }],
-                            })
-                                (
-                                <TextArea rows={4} placeholder="请填写承兑说明,内容必须填写。" />
-                                )
-                        }
-                        </FormItem>
-                        <FormItem label="承兑金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
-                        {
-                            getFieldDecorator('amount', {
-                                initialValue: data ? data.accAmount : "",
-                                rules: [{ required: true, message: '请填写正确的金额.' }],
-                            })
-                                (
-                                <InputNumber
-                                    defaultValue={0}
-                                    min={1}
-                                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                />
-                                )
-                        }
-                        </FormItem>
-                    </Form>
-                </div>]:[]
+                {stateBill == 2 ? [
+                    <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
+                        <Row>
+                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单承兑</Col>
+                        </Row>
+                        <Form>
+                            <FormItem {...formItemLayout} label="承兑说明">
+                                {
+                                    getFieldDecorator('comment', {
+                                        initialValue: data ? data.suggestion : "",
+                                        rules: [{ required: true, message: '请填写承兑说明, 内容必须填写.' }],
+                                    })
+                                        (
+                                        <TextArea rows={4} placeholder="请填写承兑说明,内容必须填写。" />
+                                        )
+                                }
+                            </FormItem>
+                            <FormItem label="承兑金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
+                                {
+                                    getFieldDecorator('amount', {
+                                        initialValue: data ? data.accAmount : "",
+                                        rules: [{ required: true, message: '请填写正确的金额.' }],
+                                    })
+                                        (
+                                        <InputNumber
+                                            defaultValue={0}
+                                            min={1}
+                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                        />
+                                        )
+                                }
+                            </FormItem>
+                        </Form>
+                    </div>] : []
                 }
+            </Modal>
+        );
+    }
+);
+
+//面函
+const FaceLetterDialog = Form.create()(
+    (props) => {
+        const { visible, onCancel, id, lcNo, bno, form } = props;
+        let pdfAcceptancePath = serverBackEnd + "/cd_" + id + "_" + lcNo + "_" + bno + ".pdf";
+
+        return (
+            <Modal
+                visible={visible}
+                width='80%'
+                height="80%"
+                footer={[
+                    <Button type="default" onClick={onCancel}>关闭</Button>,
+                    // <Button type="danger" onClick={onRejest}>拒绝</Button>,
+                ]}
+            >
+
+                <iframe src={pdfAcceptancePath} width="100%" height="600"></iframe>
             </Modal>
         );
     }
@@ -252,14 +275,15 @@ class LetterBill extends React.Component {
             depositDoc: {},
             afstate: {},
             letters: {},
-            bills:[],
-            curBill:{},
+            bills: [],
+            curBill: {},
             stateBill: 0,
             billState: {},
             curStep: "",
+            bno: "", //面函承兑ID
         }
     }
-    
+
     billDetail = (idx) => {
         const curBills = this.state.bills;
         const curBill = curBills[idx];
@@ -267,33 +291,42 @@ class LetterBill extends React.Component {
         valBill.AFNo = this.props.params.id;
         valBill.No = this.state.bills[idx].No;
         fetch_post("/api/BillRecord/GetBState", valBill).then((res) => {
-                if (res.status >= 200 && res.status < 300) {
-                    res.json().then((data) => {
-                        var bdata = {};
-                        bdata.AFNo = data.AFNo;
-                        bdata.step = data.step;
-                        bdata.state = data.state;
-                        bdata.No = data.No;
-                        bdata.suggestion = data.suggestion;
-                        bdata.accAmount = data.accAmount;
-                        var stateBill = 0;
-                        if( curBill.HandOverBillStep == "IssuingBankCheckBillStep" &&
-                            sessionStorage.getItem('userType')==bdata.state )
-                            stateBill = 1;
-                        else if( curBill.HandOverBillStep == "IssuingBankAcceptanceStep" &&
-                            sessionStorage.getItem('userType')==bdata.state )
-                            stateBill = 2;
-                        this.setState({
-                            stateBill: stateBill,
-                            curBill: curBill,
-                            billState: bdata,
-                            billDialogVisible: true,
-                        });
+            if (res.status >= 200 && res.status < 300) {
+                res.json().then((data) => {
+                    var bdata = {};
+                    bdata.AFNo = data.AFNo;
+                    bdata.step = data.step;
+                    bdata.state = data.state;
+                    bdata.No = data.No;
+                    bdata.suggestion = data.suggestion;
+                    bdata.accAmount = data.accAmount;
+                    var stateBill = 0;
+                    if (curBill.HandOverBillStep == "IssuingBankCheckBillStep" &&
+                        sessionStorage.getItem('userType') == bdata.state)
+                        stateBill = 1;
+                    else if (curBill.HandOverBillStep == "IssuingBankAcceptanceStep" &&
+                        sessionStorage.getItem('userType') == bdata.state)
+                        stateBill = 2;
+                    this.setState({
+                        stateBill: stateBill,
+                        curBill: curBill,
+                        billState: bdata,
+                        billDialogVisible: true,
                     });
-                }
-            });
+                });
+            }
+        });
     }
 
+    faceLetterDetail = (idx) => {
+        const curBills = this.state.bills;
+        const curBill = curBills[idx];
+
+        this.setState({
+            bno: curBill.No,
+            faceLetterDialogVisible: true,
+        });
+    }
     componentDidMount = () => {
         this.getLCDraftDetail();
         this.getLCProcessFlows();
@@ -392,6 +425,12 @@ class LetterBill extends React.Component {
         });
     }
 
+    closeFaceLetterDialog = () => {
+        this.setState({
+            faceLetterDialogVisible: false,
+        });
+    }
+
     closeApproveDialog = () => {
         this.setState({
             approveDialogVisible: false,
@@ -428,12 +467,12 @@ class LetterBill extends React.Component {
     }
     billToChainCode = (url, vals) => {
         fetch_post(url, vals).then((res) => {
-            if(res.status>=200 && res.status<300){
-                res.json().then((data)=>{
+            if (res.status >= 200 && res.status < 300) {
+                res.json().then((data) => {
                     this.closeBillDialog();
                     message.success("审核完成.");
                 })
-            }else {
+            } else {
                 message.error("交易执行失败，请检查.");
             }
         });
@@ -457,30 +496,28 @@ class LetterBill extends React.Component {
         var tocc = false;
         billState.isAgreed = isAgreed;
         billState.suggestion = values.comment;
-        if( this.state.stateBill==2 ){
+        if (this.state.stateBill == 2) {
             billState.accAmount = values.amount.toString();
             billVals.amount = billState.accAmount;
         }
-        if( sessionStorage.getItem('userType')==11 )
+        if (sessionStorage.getItem('userType') == 11)
             billState.state = '12';
-        else if( sessionStorage.getItem('userType')==12 )
+        else if (sessionStorage.getItem('userType') == 12)
             billState.state = '13';
-        else if( sessionStorage.getItem('userType')==13 ){
-            if(this.state.stateBill==1)
-            {
+        else if (sessionStorage.getItem('userType') == 13) {
+            if (this.state.stateBill == 1) {
                 billState.step = 'IssuingBankAcceptanceStep';
                 urlcc = '/api/bank/LetterofCredit/BillBankReceivedAudit'
             }
-            else if( this.state.stateBill==2)
-            {
+            else if (this.state.stateBill == 2) {
                 billState.step = 'HandoverBillSuccStep';
                 urlcc = '/api/bank/LetterofCredit/BillAcceptancePayment';
             }
             tocc = true;
         }
-        if( isAgreed == 'false' )
+        if (isAgreed == 'false')
             tocc = true;
-        if( tocc ){
+        if (tocc) {
             billVals.no = billState.AFNo;
             billVals.bno = billState.No;
             billVals.suggestion = billState.suggestion;
@@ -678,8 +715,8 @@ class LetterBill extends React.Component {
                 }
             });
     }
-    billStateTrans = (key) =>{
-        switch(key){
+    billStateTrans = (key) => {
+        switch (key) {
             case "BeneficiaryHandOverBillsStep":
                 return "待交单";
             case "IssuingBankCheckBillStep":
@@ -703,23 +740,24 @@ class LetterBill extends React.Component {
     }
 
     fileDetail = (key) => {
-        
+
     }
     render() {
         const columns = [
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>,}
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         // 合同及附件证明材料部分组件
         const billcolumns = [
             { title: '编号', dataIndex: 'No', key: 'No' },
             { title: '到单金额', dataIndex: 'HandoverAmount', key: 'HandoverAmount' },
             { title: '不符点', dataIndex: 'Discrepancy', key: 'Discrepancy' },
-            { title: '到单状态', key: 'HandOverBillStep', render:(text,record,index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
-            { title: '到单日期', key: 'ReceivedDate', render:(text,record,index) =><div>{record.ReceivedDate.substr(0, 19).replace('T', ' ')}</div> },
-            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.billDetail(index)}>详情</a></span>,}
+            { title: '到单状态', key: 'HandOverBillStep', render: (text, record, index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
+            { title: '到单日期', key: 'ReceivedDate', render: (text, record, index) => <div>{record.ReceivedDate.substr(0, 19).replace('T', ' ')}</div> },
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a onClick={() => this.billDetail(index)}>详情</a></span> },
+            { title: '面函', key: 'FaceLetter', render: (text, record, index) => <span><a onClick={() => this.faceLetterDetail(index)}>详情</a></span>, }
         ];
         let data = this.state.letters ? this.state.letters : [],
             deposit = this.state.deposit ? this.state.deposit : [],
@@ -736,8 +774,8 @@ class LetterBill extends React.Component {
             lcdata[0] = data.Contract;
         let btnDivHtml;
         let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-
-        if ( this.state.curStep=="IssuingBankReviewRetireBillsStep" && parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
+      
+        if (this.state.curStep == "IssuingBankReviewRetireBillsStep" && parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
                     <Row>
@@ -761,28 +799,28 @@ class LetterBill extends React.Component {
                 <Content style={{ background: '#fff', padding: 0, margin: '0' }}>
 
                     <Tabs defaultActiveKey="0" onChange={this.tabsCallback} style={{ marginTop: '20px' }}>
-                        {this.state.curStep=="IssuingBankReviewRetireBillsStep"?[
-                        <TabPane tab="付款审核" key="0">
-                            <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
-                                <div>
-                                    <Row>
-                                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>信用证编号</Col>
-                                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#6b7c93', fontWeight: 'bold' }} span={3}>{this.state.letters.LCNo}</Col>
-                                    </Row>
+                        {this.state.curStep == "IssuingBankReviewRetireBillsStep" ? [
+                            <TabPane tab="付款审核" key="0">
+                                <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
+                                    <div>
+                                        <Row>
+                                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>信用证编号</Col>
+                                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#6b7c93', fontWeight: 'bold' }} span={3}>{this.state.letters.LCNo}</Col>
+                                        </Row>
+                                    </div>
+                                    <div>
+                                        <Row>
+                                            <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>付款金额</Col>
+                                            <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount}</Col>
+                                        </Row>
+                                    </div>
                                 </div>
                                 <div>
-                                    <Row>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>付款金额</Col>
-                                        <Col style={{ marginTop: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={3}>{this.state.letters.ApplicantPaidAmount}</Col>
-                                    </Row>
+                                    {btnDivHtml}
                                 </div>
-                            </div>
-                            <div>
-                                {btnDivHtml}
-                            </div>
-                        </TabPane>
+                            </TabPane>
 
-                        ]:[]}
+                        ] : []}
                         <TabPane tab="到单处理" key="1">
                             <div style={{ backgroundColor: '#d4cfcf47', marginLeft: '14px', marginRight: '14px', padding: '15px', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
                                 <div>
@@ -921,6 +959,7 @@ class LetterBill extends React.Component {
                     data={this.state.billState}
                     stateBill={this.state.stateBill}
                 />
+
                 <ApproveDialog
                     ref={this.saveApproveRef}
                     visible={this.state.approveDialogVisible}
@@ -933,6 +972,14 @@ class LetterBill extends React.Component {
                     visible={this.state.rejectDialogVisible}
                     onCancel={this.closeRejectDialog}
                     onOk={this.handleReject}
+                />
+                <FaceLetterDialog
+                    // ref={this.saveBillRef}
+                    visible={this.state.faceLetterDialogVisible}
+                    onCancel={this.closeFaceLetterDialog}
+                    id={this.props.params.id}
+                    lcNo={this.state.letters.LCNo}
+                    bno={this.state.bno}
                 />
             </Layout>
         )

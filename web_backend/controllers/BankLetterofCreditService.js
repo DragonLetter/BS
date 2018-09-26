@@ -630,17 +630,17 @@ function writeBillPdf(req, id, resw) {
                 // console.log(resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T')));
                 billHtmlTabs += (
                     "<tr>" +
-                    "<td width=103 valign=top style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                    "<td width=103  style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +
                     "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T')) + "</span></p></td>" +
-                    "<td width=103 valign=top style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                    "<td width=103  style='width:77.35pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
                     "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBill[k].No + "</span></p></td>" +
-                    "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                    "<td width=103  style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
                     "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultBill[k].HandoverAmount + "</span></p></td>" +
-                    "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                    "<td width=103 style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt;'>" +
                     "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p></td>" +
-                    "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                    "<td width=103  style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
                     "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>" + resultObj.IssuingBank.Name + "</span></p></td>" +
-                    "<td width=103 valign=top style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
+                    "<td width=103 style='width:77.4pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;'>" +
                     "<p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p></td>" +
                     "</tr>"
                 );

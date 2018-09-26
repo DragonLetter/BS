@@ -59,7 +59,6 @@ class BaseLayout extends React.Component {
             lcnumber: lcno,
         });
     }
-
     render = () => {
         const helpCenter = (
             <div>

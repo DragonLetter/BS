@@ -22,7 +22,7 @@ const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackE
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onOk, dataform, data, form } = props;
+        const { visible, disCtl, onCancel, onOk, dataform, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 3 }, wrapperCol: { span: 19 }, };
 
@@ -44,7 +44,7 @@ const ApproveDialog = Form.create()(
                                 rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
                             })
                                 (
-                                <TextArea rows={4} placeholder="请填写审核说明,内容必须填写。" />
+                                <TextArea disabled={disCtl} rows={4} placeholder="请填写审核说明,内容必须填写。" />
                                 )
                         }
                     </FormItem>
@@ -97,6 +97,7 @@ class AcceptanceByAdvisingBank extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
+            disCtl:false,
             deposit: {},
             depositDoc: {},
             afstate: {},
@@ -144,7 +145,11 @@ class AcceptanceByAdvisingBank extends React.Component {
     }
 
     handleDraftData = (data) => {
+        let disCtl = true;
+        if (sessionStorage.getItem('userType') == 11) 
+            disCtl = false;
         this.setState({
+            disCtl: disCtl,
             letters: data,
         });
     }
@@ -612,6 +617,7 @@ class AcceptanceByAdvisingBank extends React.Component {
                 <ApproveDialog
                     ref={this.saveApproveRef}
                     visible={this.state.approveDialogVisible}
+                    disCtl={this.state.disCtl}
                     onCancel={this.closeApproveDialog}
                     onOk={this.handleApprove}
                     dataform={this.state.afstate}

@@ -32,7 +32,7 @@ const colDocs = [
 const BillDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onApprove, onRejest, dataform, stateBill, data, form } = props;
+        const { visible, disCtl, onCancel, onApprove, onRejest, dataform, stateBill, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 3 }, wrapperCol: { span: 19 }, };
 
@@ -92,61 +92,61 @@ const BillDialog = Form.create()(
                         pagination={false}
                     />
                 </div>
-                {stateBill == 1 ? [
-                    <div style={{ margin: '15px 5px', marginLeft: '20px', display: { stateBill } }}>
-                        <Row>
-                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单审核</Col>
-                        </Row>
-                        <Form>
-                            <FormItem {...formItemLayout} label="审核说明">
-                                {
-                                    getFieldDecorator('comment', {
-                                        initialValue: data ? data.suggestion : "",
-                                        rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
-                                    })
-                                        (
-                                        <TextArea rows={4} placeholder="请填写审核说明,如有不符点详细写明，内容必须填写。" />
-                                        )
-                                }
-                            </FormItem>
-                        </Form>
-                    </div>] : []
+                {stateBill==1?[
+                <div style={{ margin: '15px 5px', marginLeft: '20px', display:{stateBill} }}>
+                <Row>
+                    <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单审核</Col>
+                </Row>
+                <Form>
+                    <FormItem {...formItemLayout} label="审核说明">
+                    {
+                        getFieldDecorator('comment', {
+                            initialValue: data ? data.suggestion : "",
+                            rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
+                        })
+                            (
+                            <TextArea disabled={disCtl} rows={4} placeholder="请填写审核说明,如有不符点详细写明，内容必须填写。" />
+                            )
+                    }
+                    </FormItem>
+                </Form>
+                </div>]:[]
                 }
-                {stateBill == 2 ? [
-                    <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
-                        <Row>
-                            <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单承兑</Col>
-                        </Row>
-                        <Form>
-                            <FormItem {...formItemLayout} label="承兑说明">
-                                {
-                                    getFieldDecorator('comment', {
-                                        initialValue: data ? data.suggestion : "",
-                                        rules: [{ required: true, message: '请填写承兑说明, 内容必须填写.' }],
-                                    })
-                                        (
-                                        <TextArea rows={4} placeholder="请填写承兑说明,内容必须填写。" />
-                                        )
-                                }
-                            </FormItem>
-                            <FormItem label="承兑金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
-                                {
-                                    getFieldDecorator('amount', {
-                                        initialValue: data ? data.accAmount : "",
-                                        rules: [{ required: true, message: '请填写正确的金额.' }],
-                                    })
-                                        (
-                                        <InputNumber
-                                            defaultValue={0}
-                                            min={1}
-                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                        />
-                                        )
-                                }
-                            </FormItem>
-                        </Form>
-                    </div>] : []
+                {stateBill==2?[
+                <div style={{ margin: '15px 5px', marginLeft: '20px' }}>
+                    <Row>
+                        <Col style={{ marginBottom: '12px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>到单承兑</Col>
+                    </Row>
+                    <Form>
+                        <FormItem {...formItemLayout} label="承兑说明">
+                        {
+                            getFieldDecorator('comment', {
+                                initialValue: data ? data.suggestion : "",
+                                rules: [{ required: true, message: '请填写承兑说明, 内容必须填写.' }],
+                            })
+                                (
+                                <TextArea disabled={disCtl} rows={4} placeholder="请填写承兑说明,内容必须填写。" />
+                                )
+                        }
+                        </FormItem>
+                        <FormItem label="承兑金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
+                        {
+                            getFieldDecorator('amount', {
+                                initialValue: data ? data.accAmount : "",
+                                rules: [{ required: true, message: '请填写正确的金额.' }],
+                            })
+                                (
+                                <InputNumber disabled={disCtl}
+                                    defaultValue={0}
+                                    min={1}
+                                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                />
+                                )
+                        }
+                        </FormItem>
+                    </Form>
+                </div>]:[]
                 }
             </Modal>
         );
@@ -179,7 +179,7 @@ const FaceLetterDialog = Form.create()(
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onOk, dataform, data, form } = props;
+        const { visible, disCtl, onCancel, onOk, dataform, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 3 }, wrapperCol: { span: 19 }, };
 
@@ -201,7 +201,7 @@ const ApproveDialog = Form.create()(
                                 rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
                             })
                                 (
-                                <TextArea rows={4} placeholder="请填写审核说明,内容必须填写。" />
+                                <TextArea disabled={disCtl} rows={4} placeholder="请填写审核说明,内容必须填写。" />
                                 )
                         }
                     </FormItem>
@@ -212,7 +212,7 @@ const ApproveDialog = Form.create()(
                                 rules: [{ required: true, message: '请填写正确的金额.' }],
                             })
                                 (
-                                <InputNumber
+                                <InputNumber disabled={disCtl}
                                     defaultValue={0}
                                     min={1}
                                     formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -271,6 +271,7 @@ class LetterBill extends React.Component {
             billsDialogVisible: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
+            disCtl:false,
             deposit: {},
             depositDoc: {},
             afstate: {},
@@ -283,13 +284,12 @@ class LetterBill extends React.Component {
             bno: "", //面函承兑ID
         }
     }
-
-    billDetail = (idx) => {
-        const curBills = this.state.bills;
-        const curBill = curBills[idx];
+    
+    billDetail = (record) => {
+        const curBill = record;
         var valBill = {};
         valBill.AFNo = this.props.params.id;
-        valBill.No = this.state.bills[idx].No;
+        valBill.No = curBill.No;
         fetch_post("/api/BillRecord/GetBState", valBill).then((res) => {
             if (res.status >= 200 && res.status < 300) {
                 res.json().then((data) => {
@@ -318,9 +318,8 @@ class LetterBill extends React.Component {
         });
     }
 
-    faceLetterDetail = (idx) => {
-        const curBills = this.state.bills;
-        const curBill = curBills[idx];
+    faceLetterDetail = (record) => {
+        const curBill = record;
 
         this.setState({
             bno: curBill.No,
@@ -367,7 +366,11 @@ class LetterBill extends React.Component {
     }
 
     handleDraftData = (data) => {
+        let disCtl = true;
+        if (sessionStorage.getItem('userType') == 11) 
+            disCtl = false;
         this.setState({
+            disCtl: disCtl,
             curStep: data.CurrentStep,
             letters: data.LetterOfCredit,
             bills: data.LCTransDocsReceive,
@@ -762,7 +765,7 @@ class LetterBill extends React.Component {
                 key: 'FaceLetter',
                 render: (text, record, index) => {
                     if ((record.HandOverBillStep == "HandoverBillSuccStep") || (record.HandOverBillStep == "IssuingBankRejectStep")) {
-                        return (<span><a onClick={() => this.faceLetterDetail(index)}>详情</a></span>)
+                        return (<span><a onClick={() => this.faceLetterDetail(record)}>详情</a></span>)
                     }
                 }
             }
@@ -972,6 +975,7 @@ class LetterBill extends React.Component {
                 <ApproveDialog
                     ref={this.saveApproveRef}
                     visible={this.state.approveDialogVisible}
+                    disCtl={this.state.disCtl}
                     onCancel={this.closeApproveDialog}
                     onOk={this.handleApprove}
                     dataform={this.state.afstate}

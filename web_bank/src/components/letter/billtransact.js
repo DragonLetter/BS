@@ -757,7 +757,16 @@ class LetterBill extends React.Component {
             { title: '到单状态', key: 'HandOverBillStep', render: (text, record, index) => <div>{this.billStateTrans(record.HandOverBillStep)}</div> },
             { title: '到单日期', key: 'ReceivedDate', render: (text, record, index) => <div>{record.ReceivedDate.substr(0, 19).replace('T', ' ')}</div> },
             { title: '操作', key: 'operation', render: (text, record, index) => <span><a onClick={() => this.billDetail(index)}>详情</a></span> },
-            { title: '面函', key: 'FaceLetter', render: (text, record, index) => <span><a onClick={() => this.faceLetterDetail(index)}>详情</a></span>, }
+            {
+                title: '面函',
+                key: 'FaceLetter',
+                render: (text, record, index) => {
+                    if ((record.HandOverBillStep == "HandoverBillSuccStep") || (record.HandOverBillStep == "IssuingBankRejectStep")) {
+                        return (<span><a onClick={() => this.faceLetterDetail(index)}>详情</a></span>)
+                    }
+                }
+            }
+
         ];
         let data = this.state.letters ? this.state.letters : [],
             deposit = this.state.deposit ? this.state.deposit : [],

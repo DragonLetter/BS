@@ -1100,7 +1100,7 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
             "合同号：" + "" + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>到单金额：" +
             handoverAmount + "<span style='align:right;float:right;text-align:right;padding-right:8em'>" +
-            "承付到期日：" + receiveData + "</span></p>" +
+            "承付到期日：" + "" + "</span></p>" +
             "<p class=MsoNormal style='text-indent:2em;line-height:150%'><span style='font-size:10.0pt;line-height:150%;font-family:仿宋'>单据清单：" +
             "" + "</span></p>" +
             billOfLandingsHtmlTabs +

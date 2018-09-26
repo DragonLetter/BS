@@ -959,6 +959,7 @@ class LetterBill extends React.Component {
                 <BillDialog
                     ref={this.saveBillRef}
                     visible={this.state.billDialogVisible}
+                    disCtl={this.state.disCtl}
                     onCancel={this.closeBillDialog}
                     onApprove={this.billApprove}
                     onRejest={this.billRejest}

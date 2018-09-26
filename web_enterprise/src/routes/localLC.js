@@ -469,7 +469,9 @@ class LocalLC extends React.Component {
             banks: [],
             signedbanks: [],
             corporations: [],
-            index: 0,
+            LCHandoverData: null,
+            LCAmendData: null,
+            LCDraftData: null,
             LCData: [],
             loading: true,
             handoverBillsInfo: [],
@@ -758,9 +760,9 @@ class LocalLC extends React.Component {
     }
 
     // 交单相关处理逻辑
-    handoverBill = (index, text) => {
+    handoverBill = (data, text) => {
         this.setState({
-            index: index,
+            LCHandoverData: data,
             handoverBillsModalVisible: true,
         })
     }
@@ -777,7 +779,7 @@ class LocalLC extends React.Component {
         }
 
         let values = {
-            no: this.state.LCData[this.state.index].Key,
+            no: this.state.LCHandoverData.detail.key,
             amount: document.getElementById("handoverAmount").value,
             billinfo: billInfo,
             billFile: this.state.handoverBillsFile
@@ -806,9 +808,9 @@ class LocalLC extends React.Component {
 
 
     // 信用证修改相关处理逻辑
-    amend = (index, text) => {
+    amend = (data, text) => {
         this.setState({
-            index: index,
+            LCAmendData: data,
             amendModalVisible: true,
         })
     }
@@ -823,9 +825,8 @@ class LocalLC extends React.Component {
             if (err) {
                 return;
             }
-            values.no = this.state.LCs[this.state.index].id;
+            values.no = this.state.LCAmendData.id;
             values.amendedAmt = "" + values.amendedAmt;
-            // alert(JSON.stringify(values));
             request('/api/letterOfCredit/Amending', {
                 method: "POST",
                 body: values,
@@ -850,9 +851,9 @@ class LocalLC extends React.Component {
         })
     }
 
-    showDetailModal = (index, text) => {
+    showDetailModal = (data, text) => {
         this.setState({
-            index: index,
+            LCDraftData: data.detail,
             draftModalVisible: true,
         })
     }
@@ -881,7 +882,7 @@ class LocalLC extends React.Component {
                         if (userId == beneficiaryID) {
                             return (
                                 <span>
-                                    <a onClick={() => this.handoverBill(index, text)}>交单</a>
+                                    <a onClick={() => this.handoverBill(record, text)}>交单</a>
                                 </span>
                             )
                         }
@@ -900,7 +901,7 @@ class LocalLC extends React.Component {
                         if (userId == Applicant) {
                             return (
                                 <span>
-                                    <a onClick={() => this.amend(index, text)}>修改</a>
+                                    <a onClick={() => this.amend(record, text)}>修改</a>
                                 </span>
                             )
                         }
@@ -914,7 +915,7 @@ class LocalLC extends React.Component {
                 render: (text, record, index) => {
                     return (
                         <span>
-                            <a onClick={() => this.showDetailModal(index, text)}>详情  </a>
+                            <a onClick={() => this.showDetailModal(record, text)}>详情  </a>
                         </span>
                     )
                 }
@@ -960,13 +961,13 @@ class LocalLC extends React.Component {
                 <DraftModal
                     visible={this.state.draftModalVisible}
                     onCancel={this.closeDraftModal}
-                    data={this.state.LCData[this.state.index]}
+                    data={this.state.LCDraftData}
                     onSubmit={this.closeDraftModal}
                 />
                 <HandoverBillsModal
                     visible={this.state.handoverBillsModalVisible}
                     onCancel={this.closeHandoverBillsModal}
-                    data={this.state.LCs[this.state.index]}
+                    data={this.state.LCHandoverData}
                     onSubmit={this.handleHandoverBillSubmit}
                     onBillChange={this.handleBillChange}
                     onFileChange={this.handleFileChange}
@@ -974,7 +975,7 @@ class LocalLC extends React.Component {
                 <AmendationModal
                     visible={this.state.amendModalVisible}
                     onCancel={this.closeAmendModal}
-                    data={this.state.LCs[this.state.index]}
+                    data={this.state.LCAmendData}
                     onSubmit={this.handleAmendSubmit}
                     ref={this.amendationModalRef}
                 />

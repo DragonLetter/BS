@@ -15,6 +15,7 @@ const { Header, Content, Sider } = Layout;
 
 var nodeConf = require('../../../config/nodeconf.json');
 const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
+const serverFileServer = "http://" + nodeConf["FileServer"].IP + ":" + nodeConf["FileServer"].Port + nodeConf["FileServer"].Path;
 
 const colGoods = [
     { title: '货运单号', key: 'BolNO', dataIndex: 'BolNO' },
@@ -157,8 +158,8 @@ const BillDialog = Form.create()(
 const FaceLetterDialog = Form.create()(
     (props) => {
         const { visible, onCancel, id, lcNo, bno, form } = props;
-        let pdfAcceptancePath = serverBackEnd + "/cd_" + id + "_" + lcNo + "_" + bno + ".pdf";
-
+        let pdfAcceptancePath = serverFileServer + "/coverletter" + "/cd_" + id + "_" + lcNo + "_" + bno + ".pdf";
+        
         return (
             <Modal
                 visible={visible}
@@ -319,8 +320,7 @@ class LetterBill extends React.Component {
     }
 
     faceLetterDetail = (record) => {
-        const curBill = record;
-
+        const curBill = record;        
         this.setState({
             bno: curBill.No,
             faceLetterDialogVisible: true,
@@ -780,8 +780,8 @@ class LetterBill extends React.Component {
         if (data.Contract)
             lcdata[0] = data.Contract;
         let btnDivHtml;
-        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-
+        let pdfPath = serverFileServer + "/coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        
         if (this.state.curStep == "IssuingBankReviewRetireBillsStep" && parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>

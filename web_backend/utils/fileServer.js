@@ -87,15 +87,14 @@ function post(url, data, fn) {
     req.end();
 }
 
-exports.uploadFileStream = function (type, fileString, fileName) {
+exports.uploadFileStream = function (type, fileString, fileName, callback) {
     var req = {
         "fileName": fileName,
         "file": fileString,
         "dirName": type
     }
     Logger.debug("req to fileserver:" + JSON.stringify(req));
-    post('http://' + confNode.FileServer.IP + ':' + confNode.FileServer.Port + confNode.FileServer.Path, req, function (data) {
-        Logger.debug(data);
-        return data;
-    });
+    post('http://' + confNode.FileServer.IP + ':' + confNode.FileServer.Port + confNode.FileServer.Path,
+        req,
+        callback);
 }

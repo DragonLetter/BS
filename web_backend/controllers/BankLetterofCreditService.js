@@ -1211,26 +1211,26 @@ function createPdfFile(html, pdfName, resw) {
     // });
 };
 
-function createPdf(html, pdfName, resw) {
-    var path = require('path');
-    var filePath = path.resolve(__dirname, '../node_modules/phantomjs-prebuilt/bin/phantomjs');
-    // console.log(html);
-    // var options = { format: true };
-    var options = {
-        phantomPath: filePath,
-        filename: pdfName,
-        format: 'A4',
-        orientation: 'portrait',
-        type: "pdf",
-        timeout: 30000
-    };
-    pdf.create(html, options).toFile(function (err, res) {
-        if (err) {
-            resw.end(JSON.stringify("审核通过"));
-            return console.log(err);
-        }
-        console.log(res);
-        resw.end(JSON.stringify("审核通过"));
-    });
-};
+// function createPdf(html, pdfName, resw) {
+//     var path = require('path');
+//     var filePath = path.resolve(__dirname, '../node_modules/phantomjs-prebuilt/bin/phantomjs');
+//     // console.log(html);
+//     // var options = { format: true };
+//     var options = {
+//         phantomPath: filePath,
+//         filename: pdfName,
+//         format: 'A4',
+//         orientation: 'portrait',
+//         type: "pdf",
+//         timeout: 30000
+//     };
+//     pdf.create(html, options).toFile(function (err, res) {
+//         if (err) {
+//             resw.end(JSON.stringify("审核通过"));
+//             return console.log(err);
+//         }
+//         console.log(res);
+//         resw.end(JSON.stringify("审核通过"));
+//     });
+// };
 

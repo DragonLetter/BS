@@ -5,6 +5,7 @@ var keyHelper = require("../keyhelper");
 var pdf = require('html-pdf');
 var fs = require('fs');
 var fileServer = require('../utils/fileServer');
+var uuid = require('node-uuid');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
@@ -47,7 +48,7 @@ exports.uploadFile = function (req, res, next) {
 
   var content = args.file.value.buffer;
   var fileSize = args.file.value.size;
-  var fileName = args.file.value.originalname;
+  var fileName = uuid.v1() + "-" + args.file.value.originalname;
   var mime = args.file.value.mimetype;
   var md5sum = crypto.createHash("md5");
   md5sum.update(content);
@@ -60,17 +61,17 @@ exports.uploadFile = function (req, res, next) {
   var fileType = args.type.value;
 
   // 上传到文件服务器
-  var result = fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), fileName);
-  if (null != result) {
-    if (result.success == 1) {
+  fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), fileName, function (result) {
+    Logger.debug(result);
+    if (JSON.parse(result).success == 1) {
       Logger.debug("upload finished.");
       var resp = {
-        "id": 1,
+        // "id": 1,
         "fileName": fileName,
         "mime": mime,
         "length": fileSize,
         "fileHash": hash,
-        "signature": signture
+        "signature": Buffer.from(signture).toString("hex")
       };
       if (currentUser != undefined) {
         resp.uploader = currentUser.username;
@@ -79,7 +80,7 @@ exports.uploadFile = function (req, res, next) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(resp));
     }
-  }
+  });
 
   // getCertificateId(req).then(certId => {
   // var doc = {

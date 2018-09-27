@@ -111,7 +111,7 @@ exports.addApplicationForm = function (req, res, next) {
         "Contract": values.Contract ? values.Contract : {},
         "Attachments": values.Attachments ? values.Attachments : [],
       };
-      Logger.debug("fabricArg2: " + fabricArg2);
+      Logger.debug("fabricArg2: " + JSON.stringify(fabricArg2));
       fabric.invoke(req, "saveLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
         if (!err) {
           submitApplicationFormByCorp(req, corpNo, fabricArg1, res, next);

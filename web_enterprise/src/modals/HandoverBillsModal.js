@@ -149,10 +149,12 @@ class HandoverBillsModal extends React.Component {
             title = "交单——" + record.lcNo;
         function onDocumentChange(info) {
             let attachment = {};
-            attachment.FileName = info.file.name;
+            // attachment.FileName = info.file.name;
+            attachment.FileName = info.file.response.fileName;
             attachment.FileHash = info.file.response.fileHash;
             attachment.FileSignature = info.file.response.signature;
             attachment.Uploader = info.file.response.uploader;
+            attachment.FileUri = 'handover';
             fileList.push(attachment);
             onFileChange(fileList);
         }

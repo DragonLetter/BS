@@ -385,18 +385,22 @@ const SecondStepForm = Form.create()(
         const { visible, onCancel, onSubmit, data, form } = props;
 
         function onContractChange(info) {
-            contract.FileName = info.file.name;
+            // contract.FileName = info.file.name;
+            contract.FileName = info.file.response.fileName;
             contract.FileHash = info.file.response.fileHash;
             contract.FileSignature = info.file.response.signature;
             contract.Uploader = info.file.response.uploader;
+            contract.FileUri = 'contract';
         }
 
         function onAttachmentChange(info) {
             let attachment = {};
-            attachment.FileName = info.file.name;
+            // attachment.FileName = info.file.name;
+            attachment.FileName = info.file.response.fileName;
             attachment.FileHash = info.file.response.fileHash;
             attachment.FileSignature = info.file.response.signature;
             attachment.Uploader = info.file.response.uploader;
+            attachment.FileUri = 'accessary';
             attachments.push(attachment);
         }
 

@@ -28,10 +28,12 @@ const DepositModal = Form.create()((props) => {
         title = "缴纳保证金——" + record.lcNo;
 
     function onFileChange(info){
-        depositDoc.FileName = info.file.name;
+        // depositDoc.FileName = info.file.name;
+        depositDoc.FileName = info.file.response.fileName;
         depositDoc.FileHash = info.file.response.fileHash;
         depositDoc.FileSignature = info.file.response.signature;
         depositDoc.Uploader = info.file.response.uploader;
+        depositDoc.FileUri = 'deposit';
     }
 
     const depositFileUploadOptions = getFileUploadOptions('deposit', onFileChange);

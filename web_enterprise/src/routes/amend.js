@@ -34,7 +34,7 @@ class Amend extends React.Component {
             banks: [],
             signedbanks: [],
             corporations: [],
-            index: 0,
+            Record: null,
             LCData: [],
             loading: true,
 
@@ -89,9 +89,9 @@ class Amend extends React.Component {
     }
 
 
-    showDetailModal = (index, text) => {
+    showDetailModal = (record, text) => {
         this.setState({
-            index: index,
+            Record: record,
             AmendDetailModalVisible: true,
         })
     }
@@ -121,7 +121,7 @@ class Amend extends React.Component {
                 render: (text, record, index) => {
                     return (
                         <span>
-                            <a onClick={() => this.showDetailModal(index, text)}>详情  </a>
+                            <a onClick={() => this.showDetailModal(record, text)}>详情  </a>
                         </span>
                     )
                 }
@@ -145,7 +145,7 @@ class Amend extends React.Component {
                     //ref={this.saveFormRef}
                     visible={this.state.AmendDetailModalVisible}
                     onCancel={this.closeAmendDetailModal}
-                    data={this.state.Amends[this.state.index]}
+                    data={this.state.Record}
                     onSubmit={this.closeAmendDetailModal}
                 />
 

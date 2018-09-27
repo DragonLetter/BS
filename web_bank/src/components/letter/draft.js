@@ -16,7 +16,7 @@ const { Header, Content, Sider } = Layout;
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onOk, lcPicker, dataform, data, form } = props;
+        const { visible, disCtl, onCancel, onOk, lcPicker, dataform, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 19 }, };
 
@@ -51,22 +51,22 @@ const ApproveDialog = Form.create()(
                                 initialValue: dataform ? dataform.lcNo : "",
                                 rules: [{ required: true, message: '请填写国结系统分配的信用证编号.' }],
                                 })(
-                                <Input />
+                                <Input disabled={disCtl} />
                                 )}
                             </Col>
                             <Col span={5}>
-                                <Button onClick={lcPicker}>信用证取</Button>
+                                <Button disabled={disCtl} onClick={lcPicker}>信用证取</Button>
                             </Col>
                         </Row>
                     </FormItem>
-                    <FormItem label="保证金金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }}>
+                    <FormItem label="保证金金额" labelCol={{ span: 4 }} wrapperCol={{ span: 6 }} disabled="true">
                         {
                             getFieldDecorator('depositAmount', {
                                 initialValue: dataform ? dataform.depositAmount : "",
                                 rules: [{ required: true, message: '请填写正确的金额.' }],
                             })
                                 (
-                                <InputNumber
+                                <InputNumber disabled={disCtl}
                                     defaultValue={0}
                                     min={1}
                                     formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -75,14 +75,14 @@ const ApproveDialog = Form.create()(
                                 )
                         }
                     </FormItem>
-                    <FormItem {...formItemLayout} label="审核说明">
+                    <FormItem {...formItemLayout} label="审核说明" >
                         {
                             getFieldDecorator('comment', {
                                 initialValue: dataform ? dataform.suggestion : "",
                                 rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
                             })
                                 (
-                                <TextArea rows={4} placeholder="请填写审核说明,内容必须填写。" />
+                                <TextArea disabled={disCtl} rows={4} placeholder="请填写审核说明,内容必须填写。" />
                                 )
                         }
                     </FormItem>
@@ -132,6 +132,7 @@ class LetterDraft extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
+            disCtl: false,
             afstate: {},
             letter: {}
         }
@@ -218,7 +219,11 @@ class LetterDraft extends React.Component {
     handleApplicationFrom = (data) => {
         data.ApplicationForm.expiryDate = data.ApplicationForm.expiryDate.substr(0, 19).replace('T', ' ');
         data.ApplicationForm.GoodsInfo.latestShipmentDate = data.ApplicationForm.GoodsInfo.latestShipmentDate.substr(0, 19).replace('T', ' ');
+        let disCtl = true;
+        if (sessionStorage.getItem('userType') == 11) 
+            disCtl = false;
         this.setState({
+            disCtl: disCtl,
             letter: data,
         });
         // Afstate数据依赖于letter需要先letter返回数据后再请求afstate
@@ -332,7 +337,7 @@ class LetterDraft extends React.Component {
     ApproveUpdateAfState = () => {
         var afstate = this.state.afstate;
         afstate.state = '11';//初始化身份--经办
-        afstate.step = 'BankIssueLCStep' //流程到银行发证
+        afstate.step = 'BankIssueLCStep'; //流程到银行发证
         afstate.suggestion = "";
         afstate.depositAmount = "";
         fetch_post("/api/ApplicationForm/afstate/" + this.props.params.id, afstate)
@@ -468,7 +473,7 @@ class LetterDraft extends React.Component {
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>,}
+            { title: '操作', key: 'operation', render:(text, record, index) => <span><a target="_blank" href="http://39.104.175.115/index.pdf">{CONSTANTS.COMM_OP_FILE}</a></span>,}
         ];
         let data = this.state.letter ? this.state.letter : [],
             applicationForm = data.ApplicationForm ? data.ApplicationForm : [],
@@ -655,6 +660,7 @@ class LetterDraft extends React.Component {
                 <ApproveDialog
                     ref={this.saveApproveRef}
                     visible={this.state.approveDialogVisible}
+                    disCtl={this.state.disCtl}
                     onCancel={this.closeApproveDialog}
                     onOk={this.handleApprove}
                     lcPicker={this.letterPicker}

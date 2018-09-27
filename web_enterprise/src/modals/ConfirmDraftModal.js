@@ -2,7 +2,7 @@ import React from 'react'
 import { Timeline, Tag, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
 const Step = Steps.Step;
 
-const constants = require("../routes/constant");
+const CONSTANTS = require("../routes/constant");
 const { Header, Content, Sider } = Layout;
 
 const ConfirmDraftModal = (props) => {
@@ -15,7 +15,7 @@ const ConfirmDraftModal = (props) => {
         { title: '名称', dataIndex: 'FileName', key: 'FileName' },
         { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
         { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-        { title: '操作', key: 'operation', render: (text, record, index) => <span><a href={constants.URL_FILE_SERVER+record.FileUri}>{constants.COMM_OP_FILE}</a></span>, }
+        { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri+"/"+record.FileName}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
     ];
 
     const record = data ? data.detail.Record : [],

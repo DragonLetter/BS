@@ -270,15 +270,12 @@ class LetterCLosing extends React.Component {
         this.getDepositData();
     }
 
-    fileDetail = (key) => {
-        
-    }
     render() {
         const columns = [
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>,}
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         let data = this.state.letters ? this.state.letters : [],
             applicant = data.Applicant ? data.Applicant : [],

@@ -747,15 +747,12 @@ class LetterBill extends React.Component {
         else
             return <span><a onClick={() => this.billDetail(record)}>详情</a></span>;
     }
-    fileDetail = (key) => {
-
-    }
     render() {
         const columns = [
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render: (text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         // 合同及附件证明材料部分组件
         const billcolumns = [

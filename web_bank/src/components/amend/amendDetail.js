@@ -21,7 +21,7 @@ const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackE
 const ApproveDialog = Form.create()(
     (props) => {
         const options = [{ label: '', value: '' },];
-        const { visible, onCancel, onOk, dataform, data, form } = props;
+        const { visible, disCtl, onCancel, onOk, dataform, data, form } = props;
         const { getFieldDecorator } = form;
         const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 }, };
 
@@ -43,7 +43,7 @@ const ApproveDialog = Form.create()(
                                 rules: [{ required: true, message: '请填写审核说明, 内容必须填写.' }],
                             })
                                 (
-                                <TextArea rows={4} placeholder="请填写审核说明,内容必须填写。" />
+                                <TextArea disabled={disCtl} rows={4} placeholder="请填写审核说明,内容必须填写。" />
                                 )
                         }
                     </FormItem>
@@ -97,6 +97,7 @@ class AmendIssuing extends React.Component {
             bordered: false,
             approveDialogVisible: false,
             rejectDialogVisible: false,
+            disCtl:false,
             deposit: {},
             depositDoc: {},
             amendState: {},
@@ -153,7 +154,11 @@ class AmendIssuing extends React.Component {
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
                     res.json().then((data) => {
+                        let disCtl = true;
+                        if (sessionStorage.getItem('userType') == 11) 
+                            disCtl = false;
                         this.setState({
+                            disCtl: disCtl,
                             letters: data,
                         });
                     });
@@ -488,15 +493,12 @@ class AmendIssuing extends React.Component {
         // this.getLCProcessFlows();
         this.getDepositData();
     }
-    fileDetail = (key) => {
-        
-    }
     render() {
         const columns = [
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render:(text, record, index) => <span><a onClick={() => this.fileDetail(index)}>{CONSTANTS.COMM_OP_FILE}</a></span>,}
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         let data = this.state.letters ? this.state.letters : [],
             // applicationForm = data.ApplicationForm ? data.ApplicationForm : [],
@@ -763,6 +765,7 @@ class AmendIssuing extends React.Component {
                 <ApproveDialog
                     ref={this.saveApproveRef}
                     visible={this.state.approveDialogVisible}
+                    disCtl={this.state.disCtl}
                     onCancel={this.closeApproveDialog}
                     onOk={this.handleApprove}
                     dataform={this.state.amendState}

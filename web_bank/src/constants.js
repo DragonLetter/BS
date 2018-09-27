@@ -1,3 +1,6 @@
+
+var nodeConf = require('../config/nodeconf.json');
+
 // system and configure name
 export const SYS_NAME = '数字信用证银行系统'
 export const SYS_WELCOME_BACK ='欢迎回来'
@@ -76,3 +79,5 @@ export const COMM_OP_FILE = '下载查看'
 export const ERROR_LOGIN = '用户名密码错误，请重新登录！'
 export const ERROR_APPLICATION_FORM_APPROVED = "交易执行失败, 请检查信用证编号, 金额是否正确。"
 export const ERROR_SIGNED_FORM_AUDIT = "审核执行失败, 请检查信息是否正确。"
+
+export const URL_FILE_SERVER = "http://" + nodeConf["FileServer"].IP + ":" + nodeConf["FileServer"].Port + nodeConf["FileServer"].Path

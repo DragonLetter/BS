@@ -14,5 +14,14 @@
     "Log4js": {
         "level": "debug",
         "appendersType": "file"
+    },
+    "FileServerQiNiu": {
+        "ACCESS_KEY": "sj-sgesDLQGNkBLk53H6qSBkbR47dk2gvQXFpDyZ",
+        "SECRET_KEY": "l7WfJ9Qe1hJfdTsALABp0gsJu_mdbo_t2UbW4PVz"
+    },
+    "FileServer": {
+        "IP": "39.104.48.28",
+        "Port": "80",
+        "Path": "/nuoye/upload"
     }
 }

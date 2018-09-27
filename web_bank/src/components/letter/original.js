@@ -90,7 +90,7 @@ const RejectDialog = Form.create()(
 
 const fileUploadOptions = {
     name: 'file',
-    action: serverBackEnd + '/api/document/upload',
+    action: serverBackEnd + '/api/document/upload/default',
     withCredentials: true,
     onChange(info) {
         if (info.file.status !== 'uploading') {

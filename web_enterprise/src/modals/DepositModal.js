@@ -34,7 +34,7 @@ const DepositModal = Form.create()((props) => {
         depositDoc.Uploader = info.file.response.uploader;
     }
 
-    const depositFileUploadOptions = getFileUploadOptions(onFileChange);
+    const depositFileUploadOptions = getFileUploadOptions('deposit', onFileChange);
 
     const normFile = function(){
         return depositDoc;

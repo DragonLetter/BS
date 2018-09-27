@@ -400,9 +400,9 @@ const SecondStepForm = Form.create()(
             attachments.push(attachment);
         }
 
-        const contractFileUploadOptions = getFileUploadOptions(onContractChange);
+        const contractFileUploadOptions = getFileUploadOptions('contract', onContractChange);
 
-        const documentFileUploadOptions = getFileUploadOptions(onAttachmentChange);
+        const documentFileUploadOptions = getFileUploadOptions('accessary', onAttachmentChange);
 
         return (
             <Modal

@@ -73,10 +73,10 @@ export function request(url, options){
         });
 }
 
-export function getFileUploadOptions(onChange, onRemove){
+export function getFileUploadOptions(type, onChange, onRemove){
     const options = {
         name: 'file',
-        action: serverIP + '/api/Document/Upload',
+        action: serverIP + '/api/Document/Upload/' + type,
         withCredentials: true,
         onChange(info) {
             if (info.file.status !== 'uploading') {

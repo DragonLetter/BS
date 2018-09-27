@@ -156,10 +156,10 @@ class HandoverBillsModal extends React.Component {
             fileList.push(attachment);
             onFileChange(fileList);
         }
-        const documentFileUploadOptions = getFileUploadOptions(onDocumentChange);
+        const documentFileUploadOptions = getFileUploadOptions('handover', onDocumentChange);
         // const documentFileUploadOptions = {
         //     name: 'file',
-        //     action: 'http://localhost:8080/api/Document/Upload',
+        //     action: 'http://localhost:8080/api/Document/Upload/default',
 
         //     onChange(info) {
         //         if (info.file.status !== 'uploading') {

@@ -978,7 +978,7 @@ paths:
           schema:
             $ref: "#/definitions/TransFData"
       x-swagger-router-controller: "Document"
-  /Document/Upload:
+  /Document/Upload/{type}:
     post:
       tags:
       - "Document"
@@ -990,6 +990,11 @@ paths:
       produces:
       - "application/json"
       parameters:
+      - name: "type"
+        in: "path"
+        description: "the different area of files"
+        required: true
+        type: "string"
       - name: "additionalMetadata"
         in: "formData"
         description: "Additional data to pass to server"

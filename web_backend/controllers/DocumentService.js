@@ -4,6 +4,7 @@ var crypto = require('crypto');
 var keyHelper = require("../keyhelper");
 var pdf = require('html-pdf');
 var fs = require('fs');
+var fileServer = require('../utils/fileServer');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
@@ -56,33 +57,56 @@ exports.uploadFile = function (req, res, next) {
   var privateKey = keyHelper.getPrivateKey(req);
   var signture = sign.sign(privateKey);
   var currentUser = req.session.user;
+  var fileType = args.type.value;
 
-  // getCertificateId(req).then(certId => {
-    var doc = {
-      "fileName": fileName,
-      "mime": mime,
-      "length": fileSize,
-      "content": content,
-      "hash": hash,
-      "signature": Buffer.from(signture).toString("hex"),
-      "certId": 1 //certId
-    };
-    models.Document.create(doc).then(function (data) {
-      var result = {
-        "id": data.id,
+  // 上传到文件服务器
+  var result = fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), fileName);
+  if (null != result) {
+    if (result.success == 1) {
+      Logger.debug("upload finished.");
+      var resp = {
+        "id": 1,
         "fileName": fileName,
         "mime": mime,
         "length": fileSize,
         "fileHash": hash,
-        "signature": data.signature
+        "signature": signture
       };
       if (currentUser != undefined) {
-        result.uploader = currentUser.username;
+        resp.uploader = currentUser.username;
       }
 
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(result));
-    });
+      res.end(JSON.stringify(resp));
+    }
+  }
+
+  // getCertificateId(req).then(certId => {
+  // var doc = {
+  //   "fileName": fileName,
+  //   "mime": mime,
+  //   "length": fileSize,
+  //   "content": content,
+  //   "hash": hash,
+  //   "signature": Buffer.from(signture).toString("hex"),
+  //   "certId": 1 //certId
+  // };
+  // models.Document.create(doc).then(function (data) {
+  //   var result = {
+  //     "id": data.id,
+  //     "fileName": fileName,
+  //     "mime": mime,
+  //     "length": fileSize,
+  //     "fileHash": hash,
+  //     "signature": data.signature
+  //   };
+  //   if (currentUser != undefined) {
+  //     result.uploader = currentUser.username;
+  //   }
+
+  //   res.setHeader('Content-Type', 'application/json');
+  //   res.end(JSON.stringify(result));
+  // });
   // });
 }
 

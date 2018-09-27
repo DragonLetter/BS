@@ -154,7 +154,7 @@ class HandoverBillsModal extends React.Component {
             attachment.FileHash = info.file.response.fileHash;
             attachment.FileSignature = info.file.response.signature;
             attachment.Uploader = info.file.response.uploader;
-            attachment.FileUri = 'handover';
+            attachment.FileUri = info.file.response.dirName;
             fileList.push(attachment);
             onFileChange(fileList);
         }

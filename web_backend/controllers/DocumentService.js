@@ -71,7 +71,8 @@ exports.uploadFile = function (req, res, next) {
         "mime": mime,
         "length": fileSize,
         "fileHash": hash,
-        "signature": Buffer.from(signture).toString("hex")
+        "signature": Buffer.from(signture).toString("hex"),
+        "dirName": fileType
       };
       if (currentUser != undefined) {
         resp.uploader = currentUser.username;

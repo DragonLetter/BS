@@ -33,7 +33,7 @@ const DepositModal = Form.create()((props) => {
         depositDoc.FileHash = info.file.response.fileHash;
         depositDoc.FileSignature = info.file.response.signature;
         depositDoc.Uploader = info.file.response.uploader;
-        depositDoc.FileUri = 'deposit';
+        depositDoc.FileUri = info.file.response.dirName;
     }
 
     const depositFileUploadOptions = getFileUploadOptions('deposit', onFileChange);

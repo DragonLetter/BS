@@ -3,6 +3,7 @@ import { Timeline, Row, Layout, Table, Icon, Steps, Col, Modal } from 'antd'
 import { LC_STEPS, LC_HANDOVER_STEPS_SHOW } from '../routes/constant';
 
 const { Content } = Layout;
+const constants = require("../routes/constant");
 
 const DraftModal = (props) => {
     // 外部传入数据
@@ -12,7 +13,8 @@ const DraftModal = (props) => {
     const attachmentColumns = [
         { title: '名称', dataIndex: 'FileName', key: 'FileName' },
         { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
-        { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' }
+        { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
+        { title: '操作', key: 'operation', render: (text, record, index) => <span><a href={constants.URL_FILE_SERVER+record.FileUri}>{constants.COMM_OP_FILE}</a></span>, }
     ],
         handoverColumns = [
             { title: '货运单号', dataIndex: 'BolNO', key: 'BolNO' },

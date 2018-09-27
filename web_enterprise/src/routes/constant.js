@@ -1,3 +1,5 @@
+
+var nodeConf = require('../../config/nodeconf.json');
 // 1.返回数据里记录的信息
 exports.LC_STEPS = {
     LCStart: "开始",
@@ -77,3 +79,6 @@ exports.AMEND_PROCESSING_STEPS = ['通知行收到信用证通知', "受益人�
 exports.APPLICANT_HANDOVER_PROCESSING_STEPS = ["申请人付款"];
 
 exports.LC_STATUS = ["信用证申请", "信用证草稿", "信用证正本", "信用证正本修改", "信用证生效", "交单", "承兑", "付款", "拒付", "闭卷"];
+
+exports.COMM_OP_FILE = '下载查看'
+exports.URL_FILE_SERVER = "http://" + nodeConf["FileServer"].IP + ":" + nodeConf["FileServer"].Port + nodeConf["FileServer"].Path+"/"

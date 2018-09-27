@@ -6,5 +6,10 @@
     "Enterprise": {
         "IP": "localhost",
         "Port": 8000
+    },
+    "FileServer": {
+        "IP": "39.104.48.28",
+        "Port": "80",
+        "Path": "/file"
     }
 }

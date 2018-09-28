@@ -598,7 +598,7 @@ function writeBillPdf(req, id, resw) {
     fabric.query(req, "getLcByNo", [id], function (error, resp) {
         if (resp == null || resp.result == null) {
             // console.log("1-----resp result is null!!!!");
-            // resw.end();
+             resw.end();
             return;
         }
         var resultObj = JSON.parse(resp.result).LetterOfCredit;
@@ -626,12 +626,12 @@ function writeBillPdf(req, id, resw) {
         var billHtmlTabs = "";
         var k;
         if (resultBill != null) {
-            // console.log("le: "+resultBill.length);
+             //console.log("le: "+resultBill.length);
             for (k = 0; k < resultBill.length; k++) {
-                // console.log("no"+resultBill[k].No);
-                // console.log(resultBill[k].HandoverAmount);
-                // console.log(resultObj.IssuingBank.Name);
-                // console.log(resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T')));
+                 //console.log("no"+resultBill[k].No);
+                 //console.log(resultBill[k].HandoverAmount);
+                 //console.log(resultObj.IssuingBank.Name);
+                 //console.log(resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T')));
                 billHtmlTabs += (
                     "<tr>" +
                     "<td width=103  style='width:77.35pt;border:solid black 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;'>" +

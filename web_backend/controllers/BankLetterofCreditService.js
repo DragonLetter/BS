@@ -2,6 +2,8 @@
 var fabric = require("../fabric");
 var models = require('../models');
 var pdf = require('html-pdf');
+const log4js = require('../utils/log4js');
+const Logger = log4js.getLogger('be');
 var fileServer = require('../utils/fileServer');
 
 /**
@@ -1010,12 +1012,12 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
                     handoverAmount = resultBill[k].HandoverAmount;
                     receiveData = resultBill[k].ReceivedDate.substr(0, (resultBill[k].ReceivedDate).indexOf('T'));
                     desp = resultBill[k].Discrepancy;
-                    
-                    var resultBillOfLandings  = resultBill[k].BillOfLandings;
+
+                    var resultBillOfLandings = resultBill[k].BillOfLandings;
                     // console.log("resultBillOfLandings: " + JSON.stringify(resultBillOfLandings));
                     if (resultBillOfLandings.length != 0) {
                         // console.log("le: "+resultBill.length);
-                        billOfLandingsHtmlTabs += (                            
+                        billOfLandingsHtmlTabs += (
                             "<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 style='margin-left:20pt;border-collapse:collapse;border:none;font-size:10pt'>" +
                             "<tr>" +
                             "<td width=103 style='width:77.35pt;border:solid black 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>" +
@@ -1058,7 +1060,7 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
             }
         }
 
-       
+
         var isAgreeText = "";
         if (isAgree == "true") {
             isAgreeText = ("（<span>√</span>）同意承付,并在此确认已收到上述信用证项下全套单据。</span></p>" +
@@ -1195,13 +1197,14 @@ function createPdfFile(html, pdfName, resw) {
     pdf.create(html, options).toBuffer(function (err, buffer) {
         if (err) return console.log(err);
         // res.setHeader('Content-Type', 'application/json');
-        var result = fileServer.uploadFileStream("coverletter", buffer.toJSON().data.toString(), pdfName);
-        
+        fileServer.uploadFileStream("coverletter", buffer.toJSON().data.toString(), pdfName, function (result) {
+            Logger.debug(result);
+            // console.log(result);
+        });
         // console.log(buffer.toJSON().data.toString());                   
-        // console.log(pdfName);
-        // console.log(JSON.stringify(result));
+        // console.log(pdfName);       
         resw.end(JSON.stringify("审核通过"));
-      });
+    });
 
     // pdf.create(html, options).toFile(function (err, res) {
     //     if (err) {

@@ -16,7 +16,6 @@ let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "
 let isFileUploaded = false;
 
 var nodeConf = require('../../../config/nodeconf.json');
-const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 
 const ApproveDialog = Form.create()(
     (props) => {
@@ -287,8 +286,8 @@ class LetterCLosing extends React.Component {
         if (data.Contract)
             lcdata[0] = data.Contract;
         let btnDivHtml;
-        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
-        let pdfAcceptance = serverBackEnd + "/cd_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
                 <div style={{ marginTop: '20px', marginLeft: '16px', marginRight: '16px', marginBottom: '5px' }}>
@@ -432,18 +431,12 @@ class LetterCLosing extends React.Component {
                             </div>
                         </TabPane>
 
-                        <TabPane tab="面函(正本)" key="4" >
+                        <TabPane tab="面函" key="4" >
                             <iframe src={pdfPath} width="100%" height="400">
 
                             </iframe>
 
-                        </TabPane>
-                        <TabPane tab="面函(承兑)" key="5" >
-                            <iframe src={pdfAcceptance} width="100%" height="400">
-
-                            </iframe>
-
-                        </TabPane>
+                        </TabPane>                        
                     </Tabs>
 
                 </Content>

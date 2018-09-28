@@ -17,7 +17,6 @@ let lcAttachment = { "no": "", "name": "", "uri": "", "hash": "", "signature": "
 let isFileUploaded = false;
 
 var nodeConf = require('../../../config/nodeconf.json');
-const serverBackEnd = "http://" + nodeConf["BackEnd"].IP + ":" + nodeConf["BackEnd"].Port;
 
 const ApproveDialog = Form.create()(
     (props) => {
@@ -452,7 +451,7 @@ class LetterDraft extends React.Component {
         if (data.Contract)
             lcdata[0] = data.Contract;
         let btnDivHtml;
-        let pdfPath = serverBackEnd + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
 
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (

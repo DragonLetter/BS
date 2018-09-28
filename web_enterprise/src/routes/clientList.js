@@ -45,7 +45,7 @@ const AddClientForm = Form.create()(
             labelCol: { span: 7 },
             wrapperCol: { span: 15 },
         };
-        const dateFormat = 'YYYY/MM/DD';
+        const dateFormat = 'YYYY-MM-DD';
         return (
             <Modal
                 visible={visible}

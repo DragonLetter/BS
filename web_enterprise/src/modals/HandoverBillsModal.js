@@ -1,9 +1,7 @@
 import React from 'react'
 import { Timeline, Upload, Popconfirm, Tag, Tabs, Row, Card, Layout, Breadcrumb, Collapse, InputNumber, Table, Icon, Steps, Form, Input, Select, Checkbox, DatePicker, Col, Radio, Button, Modal, Badge, Menu, Dropdown, message } from 'antd'
 import { fetch_get, fetch_post, request, getFileUploadOptions } from '../utils/common';
-const Step = Steps.Step;
-
-const { Header, Content, Sider } = Layout;
+import moment from 'moment';
 
 const EditableCell = ({ editable, value, onChange }) => (
     <div>
@@ -79,13 +77,24 @@ class HandoverBillsModal extends React.Component {
     }
 
     renderColumns(text, record, column) {
-        return (
-            <EditableCell
-                editable={record.editable}
-                value={text}
-                onChange={value => this.handleChange(value, record.key, column)}
-            />
-        );
+        if ('shippingTime' == column) {
+            return (
+                <DatePicker
+                    placeholder="发货日期"
+                    format="YYYY-MM-DD"
+                    disabled={record.editable ? false : true}
+                    onChange={value => this.handleDateChange(value, record.key, column)}
+                />
+            );
+        } else {
+            return (
+                <EditableCell
+                    editable={record.editable}
+                    value={text}
+                    onChange={value => this.handleChange(value, record.key, column)}
+                />
+            );
+        }
     }
 
     handleAdd = () => {
@@ -101,6 +110,15 @@ class HandoverBillsModal extends React.Component {
             dataSource: [...dataSource, newData],
             count: count + 1,
         });
+    }
+
+    handleDateChange(value, key, column) {
+        const newData = [...this.state.dataSource];
+        const target = newData.filter(item => key === item.key)[0];
+        if (target) {
+            target[column] = value.format('YYYY-MM-DD').toString();
+            this.setState({ dataSource: newData });
+        }
     }
 
     handleChange(value, key, column) {

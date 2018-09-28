@@ -210,7 +210,7 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('ExpiryDate', {
                                         rules: [{ required: true, message: '请输入到期日!' }],
                                     })(
-                                        <DatePicker placeholder="到期日" style={{ width: '100%' }} />
+                                        <DatePicker placeholder="到期日" style={{ width: '100%' }} format="YYYY-MM-DD"/>
                                     )}
                                 </FormItem>
                             </Col>
@@ -291,7 +291,7 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('LastestShipDate', {
                                         rules: [{ required: true, message: '请选择最迟货运/服务提供日！' }],
                                     })(
-                                        <DatePicker placeholder="最迟货运/服务提供日" style={{ width: '100%' }} />
+                                        <DatePicker placeholder="最迟货运/服务提供日" style={{ width: '100%' }} format="YYYY-MM-DD"/>
                                     )}
                                 </FormItem>
                             </Col>
@@ -713,6 +713,8 @@ class LocalLC extends React.Component {
             values.AdvisingBankId = parseInt(values.AdvisingBankId);
             values.AfterSight = parseInt(values.AfterSight);
             values.DocDelay = parseInt(values.DocDelay);
+            // values.ExpiryDate = values.ExpiryDate.format('YYYY-MM-DD');
+            // values.LastestShipDate = values.LastestShipDate.format('YYYY-MM-DD');
             if (values.Amount < values.EnsureAmount)
                 return alert("输入正确的信用证金额及保证金金额！");
             formValues = values;

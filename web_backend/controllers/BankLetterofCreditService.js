@@ -2,6 +2,8 @@
 var fabric = require("../fabric");
 var models = require('../models');
 var pdf = require('html-pdf');
+var fileServer = require('../utils/fileServer');
+
 /**
  * 开证行：正式开立信用证，共识，并发送通知给网络参与方（开证 or 拒绝）
  * 

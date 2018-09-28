@@ -783,7 +783,7 @@ class LocalLC extends React.Component {
         }
 
         let values = {
-            no: this.state.LCHandoverData.detail.key,
+            no: this.state.LCHandoverData.detail.Key,
             amount: document.getElementById("handoverAmount").value,
             billinfo: billInfo,
             billFile: this.state.handoverBillsFile

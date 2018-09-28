@@ -964,7 +964,7 @@ function writeBillPdf(req, id, resw) {
         var filePath = path.resolve(__dirname, '../pdf/');
         // html2Pdf(htmlStr, filePath + filename);
 
-        createPdf(htmlStr, filePath + '/zb_' + id + "_" + resultObj.LCNo + '.pdf', resw);
+        createPdfFile(htmlStr, 'zb_' + id + "_" + resultObj.LCNo + '.pdf', resw);
 
     });
 }

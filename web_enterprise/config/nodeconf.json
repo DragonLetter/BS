@@ -4,7 +4,7 @@
         "Port": 8080
     },
     "Enterprise": {
-        "IP": "localhost",
+        "IP": "39.104.175.115",
         "Port": 8000
     },
     "FileServer": {

@@ -470,7 +470,7 @@ class LetterDraft extends React.Component {
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri+"/"+record.FileName}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         let data = this.state.letter ? this.state.letter : [],
             applicationForm = data.ApplicationForm ? data.ApplicationForm : [],
@@ -481,6 +481,9 @@ class LetterDraft extends React.Component {
             goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
             isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
             attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
+            contract = applicationForm.Contract? applicationForm.Contract : [],
+            lctDeposit = data.LCTransDeposit? data.LCTransDeposit : [],
+            lctdDoc = lctDeposit.DepositDoc? lctDeposit.DepositDoc : [],  
             chargeInIssueBank = "在开证行产生的费用，由" + (applicationForm.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
             chargeOutIssueBank = "在开证行外产生的费用，由" + (applicationForm.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
             docDelay = "单据必须自运输单据签发日" + applicationForm.docDelay + "日内提交，且不能低于信用证有效期。",
@@ -488,7 +491,59 @@ class LetterDraft extends React.Component {
             Transfer = applicationForm.Transfer === "1" ? "可转让" : "不可转让",
             Confirmed = applicationForm.Confirmed === "1" ? "可保兑" : "不可保兑",
             OverLow = "短装:" + applicationForm.Lowfill + "    溢装:" + applicationForm.Overfill;
-
+        
+        let thCon = (<div></div>);
+        if( contract.FileName ){
+            let tCon = [];
+            tCon[0] = contract;
+            thCon = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={tCon}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
+        let thAtt = (<div></div>);
+        if( attachments.length > 0){
+            thAtt = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>附加资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={attachments}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
+        let thDep = (<div></div>);
+        if( lctdDoc.FileName ){
+            let tDep = [];
+            tDep[0] = lctdDoc;
+            thDep = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>单据资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={tDep}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
         let btnDivHtml;
         if (this.state.letter != null && this.state.letter.CurrentStep != "" && this.state.letter.CurrentStep == "BankConfirmApplyFormStep" &&
             parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
@@ -620,16 +675,14 @@ class LetterDraft extends React.Component {
                                 </Row>
                             </div>
 
-                            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
-                                <Row>
-                                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同及申请材料</Col>
-                                </Row>
-                                <Table
-                                    columns={columns}
-                                    dataSource={attachments}
-                                    pagination={false}
-                                    showHeader={false}
-                                />
+                            <div>
+                                {thCon}
+                            </div>
+                            <div>
+                                {thAtt}
+                            </div>
+                            <div>
+                                {thDep}
                             </div>
 
                             <div style={{ margin: '5px 8px', borderTop: '1px solid #e6ebf1', minHeight: 20 }}>

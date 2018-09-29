@@ -399,21 +399,68 @@ class LetterRedemption extends React.Component {
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri+"/"+record.FileName}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         let data = this.state.letters.LetterOfCredit ? this.state.letters.LetterOfCredit : [],
             applicant = data.Applicant ? data.Applicant : [],
             beneficiary = data.Beneficiary ? data.Beneficiary : [],
             issuingBank = data.IssuingBank ? data.IssuingBank : [],
             advisingBank = data.AdvisingBank ? data.AdvisingBank : [],
-            attachments = data.Attachments ? data.Attachments : [];
-        let boldata = [];
-        if (this.state.depositDoc)
-            boldata[0] = this.state.depositDoc;
-        let lcdata = [];
-        if (data.Contract)
-            lcdata[0] = data.Contract;
-
+            attachments = data.Attachments ? data.Attachments : [],
+            contract = data.Contract? data.Contract : [],
+            lctdDoc = this.state.depositDoc? this.state.depositDoc : [];
+        let thCon = (<div></div>);
+        if( contract.FileName ){
+            let tCon = [];
+            tCon[0] = contract;
+            thCon = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={tCon}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
+        let thAtt = (<div></div>);
+        if( attachments.length > 0){
+            thAtt = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>附加资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={attachments}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
+        let thDep = (<div></div>);
+        if( lctdDoc.FileName ){
+            let tDep = [];
+            tDep[0] = lctdDoc;
+            thDep = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>单据资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={tDep}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
@@ -525,29 +572,13 @@ class LetterRedemption extends React.Component {
                                     </Row>
                                 </div>
                                 <div>
+                                    {thCon}
                                 </div>
-                                <Row>
-                                    <Col style={{ marginTop: '30px', marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}></Col>
-                                </Row>
-                                <Table
-                                    columns={columns}
-                                    dataSource={lcdata}
-                                    pagination={false}
-                                    showHeader={false}
-                                />
-                                <Table
-                                    columns={columns}
-                                    dataSource={attachments}
-                                    pagination={false}
-                                    showHeader={false}
-                                />
-                                {/* <Table
-                                    columns={columns}
-                                    dataSource={attachments}
-                                    pagination={false}
-                                    showHeader={false}
-                                /> */}
                                 <div>
+                                    {thAtt}
+                                </div>
+                                <div>
+                                    {thDep}
                                 </div>
                             </div>
                         </TabPane>

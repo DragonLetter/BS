@@ -10,11 +10,11 @@ const DraftModal = (props) => {
     const { visible, onCancel, onSubmit, data, form } = props;
 
     // 表单结构定义：附件表和交单表
-    const attachmentColumns = [
+    const columns = [
         { title: '名称', dataIndex: 'FileName', key: 'FileName' },
         { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
         { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-        { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri+"/"+record.FileName}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
+        { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
     ],
         handoverColumns = [
             { title: '货运单号', dataIndex: 'BolNO', key: 'BolNO' },
@@ -31,8 +31,10 @@ const DraftModal = (props) => {
         applicant = applicationForm.Applicant ? applicationForm.Applicant : [],
         beneficiary = applicationForm.Beneficiary ? applicationForm.Beneficiary : [],
         goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
-        contract = applicationForm.Contract ? applicationForm.Contract : {},
         attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
+        contract = applicationForm.Contract? applicationForm.Contract : [],
+        lctDeposit = record.LCTransDeposit? record.LCTransDeposit : [],
+        lctdDoc = lctDeposit.DepositDoc? lctDeposit.DepositDoc : [],  
         title = "国内信用证详情——" + (record.lcNo || '等待银行审核'),
         transport = (goodsInfo.allowPartialShipment === "1" ? "允许分批/分次 " : '') + (goodsInfo.allowTransShipment === "1" ? "允许转运/分期" : ''),
         isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
@@ -73,6 +75,58 @@ const DraftModal = (props) => {
             depositDisplay = { display: "" };
             handoverDisplay = { display: "" };
             break;
+    }
+    let thCon = (<div></div>);
+    if( contract.FileName ){
+        let tCon = [];
+        tCon[0] = contract;
+        thCon = (
+        <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+            <Row>
+                <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同资料</Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={tCon}
+                pagination={false}
+                showHeader={false}
+            />
+        </div>
+        );
+    }
+    let thAtt = (<div></div>);
+    if( attachments.length > 0){
+        thAtt = (
+        <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+            <Row>
+                <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>附加资料</Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={attachments}
+                pagination={false}
+                showHeader={false}
+            />
+        </div>
+        );
+    }
+    let thDep = (<div></div>);
+    if( lctdDoc.FileName ){
+        let tDep = [];
+        tDep[0] = lctdDoc;
+        thDep = (
+        <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+            <Row>
+                <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>单据资料</Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={tDep}
+                pagination={false}
+                showHeader={false}
+            />
+        </div>
+        );
     }
 
     // 构造交单列表
@@ -210,21 +264,11 @@ const DraftModal = (props) => {
                         </Row>
                     </div>
                     <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1', minHeight: 20 }}></div>
-                    {/* 合同附件部分 */}
-                    <div style={{ margin: '12px 16px' }}>
-                        <Row key={15}>
-                            <Col style={{ marginTop: '5px', fontWeight: 800, fontSize: '13px', color: '#32325d' }} span={12}>合同附件</Col>
-                            <Col style={{ marginTop: '5px', fontSize: '13px', textAlign: 'right' }} span={12} offset={0}>
-                            </Col>
-                        </Row>
+                    <div>
+                        {thCon}
                     </div>
-                    <div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
-                        <Table
-                            columns={attachmentColumns}
-                            dataSource={attachments}
-                            pagination={false}
-                            showHeader={false}
-                        />
+                    <div>
+                        {thAtt}
                     </div>
                     {/* 保证金信息 */}
                     <div style={depositDisplay}>
@@ -243,16 +287,8 @@ const DraftModal = (props) => {
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>已缴金额</Col>
                                 <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d' }} span={6}>{depositInfo.commitAmount}</Col>
                             </Row>
-                            <Row key={18}>
-                                <Col style={{ marginTop: '20px', marginBottom: '12px', fontSize: '12px', color: '#32325d' }} span={6}>单据信息</Col>
-                            </Row>
-                            <div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
-                                <Table
-                                    columns={attachmentColumns}
-                                    dataSource={contract.DepositDoc}
-                                    pagination={false}
-                                    showHeader={false}
-                                />
+                            <div>
+                                {thDep}
                             </div>
                         </div>
                     </div>

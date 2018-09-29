@@ -444,7 +444,7 @@ class LetterDraft extends React.Component {
             { title: '名称', dataIndex: 'FileName', key: 'FileName' },
             { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
             { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-            { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri+"/"+record.FileName}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
+            { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
         ];
         let data = this.state.letters ? this.state.letters : [],
             // applicationForm = data.ApplicationForm ? data.ApplicationForm : [],
@@ -455,6 +455,8 @@ class LetterDraft extends React.Component {
             goodsInfo = data.GoodsInfo ? data.GoodsInfo : [],
             isAtSight = data.isAtSight === "true" ? "即期" : ("发运/服务交付" + data.afterSight + "日后"),
             attachments = data.Attachments ? data.Attachments : [],
+            contract = data.Contract? data.Contract : [],
+            lctdDoc = this.state.DepositDoc? this.state.DepositDoc : [],  
             chargeInIssueBank = "在开证行产生的费用，由" + (data.chargeInIssueBank === "1" ? "申请人" : "受益人") + "提供。",
             chargeOutIssueBank = "在开证行外产生的费用，由" + (data.chargeOutIssueBank === "1" ? "申请人" : "受益人") + "提供。",
             docDelay = "单据必须自运输单据签发日" + data.docDelay + "日内提交，且不能低于信用证有效期。",
@@ -463,6 +465,58 @@ class LetterDraft extends React.Component {
             Confirmed = data.Confirmed==="1"?"可保兑":"不可保兑",
             OverLow = "短装:"+data.Lowfill+"    溢装:"+data.Overfill;
 
+        let thCon = (<div></div>);
+        if( contract.FileName ){
+            let tCon = [];
+            tCon[0] = contract;
+            thCon = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={tCon}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
+        let thAtt = (<div></div>);
+        if( attachments.length > 0){
+            thAtt = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>附加资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={attachments}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
+        let thDep = (<div></div>);
+        if( lctdDoc.FileName ){
+            let tDep = [];
+            tDep[0] = lctdDoc;
+            thDep = (
+            <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+                <Row>
+                    <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>单据资料</Col>
+                </Row>
+                <Table
+                    columns={columns}
+                    dataSource={tDep}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </div>
+            );
+        }
         let btnDivHtml;
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
@@ -649,15 +703,15 @@ class LetterDraft extends React.Component {
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
                                     </Row>
-                                    <Row>
-                                        <Col style={{ marginTop: '20px', marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同及申请材料</Col>
-                                    </Row>
-                                    <Table
-                                        columns={columns}
-                                        dataSource={attachments}
-                                        pagination={false}
-                                        showHeader={false}
-                                    />
+                                    <div>
+                                        {thCon}
+                                    </div>
+                                    <div>
+                                        {thAtt}
+                                    </div>
+                                    <div>
+                                        {thDep}
+                                    </div>
                                 </div>
                             </div>
                         </TabPane>

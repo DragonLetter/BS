@@ -15,7 +15,7 @@ const ConfirmDraftModal = (props) => {
         { title: '名称', dataIndex: 'FileName', key: 'FileName' },
         { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
         { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },
-        { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri+"/"+record.FileName}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
+        { title: '操作', key: 'operation', render: (text, record, index) => <span><a target="_blank" href={CONSTANTS.URL_FILE_SERVER+record.FileUri}>{CONSTANTS.COMM_OP_FILE}</a></span>, }
     ];
 
     const record = data ? data.detail.Record : [],
@@ -25,8 +25,10 @@ const ConfirmDraftModal = (props) => {
         issuingBank = applicationForm.IssuingBank ? applicationForm.IssuingBank : [],
         advisingBank = applicationForm.AdvisingBank ? applicationForm.AdvisingBank : [],
         goodsInfo = applicationForm.GoodsInfo ? applicationForm.GoodsInfo : [],
-        contract = applicationForm.Contract ? applicationForm.Contract : {},
         attachments = applicationForm.Attachments ? applicationForm.Attachments : [],
+        contract = applicationForm.Contract? applicationForm.Contract : [],
+        lctDeposit = record.LCTransDeposit? record.LCTransDeposit : [],
+        lctdDoc = lctDeposit.DepositDoc? lctDeposit.DepositDoc : [],  
         transport = (goodsInfo.allowPartialShipment === "1" ? "允许分批 " : '') + (goodsInfo.allowTransShipment === "1" ? "允许转运" : ''),
         isAtSight = applicationForm.isAtSight === "true" ? "即期" : ("发运/服务交付" + applicationForm.afterSight + "日后"),
         tradeType = goodsInfo.tradeNature === "1" ? "货物贸易" : "服务贸易",
@@ -37,6 +39,58 @@ const ConfirmDraftModal = (props) => {
         Transfer = applicationForm.Transfer==="1"?"可转让":"不可转让",
         Confirmed = applicationForm.Confirmed==="1"?"可保兑":"不可保兑",
         OverLow = "短装:"+applicationForm.Lowfill+"    溢装:"+applicationForm.Overfill ;
+    let thCon = (<div></div>);
+    if( contract.FileName ){
+        let tCon = [];
+        tCon[0] = contract;
+        thCon = (
+        <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+            <Row>
+                <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同资料</Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={tCon}
+                pagination={false}
+                showHeader={false}
+            />
+        </div>
+        );
+    }
+    let thAtt = (<div></div>);
+    if( attachments.length > 0){
+        thAtt = (
+        <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+            <Row>
+                <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>附加资料</Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={attachments}
+                pagination={false}
+                showHeader={false}
+            />
+        </div>
+        );
+    }
+    let thDep = (<div></div>);
+    if( lctdDoc.FileName ){
+        let tDep = [];
+        tDep[0] = lctdDoc;
+        thDep = (
+        <div style={{ margin: '15px 5px', marginLeft: '20px', marginTop: '30px' }}>
+            <Row>
+                <Col style={{ marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>单据资料</Col>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={tDep}
+                pagination={false}
+                showHeader={false}
+            />
+        </div>
+        );
+    }
     return (
         <Modal
             visible={visible}
@@ -159,24 +213,14 @@ const ConfirmDraftModal = (props) => {
                     </Row>
                     </div>
                     <div style={{ margin: '12px 16px', borderTop: '1px solid #e6ebf1', minHeight: 20 }}></div>
-
-                    {/**
-                    * 合同附件部分
-                */}
-                    <div style={{ margin: '12px 16px' }}>
-                        <Row>
-                            <Col style={{ marginTop: '5px', fontWeight: 800, fontSize: '13px', color: '#32325d' }} span={12}>合同附件</Col>
-                            <Col style={{ marginTop: '5px', fontSize: '13px', textAlign: 'right' }} span={12} offset={0}>
-                            </Col>
-                        </Row>
+                    <div>
+                        {thCon}
                     </div>
-                    <div style={{ margin: '16px 16px', borderTop: '1px solid #e6ebf1' }}>
-                        <Table
-                            columns={attachmentColumns}
-                            dataSource={attachments}
-                            pagination={false}
-                            showHeader={false}
-                        />
+                    <div>
+                        {thAtt}
+                    </div>
+                    <div>
+                        {thDep}
                     </div>
                 </Content>
             </Layout>

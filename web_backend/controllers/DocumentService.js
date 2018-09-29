@@ -48,7 +48,8 @@ exports.uploadFile = function (req, res, next) {
 
   var content = args.file.value.buffer;
   var fileSize = args.file.value.size;
-  var fileName = uuid.v1() + "-" + args.file.value.originalname;
+  var oriFileName = args.file.value.originalname;
+  var uniqFileName = uuid.v1() + "-" + oriFileName;
   var mime = args.file.value.mimetype;
   var md5sum = crypto.createHash("md5");
   md5sum.update(content);
@@ -61,18 +62,17 @@ exports.uploadFile = function (req, res, next) {
   var fileType = args.type.value;
 
   // 上传到文件服务器
-  fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), fileName, function (result) {
+  fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), uniqFileName, function (result) {
     Logger.debug(result);
     if (JSON.parse(result).success == 1) {
-      Logger.debug("upload finished.");
       var resp = {
         // "id": 1,
-        "fileName": fileName,
+        "fileName": oriFileName,
         "mime": mime,
         "length": fileSize,
         "fileHash": hash,
         "signature": Buffer.from(signture).toString("hex"),
-        "dirName": fileType
+        "dirName": fileType + '/' + uniqFileName
       };
       if (currentUser != undefined) {
         resp.uploader = currentUser.username;

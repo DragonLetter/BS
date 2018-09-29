@@ -15,7 +15,7 @@ const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 const { TextArea } = Input;
 
-let contract = {}, attachments = [], formValues, No;
+let contract = {}, attachments = [], formValues; // No;
 
 const AddDraftProtocol = Form.create()(
     (props) => {
@@ -210,7 +210,7 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('ExpiryDate', {
                                         rules: [{ required: true, message: '请输入到期日!' }],
                                     })(
-                                        <DatePicker placeholder="到期日" style={{ width: '100%' }} format="YYYY-MM-DD"/>
+                                        <DatePicker placeholder="到期日" style={{ width: '100%' }} format="YYYY-MM-DD" />
                                     )}
                                 </FormItem>
                             </Col>
@@ -291,7 +291,7 @@ const AddDraftForm = Form.create()(
                                     {getFieldDecorator('LastestShipDate', {
                                         rules: [{ required: true, message: '请选择最迟货运/服务提供日！' }],
                                     })(
-                                        <DatePicker placeholder="最迟货运/服务提供日" style={{ width: '100%' }} format="YYYY-MM-DD"/>
+                                        <DatePicker placeholder="最迟货运/服务提供日" style={{ width: '100%' }} format="YYYY-MM-DD" />
                                     )}
                                 </FormItem>
                             </Col>
@@ -486,7 +486,7 @@ class LocalLC extends React.Component {
 
     handleLCInfo = (data) => {
         const lcs = [];
-        No = "";
+        // No = "";
         for (let i = 0; i < data.length; i++) {
             lcs.push({
                 key: i,
@@ -718,23 +718,10 @@ class LocalLC extends React.Component {
             if (values.Amount < values.EnsureAmount)
                 return alert("输入正确的信用证金额及保证金金额！");
             formValues = values;
-            request('/api/applicationform', {
-                method: "POST",
-                body: values,
-            }).then((data) => {
-                message.success("创建成功!");
-                this.handleLCInfo(data);
-                // No = data[data.length - 1].Key;
-                let keyArray = [];
-                for (let i in data) {
-                    keyArray.push(data[i].Key);
-                }
-                No = Math.max(...keyArray);
-                this.setState({
-                    createDraftFromVisible: false,
-                    secondStepFromVisible: true,
-                    loading: false,
-                });
+            this.setState({
+                createDraftFromVisible: false,
+                secondStepFromVisible: true,
+                loading: false,
             });
         })
     }
@@ -751,17 +738,18 @@ class LocalLC extends React.Component {
             }
             let data = formValues;
             data.Contract = contract;
-            data.No = No;
+            // data.No = No;
             data.Attachments = attachments;
             request('/api/applicationform', {
                 method: "POST",
                 body: data,
-            })
-                .then((data) => {
-                    this.setState({
-                        loading: false,
-                    })
-                });
+            }).then((data) => {
+                message.success("创建成功!");
+                this.handleLCInfo(data);
+                this.setState({
+                    loading: false,
+                })
+            });
         });
     }
 

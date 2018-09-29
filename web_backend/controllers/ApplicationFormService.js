@@ -4,6 +4,7 @@ var models = require('../models');
 var sequenceHelper = require("./SequenceHelper");
 var constants = require("./Constants");
 var moment = require("moment");
+var uuid = require('node-uuid');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
@@ -24,20 +25,9 @@ exports.addApplicationForm = function (req, res, next) {
     p2 = models.Corporation.findById(values.BeneficiaryId),
     p3 = models.Bank.findById(values.IssueBankId),
     p4 = models.Bank.findById(values.AdvisingBankId),
-    // p5 = models.SignedBank.find({
-    //   where: {
-    //     corporationId: values.ApplyCorpId,
-    //     bankId: values.IssueBankId,
-    //   }
-    // }),
-    // p6 = models.SignedBank.find({
-    //   where: {
-    //     corporationId: values.BeneficiaryId,
-    //     bankId: values.AdvisingBankId,
-    //   }
-    // }),
-    lcId = sequenceHelper.GenerateNewId("LC"),
-    applyId = sequenceHelper.GenerateNewId("LCApplication"), corpNo;
+    lcId = uuid.v1(),  // 使用uuid作为唯一标识
+    applyId = lcId,
+    corpNo;
 
   Promise.all([p1, p2, p3, p4, p1, p2, lcId, applyId]).then(
     function ([applicant, beneficiary, issueBank, advisingBank, applicantSign, beneficiarySign, lcIdNumber, applyIdNumber]) {
@@ -112,9 +102,10 @@ exports.addApplicationForm = function (req, res, next) {
         "Attachments": values.Attachments ? values.Attachments : [],
       };
       Logger.debug("fabricArg2: " + JSON.stringify(fabricArg2));
-      fabric.invoke(req, "saveLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
+      fabric.invoke(req, "submitLCApplication", [fabricArg1, JSON.stringify(fabricArg2)], function (err, resp) {
         if (!err) {
-          submitApplicationFormByCorp(req, corpNo, fabricArg1, res, next);
+          // submitApplicationFormByCorp(req, corpNo, fabricArg1, res, next);
+          getApplicationFormByCorp(req, corpNo, res, next);
         }
         else {
           Logger.error("error info:" + err);
@@ -160,7 +151,7 @@ exports.getAFState = function (req, res, next) {
     if (data) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(data.dataValues || {}, null, 2));
-    }else{
+    } else {
       var dAf = {
         'AFNo': args.AFNo.value,
         'step': 'BankConfirmApplyFormStep',
@@ -170,25 +161,11 @@ exports.getAFState = function (req, res, next) {
         Logger.debug("insert afstates");
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(dAf || {}, null, 2));
-        }).catch(function (e) {
+      }).catch(function (e) {
       });
     }
   });
 };
-
-function submitApplicationFormByCorp(req, corpNo, key, res, next) {
-  var id = key;
-  Logger.debug("No:" + key + " corpNo:" + corpNo);
-  fabric.invoke(req, "submitLCApplication", [id], function (err, resp) {
-    if (!err) {
-      var corpId = corpNo;
-      getApplicationFormByCorp(req, corpId, res, next);
-    }
-    else {
-      Logger.error("error info:" + err);
-    }
-  });
-}
 
 exports.addFile = function (req, res, next) {
   var args = req.swagger.params;
@@ -500,4 +477,4 @@ exports.confirmApplicationForm = function (req, res, next) {
   });
 };
 
- 
+

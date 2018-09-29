@@ -4,6 +4,7 @@ module.exports = function (sequelize, DataTypes) {
   var Corporation = sequelize.define("Corporation", {
     name: DataTypes.STRING,
     domain: DataTypes.STRING,
+    no: DataTypes.STRING,
     nation: DataTypes.STRING,
     contact: DataTypes.STRING,
     email: DataTypes.STRING,

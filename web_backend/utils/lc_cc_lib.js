@@ -76,7 +76,7 @@ module.exports = function (enrollObj, g_options, fcw, logger) {
 			event_url: g_options.event_url,
 			endorsed_hook: options.endorsed_hook,
 			ordered_hook: options.ordered_hook,
-			cc_function: 'saveLCApplication',
+			cc_function: 'submitLCApplication',
 			cc_args: [
 				"{'ApplyCorp':{'No':'DragonLedger','Name':'Lixiaohu','Domain':'org1.example.com'},'Currency':'RMB','Amount':'12345.67','IsApproved':'false','IssueBank':{'No':'ICBC','Name':'ICBC Bank','Domain':'org1.example.com'}}",
 				"{'Document':{'FileName':'lixiaohucontract','FileUri':'c:qwerty','FileHash':'56d34dad234bbdabcb3213','FileSignature':'lixiaohussignature','Uploader':'lihuichi'},'ContractNo':'201708092123','Purchaser':{'No':'DragonLedger','Name':'Lixiaohu','Domain':'org1.example.com'},'Vendor':{'No':'Apachebet','Name':'ApachebeX','Domain':'org1.example.com'},'Amount':'12345.67','Commodity':'XBox360','ContractTemplateNo':'1','ContractInstanceNo':'1'}",

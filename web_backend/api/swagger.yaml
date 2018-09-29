@@ -1896,7 +1896,6 @@ paths:
         description: "the No of the applicationform"
         required: true
         type: "string"
-
       responses:
         200:
           description: "successful operation"
@@ -2088,8 +2087,7 @@ paths:
         in: "path"
         description: "ID of ApplicationForm to return"
         required: true
-        type: "integer"
-        format: "int64"
+        type: "string"
       responses:
         200:
           description: "successful operation"
@@ -2114,8 +2112,7 @@ paths:
         in: "path"
         description: "ApplicationForm id to delete"
         required: true
-        type: "integer"
-        format: "int64"
+        type: "string"
       responses:
         400:
           description: "Invalid ID supplied"
@@ -3109,6 +3106,8 @@ definitions:
       name:
         type: "string"
       domain:
+        type: "string"
+      no:
         type: "string"
       nation:
         type: "string"

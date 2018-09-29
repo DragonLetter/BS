@@ -11,7 +11,7 @@ const ConfirmDraftModal = (props) => {
         labelCol: { span: 5 },
         wrapperCol: { span: 19 },
     };
-    const attachmentColumns = [
+    const columns = [
         { title: '名称', dataIndex: 'FileName', key: 'FileName' },
         { title: '上传人', dataIndex: 'Uploader', key: 'Uploader' },
         { title: '文件哈希值', dataIndex: 'FileHash', key: 'FileHash' },

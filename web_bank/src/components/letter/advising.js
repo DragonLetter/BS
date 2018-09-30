@@ -557,7 +557,6 @@ class LetterDraft extends React.Component {
                                     {thDep}
                                 </div>
                             </div>
-                            <div style={{ margin: '5px 8px', borderTop: '1px solid #e6ebf1', minHeight: 20 }}></div>
                             <div>
                                 {btnDivHtml}
                             </div>

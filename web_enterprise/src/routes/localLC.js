@@ -566,15 +566,18 @@ class LocalLC extends React.Component {
             .then((data) => {
                 const corporations = [];
                 for (let i = 0; i < data.length; i++) {
-                    corporations.push({
-                        key: i,
-                        id: data[i].id,
-                        name: data[i].name,
-                        nation: data[i].nation,
-                        contact: data[i].contact,
-                        email: data[i].email,
-                        creationTime: data[i].creationTime,
-                    })
+                    // 当前登录用户不能加入到合作企业列表中
+                    if (data[i].id != userId) {
+                        corporations.push({
+                            key: i,
+                            id: data[i].id,
+                            name: data[i].name,
+                            nation: data[i].nation,
+                            contact: data[i].contact,
+                            email: data[i].email,
+                            creationTime: data[i].creationTime,
+                        })
+                    }
                 }
 
                 this.setState({

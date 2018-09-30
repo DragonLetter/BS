@@ -11,10 +11,9 @@ const AmendOperationsModal = Form.create()(
         const { visible, onCancel, onOk, dataform, data, form } = props;
         const { getFieldDecorator } = form;
 
-        var billData, title;
-        if (data) {
-            billData = data.billDetail;
-            title = "信用证编号—" + data.title;
+        var  title;
+        if (data) {           
+            title = "信用证编号—" + data.lcNo;
         }
 
 

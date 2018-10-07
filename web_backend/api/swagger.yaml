@@ -4420,7 +4420,7 @@ definitions:
       RootIds:
         type: "array"
         items:
-          type: string
+          $ref: "#/definitions/BclcRootIdData"
   UnionChainReadStepNoResp:
     type: "object"
     properties:
@@ -4550,6 +4550,15 @@ definitions:
         type: "integer"
         format: "int64"
       MemberType:
+        type: "string"
+  BclcRootIdData:
+    type: "object"
+    properties:
+      RootId:
+        type: "string"
+      StepNo:
+        type: "string"
+      TxIds:
         type: "string"
 #### endregion
 

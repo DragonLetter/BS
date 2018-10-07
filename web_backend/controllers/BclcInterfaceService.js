@@ -2,6 +2,7 @@
 
 var fabric = require("../fabric");
 var bclcApi = require("../bclc/BclcApi");
+var constants = require("./Constants");
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
@@ -60,27 +61,27 @@ exports.unionChainSaveDataBE = function (lcID) {
     fabric.query(req, "getLcByNo", [lcID], function (error, resp) {
         Logger.debug("Credit detail:" + resp.result);
         var respObj = JSON.parse(resp.result);
-        var owner = respObj.Owner;
+        var rootID = respObj.no;
         var lcInfo = respObj.LetterOfCredit;
         var currStep = respObj.CurrentStep;
 
         // 构造请求数据
         var txDataReq = {
-            "OWNREF": owner.no, //"1233",
+            "OWNREF": lcInfo.LCNo, //"1233",
             "ISSUE_DT": lcInfo.applyTime, //"20170203",
             "ISS_BK_SC": lcInfo.IssuingBank.No, //"7211111111",
-            "LC_TX_CODE": lcInfo.LCNo, //"BCL0101",
+            "LC_TX_CODE": lcInfo.LCNo, //"BCL0101",业务交易码
             "ADV_BK_SC": lcInfo.AdvisingBank.No, //"CITICBNK",
             "LC_REF_ID": lcInfo.LCNo, //"7211111100000000",
-            "LC_TYPE": "test",
+            "LC_TYPE": lcInfo.isAtSight, // 即期还是远期
             "LC_EXPIRY_DT": lcInfo.expiryDate //"20170202"
         };
         var transData = {
-            "ReceiveMember": "CIBKCNBJ",
-            "NotifyMemberList": [],
+            "ReceiveMember": lcInfo.Beneficiary.No, // "CIBKCNBJ",
+            "NotifyMemberList": [lcInfo.AdvisingBank.No],
             "TxData": JSON.stringify(txDataReq),
             "CurStep": constants.STEPS_NUM[currStep], //1,
-            "rootId": "1",
+            "rootId": rootID,
             "PermTable": null,
             "LC_TX_CODE": "BCL0102"
         };

@@ -3009,7 +3009,28 @@ paths:
       x-swagger-router-controller: "BlockchainStatus"
 
 # BCLC系统接口
-  /BclcInterface/UnionChainSaveData/{appId}:
+  /BclcInterface/test/uionChainReadData/{TxID}:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统获取交易数据"
+      description: "Read tx data from BCLC"
+      operationId: "uionChainReadData"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "TxID"
+        in: "path"
+        description: "交易ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UionChainReadDataResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainSaveData:
     post:
       tags: 
       - "BclcInterface"
@@ -3019,20 +3040,149 @@ paths:
       produces: 
       - "application/json"
       parameters:
-      - name: "appId"
-        in: "path"
-        description: "ID of Application"
+      - in: "body"
+        name: "body"
+        description: "Save data request"
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          $ref: "#/definitions/UnionChainSaveDataReq"
       responses:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/BclcCreditResp"
+            $ref: "#/definitions/UnionChainSaveDataResp"
         504:
           description: "Timeout"
-      x-swagger-router-controller: "BclcInterface" 
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainReadRootIds:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统获取root ids"
+      description: "Read root ids from BCLC"
+      operationId: "unionChainReadRootIds"
+      produces: 
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UnionChainReadRootIdsResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainReadStepNo/{RootID}:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统获取信用证下StepNo"
+      description: "Read root id's step from BCLC"
+      operationId: "unionChainReadStepNo"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "RootID"
+        in: "path"
+        description: "root ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UnionChainReadStepNoResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/queryTransactionState/{TxID}:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统获取交易状态"
+      description: "Read tx state from BCLC"
+      operationId: "queryTransactionState"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "TxID"
+        in: "path"
+        description: "交易ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/QueryTransactionStateResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainReadTxIDs/{RootID}:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统获取此信用证下已有的交易TxID列表"
+      description: "Read tx id list from BCLC"
+      operationId: "unionChainReadTxIDs"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "RootID"
+        in: "path"
+        description: "root ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UnionChainReadTxIDsResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainGetPendingTx:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统获取待处理交易列表"
+      description: "Read pending Tx from BCLC"
+      operationId: "unionChainGetPendingTx"
+      produces: 
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UnionChainGetPendingTxResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainDelPendingTx/{TxID}:
+    get:
+      tags: 
+      - "BclcInterface"
+      summary: "从BCLC系统移除待处理交易列表项"
+      description: "Rempve tx from BCLC"
+      operationId: "unionChainDelPendingTx"
+      produces: 
+      - "application/json"
+      parameters:
+      - name: "TxID"
+        in: "path"
+        description: "交易ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UnionChainDelPendingTxResp"
+      x-swagger-router-controller: "BclcInterface"
+  /BclcInterface/test/unionChainSync:
+    post:
+      tags: 
+      - "BclcInterface"
+      summary: "发送模拟交易到BCLC系统"
+      description: "Send Tx sync request to BCLC"
+      operationId: "unionChainSync"
+      produces: 
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UnionChainSyncResp"
+      x-swagger-router-controller: "BclcInterface"
 #### endregion
 
 #### ---------- securityDefine region ----------
@@ -4210,10 +4360,47 @@ definitions:
       userId:
         type: "string"
   #Bclc信用证保存结果
-  BclcCreditResp:
+  UionChainReadDataResp:
     type: "object"
     properties:
-      code:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      PermTable:
+        type: "string"
+      RootId:
+        type: "string"
+      CurStep:
+        type: "integer"
+        format: "int64"
+      TxData:
+        $ref: "#/definitions/BclcTxDataResp"
+  UnionChainSaveDataReq:
+    type: "object"
+    properties:
+      ReceiveMember:
+        type: "string"
+      NotifyMemberList:
+        type: "array"
+        items:
+          type: string
+      TxData:
+        type: "string"  #$ref: "#/definitions/BclcTxDataReq"
+      CurStep:
+        type: "integer"
+        format: "int64"
+      RootId:
+        type: "string"
+      PermTable:
+        type: "string"
+      LC_TX_CODE:
+        type: "string"
+  UnionChainSaveDataResp:
+    type: "object"
+    properties:
+      Code:
         type: "integer"
         format: "int64"
       CodeMessage:
@@ -4221,8 +4408,99 @@ definitions:
       MemberHash:
         type: "string"
       TxData:
-        $ref: "#/definitions/BclcTxData"
-  BclcTxData:
+        $ref: "#/definitions/BclcTxDataResp"
+  UnionChainReadRootIdsResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      RootIds:
+        type: "array"
+        items:
+          type: string
+  UnionChainReadStepNoResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      StepNo:
+        type: "integer"
+        format: "int64"
+  QueryTransactionStateResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      ValidationCode:
+        type: "integer"
+        format: "int64"
+  UnionChainReadTxIDsResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      Data:
+        $ref: "#/definitions/BclcRootTxIDsResp"
+  UnionChainGetPendingTxResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      PendingTxs:
+        $ref: "#/definitions/BclcPendingTxResp"
+  UnionChainDelPendingTxResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+  UnionChainSyncResp:
+    type: "object"
+    properties:
+      Code:
+        type: "integer"
+        format: "int64"
+      CodeMessage:
+        type: "string"
+      Data:
+        type: "string"
+  BclcTxDataReq:
+    type: "object"
+    properties:
+      OWNREF:
+        type: "string"
+      ISSUE_DT:
+        type: "string"
+      ISS_BK_SC:
+        type: "string"
+      LC_TX_CODE:
+        type: "string"
+      ADV_BK_SC:
+        type: "string"
+      LC_REF_ID:
+        type: "string"
+      LC_TYPE:
+        type: "string"
+      LC_EXPIRY_DT:
+        type: "string"
+  BclcTxDataResp:
     type: "object"
     properties:
       curId:
@@ -4239,7 +4517,9 @@ definitions:
       recieveMember:
         $ref: "#/definitions/BclcMemberData"
       notifyMember:
-        $ref: "#/definitions/BclcMemberData"
+        type: "array"
+        items:
+          $ref: "#/definitions/BclcMemberData"
       LC_TX_CODE:
         type: "string"
   BclcMemberData:
@@ -4248,6 +4528,28 @@ definitions:
       member:
         type: "string"
       key:
+        type: "string"
+  BclcRootTxIDsResp:
+    type: "object"
+    properties:
+      RootId:
+        type: "string"
+      StepNo:
+        type: "integer"
+        format: "int64"
+      TxIds:
+        type: "string"
+  BclcPendingTxResp:
+    type: "object"
+    properties:
+      TxId:
+        type: "string"
+      RootId:
+        type: "string"
+      StepNo:
+        type: "integer"
+        format: "int64"
+      MemberType:
         type: "string"
 #### endregion
 

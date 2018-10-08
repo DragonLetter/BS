@@ -55,8 +55,8 @@ exports.unionChainSaveData = function (req, res, next) {
     });
 }
 
-exports.unionChainSaveDataBE = function (lcID) {
-    Logger.debug("lcID:" + lcID);
+exports.unionChainSaveDataBE = function (req, lcID) {
+    Logger.debug("unionChainSaveDataBE lcID:" + lcID);
 
     fabric.query(req, "getLcByNo", [lcID], function (error, resp) {
         Logger.debug("Credit detail:" + resp.result);
@@ -64,6 +64,14 @@ exports.unionChainSaveDataBE = function (lcID) {
         var rootID = respObj.no;
         var lcInfo = respObj.LetterOfCredit;
         var currStep = respObj.CurrentStep;
+        var isAtSight = lcInfo.isAtSight;
+        var lcType;
+        
+        if (isAtSight == undefined) {
+            lcType = "远期";
+        } else {
+            lcType = "即期";
+        }
 
         // 构造请求数据
         var txDataReq = {
@@ -73,7 +81,7 @@ exports.unionChainSaveDataBE = function (lcID) {
             "LC_TX_CODE": lcInfo.LCNo, //"BCL0101",业务交易码
             "ADV_BK_SC": lcInfo.AdvisingBank.No, //"CITICBNK",
             "LC_REF_ID": lcInfo.LCNo, //"7211111100000000",
-            "LC_TYPE": lcInfo.isAtSight, // 即期还是远期
+            "LC_TYPE": lcType, // 即期还是远期
             "LC_EXPIRY_DT": lcInfo.expiryDate //"20170202"
         };
         var transData = {

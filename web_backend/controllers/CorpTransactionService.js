@@ -1,7 +1,8 @@
 'use strict';
 var fabric = require("../fabric");
 var models = require('../models');
-var constants = require("./Constants")
+var constants = require("./Constants");
+var validator = require('validator');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
@@ -28,7 +29,7 @@ exports.getProcessingTransByCorpId = function (req, res, next) {
         }
         else if (Object.keys(corp).length > 0) {
             fabric.query(req, "getLcListByApplicant", [id], function (err, resp) {
-                if (!err) {
+                if (!err && validator.isJSON(resp.result)) {
                     let results = JSON.parse(resp.result);
                     results.map(lc => {
                         lc.Record.CurrentStep = constants.STEPS[lc.Record.CurrentStep];
@@ -66,8 +67,8 @@ exports.getProcessingTransByCorpId = function (req, res, next) {
                             Logger.error(err);
                         }
                     });
-                }
-                else {
+                } else {
+                    Logger.info("getLcListByApplicant result failed:" + inspect(resp));
                     Logger.error(err);
                 }
             });

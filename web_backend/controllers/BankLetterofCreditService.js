@@ -2,6 +2,7 @@
 var fabric = require("../fabric");
 var models = require('../models');
 var pdf = require('html-pdf');
+var bclcService = require('./BclcInterfaceService');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var fileServer = require('../utils/fileServer');
@@ -27,6 +28,7 @@ exports.bankIssuing = function (req, res, next) {
     fabric.invoke(req, "issueLetterOfCredit", [no, suggestion, isAgreed, JSON.stringify(docArg)], function (err, resp) {
         if (!err) {
             writePdf(req, no, res);
+            bclcService.unionChainSaveDataBE(req, no);
             // res.end(JSON.stringify("审核通过"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));
@@ -217,6 +219,7 @@ exports.LCClosing = function (req, res, next) {
 
     fabric.invoke(req, "lcClose", [p1, p2], function (err, resp) {
         if (!err) {
+            bclcService.unionChainSaveDataBE(req, p1);
             res.end(JSON.stringify("恭喜，信用证闭卷完成！"));
         } else {
             res.end(JSON.stringify("区块链交易执行失败！"));

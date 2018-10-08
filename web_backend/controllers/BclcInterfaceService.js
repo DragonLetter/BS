@@ -8,33 +8,38 @@ const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
 
 function callbackBclc(respData, res) {
-    Logger.debug("save resp:" + JSON.stringify(respData));
+    if (respData == undefined) {
+        Logger.debug("No resp data");
+        res.end();
+    } else {
+        Logger.debug("save resp:" + JSON.stringify(respData));
 
-    var result = JSON.parse(respData.substring(6));
-    // 返回数据中Code为0表示成功，1表示失败，504表示未收到区块链节点的共识响应信息
-    if (result.Code == 0) {
-        Logger.debug("Bclc resp successfully");
-    } else if (result.Code == 1) {
-        Logger.info("Bclc resp failed");
-    } else if (result.Code == 504) {
-        Logger.info("Bclc Tx timeout");
-        res.status(504);
-    } else if (result.Code == 600) {
-        Logger.info("Bclc Tx not me");
-        res.status(600);
-    } else if (result.Code == 900) {
-        Logger.info("Bclc Json encode failed");
-        res.status(900);
-    } else if (result.Code == 901) {
-        Logger.info("Bclc Json unmarshal failed");
-        res.status(901);
-    } else if (result.Code == 999) {
-        Logger.info("Bclc unsupport Tx");
-        res.status(999);
+        var result = JSON.parse(respData.substring(6));
+        // 返回数据中Code为0表示成功，1表示失败，504表示未收到区块链节点的共识响应信息
+        if (result.Code == 0) {
+            Logger.debug("Bclc resp successfully");
+        } else if (result.Code == 1) {
+            Logger.info("Bclc resp failed");
+        } else if (result.Code == 504) {
+            Logger.info("Bclc Tx timeout");
+            res.status(504);
+        } else if (result.Code == 600) {
+            Logger.info("Bclc Tx not me");
+            res.status(600);
+        } else if (result.Code == 900) {
+            Logger.info("Bclc Json encode failed");
+            res.status(900);
+        } else if (result.Code == 901) {
+            Logger.info("Bclc Json unmarshal failed");
+            res.status(901);
+        } else if (result.Code == 999) {
+            Logger.info("Bclc unsupport Tx");
+            res.status(999);
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(result));
     }
-
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(result));
 }
 
 exports.unionChainSaveData = function (req, res, next) {
@@ -66,7 +71,7 @@ exports.unionChainSaveDataBE = function (req, lcID) {
         var currStep = respObj.CurrentStep;
         var isAtSight = lcInfo.isAtSight;
         var lcType;
-        
+
         if (isAtSight == undefined) {
             lcType = "远期";
         } else {

@@ -733,7 +733,7 @@ class AmendIssuing extends React.Component {
 
                                     <Row>
                                         <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#6b7c93' }} span={3}>其他条款</Col>
-                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d', height: '40px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
+                                        <Col style={{ margin: '5px 0px', fontSize: '12px', color: '#32325d', height: '50px' }} span={21}><div>{chargeInIssueBank}<br />{chargeOutIssueBank}<br />{docDelay}<br />发起日期不能早于开证日期。</div></Col>
                                     </Row>
                                     <Row>
                                         <Col style={{ marginTop: '20px', marginBottom: '6px', fontSize: '12px', color: '#32325d', fontWeight: 'bold' }} span={6}>合同及申请材料</Col>

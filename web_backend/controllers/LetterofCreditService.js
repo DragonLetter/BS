@@ -21,7 +21,7 @@ exports.lcAmendation = function (req, res, next) {
         "AmendedCurrency": value.amendedCurrency,
         "AmendedAmt": value.amendedAmt,
         "AddedDays": value.addedDays,
-        "AmendExpiryDate": value.amendExpiryDate,
+        "AmendExpiryDate": value.amendExpiryDate.substr(0, 19).replace('T', ' '),
         "TransPortName": value.transPortName,
         "AddedDepositAmt": value.addedDepositAmt,
     };

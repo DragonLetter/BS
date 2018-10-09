@@ -33,6 +33,8 @@ exports.addApplicationForm = function (req, res, next) {
     function ([applicant, beneficiary, issueBank, advisingBank, applicantSign, beneficiarySign, lcIdNumber, applyIdNumber]) {
       var fabricArg1 = values.No ? values.No.toString() : lcIdNumber.toString();
       corpNo = applicant.id.toString();
+      var applyTime = new Date();
+      applyTime.toLocaleString();
       var fabricArg2 = {
         "No": applyIdNumber.toString(),
         "Applicant": {
@@ -69,7 +71,7 @@ exports.addApplicationForm = function (req, res, next) {
           "AccountName": beneficiarySign.name,
           "Remark": "",
         },
-        "ExpiryDate": values.ExpiryDate,
+        "ExpiryDate": values.ExpiryDate.substr(0, 19).replace('T', ' '),
         "ExpiryPlace": values.ExpiryPlace,
         "IsAtSight": values.IsAtSight.toString(),
         "AfterSight": values.AfterSight.toString(),
@@ -77,7 +79,7 @@ exports.addApplicationForm = function (req, res, next) {
           // "GoodsNo": "1234567",
           "AllowPartialShipment": values.AllowPartialShippment,
           "AllowTransShipment": values.AllowTransShipment,
-          "LatestShipmentDate": values.LastestShipDate,
+          "LatestShipmentDate": values.LastestShipDate.substr(0, 19).replace('T', ' '),
           "ShippingWay": values.ShippingWay,
           "ShippingPlace": values.ShippingPlace,
           "ShippingDestination": values.ShippingDestination,
@@ -93,7 +95,7 @@ exports.addApplicationForm = function (req, res, next) {
         "Confirmed": values.Confirmed.toString(),
         "Lowfill": values.Lowfill,
         "Overfill": values.Overfill,
-        "ApplyTime": moment().format(),
+        "ApplyTime": applyTime.substr(0, 19).replace('T', ' '),
         "ChargeInIssueBank": values.ChargeInIssueBank.toString(),
         "ChargeOutIssueBank": values.ChargeOutIssueBank.toString(),
         "DocDelay": values.DocDelay.toString(),

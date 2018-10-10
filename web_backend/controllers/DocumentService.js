@@ -51,9 +51,6 @@ exports.uploadFile = function (req, res, next) {
   var oriFileName = args.file.value.originalname;
   var uniqFileName = uuid.v1() + "-" + oriFileName;
   var mime = args.file.value.mimetype;
-  var md5sum = crypto.createHash("md5");
-  md5sum.update(content);
-  var hash = md5sum.digest("hex");
   var sign = crypto.createSign('RSA-SHA256');
   sign.update(content);
   var privateKey = keyHelper.getPrivateKey(req);
@@ -70,7 +67,7 @@ exports.uploadFile = function (req, res, next) {
         "fileName": oriFileName,
         "mime": mime,
         "length": fileSize,
-        "fileHash": hash,
+        "fileHash": "0",
         "signature": Buffer.from(signture).toString("hex"),
         "dirName": fileType + '/' + uniqFileName
       };

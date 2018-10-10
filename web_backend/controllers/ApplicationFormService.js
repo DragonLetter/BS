@@ -33,8 +33,7 @@ exports.addApplicationForm = function (req, res, next) {
     function ([applicant, beneficiary, issueBank, advisingBank, applicantSign, beneficiarySign, lcIdNumber, applyIdNumber]) {
       var fabricArg1 = values.No ? values.No.toString() : lcIdNumber.toString();
       corpNo = applicant.id.toString();
-      var applyTime = new Date();
-      applyTime.toLocaleString();
+      var applyTime = new Date().toLocaleString();
       var fabricArg2 = {
         "No": applyIdNumber.toString(),
         "Applicant": {

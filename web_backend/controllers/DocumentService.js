@@ -49,7 +49,7 @@ exports.uploadFile = function (req, res, next) {
   var content = args.file.value.buffer;
   var fileSize = args.file.value.size;
   var oriFileName = args.file.value.originalname;
-  var uniqFileName = uuid.v1() + "-" + oriFileName;
+  // var uniqFileName = uuid.v1() + "-" + oriFileName;
   var mime = args.file.value.mimetype;
   var sign = crypto.createSign('RSA-SHA256');
   sign.update(content);
@@ -59,9 +59,10 @@ exports.uploadFile = function (req, res, next) {
   var fileType = args.type.value;
 
   // 上传到文件服务器
-  fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), uniqFileName, function (result) {
-    Logger.debug(result);
-    if (JSON.parse(result).success == 1) {
+  fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), oriFileName, function (respFileServer) {
+    Logger.debug(respFileServer);
+    var valResp = JSON.parse(respFileServer);
+    if (valResp.success == 1) {
       var resp = {
         // "id": 1,
         "fileName": oriFileName,
@@ -69,7 +70,7 @@ exports.uploadFile = function (req, res, next) {
         "length": fileSize,
         "fileHash": "0",
         "signature": Buffer.from(signture).toString("hex"),
-        "dirName": fileType + '/' + uniqFileName
+        "dirName": valResp.result
       };
       if (currentUser != undefined) {
         resp.uploader = currentUser.username;

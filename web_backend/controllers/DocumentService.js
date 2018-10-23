@@ -6,6 +6,7 @@ var pdf = require('html-pdf');
 var fs = require('fs');
 var fileServer = require('../utils/fileServer');
 var uuid = require('node-uuid');
+var validator = require('validator');
 const log4js = require('../utils/log4js');
 const Logger = log4js.getLogger('be');
 var inspect = require('util').inspect;
@@ -61,6 +62,12 @@ exports.uploadFile = function (req, res, next) {
   // 上传到文件服务器
   fileServer.uploadFileStream(fileType, content.toJSON(content).data.toString(), oriFileName, function (respFileServer) {
     Logger.debug(respFileServer);
+    if (!validator.isJSON(respFileServer)){
+      Logger.warn("Not JSON string");
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(resp));
+      return;
+    }
     var valResp = JSON.parse(respFileServer);
     if (valResp.success == 1) {
       var resp = {

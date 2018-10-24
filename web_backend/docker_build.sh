@@ -6,5 +6,6 @@ echo "workdir:"$WORKDIR
 cp $WORKDIR/docker_index.js $WORKDIR/index.js
 
 #删除以前旧的镜像并构建新镜像
+docker rm -f web_backend_i
 docker rmi web_backend
 docker build -t web_backend .

@@ -65,7 +65,7 @@ exports.uploadFile = function (req, res, next) {
     if (!validator.isJSON(respFileServer)){
       Logger.warn("Not JSON string");
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(resp));
+      res.status(404).end();
       return;
     }
     var valResp = JSON.parse(respFileServer);

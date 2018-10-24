@@ -6,5 +6,6 @@ echo "workdir:"$WORKDIR
 cp $WORKDIR/docker_common.js $WORKDIR/src/utils/common.js
 
 #删除以前旧的镜像并构建新镜像
+docker rm -f web_enterprise_i
 docker rmi web_enterprise
 docker build -t web_enterprise .

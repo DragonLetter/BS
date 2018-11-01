@@ -445,6 +445,7 @@ exports.getLCDraftByTxId = function (req, res, next) {
             if (draft == null) {
                 res.end();
             } else {
+                draft.UrlFletter=JSON.parse(resp.result).UrlFletter;
                 draft.no = JSON.parse(resp.result).no;
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify(draft));

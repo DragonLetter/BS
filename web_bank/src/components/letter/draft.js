@@ -459,7 +459,9 @@ class LetterDraft extends React.Component {
                 }
             });
     }
+    handleClose = () =>{
 
+    }
     // TABS选择回调
     tabsCallback = (key) => {
         this.getLCApplyDetail();
@@ -544,21 +546,34 @@ class LetterDraft extends React.Component {
             </div>
             );
         }
-        let btnDivHtml;
-        if (this.state.letter != null && this.state.letter.CurrentStep != "" && this.state.letter.CurrentStep == "BankConfirmApplyFormStep" &&
-            parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
-            btnDivHtml = (
-                <div style={{ marginLeft: '16px', marginRight: '16px', marginBottom: '20px' }}>
-                    <Row>
-                        <Col style={{ fontSize: '13px' }} span={24} offset={0}>
-                            <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />接受申请</Button>
-                            <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝申请</Button>
-                        </Col>
-                    </Row>
-                </div>
-            );
-        } else {
-            btnDivHtml = (<div></div>);
+        let btnDivHtml = (<div></div>);
+        if( this.state.letter && this.state.letter.CurrentStep=="BankConfirmApplyFormStep" &&
+            parseInt(this.state.afstate.state) == sessionStorage.getItem('userType') ){
+                btnDivHtml = (
+                    <div style={{ marginLeft: '16px', marginRight: '16px', marginBottom: '20px' }}>
+                        <Row>
+                            <Col style={{ fontSize: '13px' }} span={24} offset={0}>
+                                <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />接受申请</Button>
+                                <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝申请</Button>
+                            </Col>
+                        </Row>
+                    </div>
+                );
+            // if( issuingBank.No==sessionStorage.getItem("bankno") && parseInt(this.state.afstate.state) == 11 ){
+            //     btnDivHtml = (
+            //         <div style={{ marginLeft: '16px', marginRight: '16px', marginBottom: '20px' }}>
+            //             <Row>
+            //                 <Col style={{ fontSize: '13px' }} span={12} offset={0}>
+            //                     <Button type='primary' style={{ marginLeft: '5px' }} onClick={this.showApproveDialog.bind(this)}><Icon type="check-circle" />接受申请</Button>
+            //                     <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.showRejectDialog.bind(this)}><Icon type="close-circle" />拒绝申请</Button>
+            //                 </Col>
+            //                 <Col style={{ fontSize: '13px' }} span={12} offset={0}>
+            //                     <Button type='danger' style={{ marginLeft: '5px' }} onClick={this.handleClose.bind(this)}><Icon type="close-circle" />闭卷</Button>
+            //                 </Col>
+            //             </Row>
+            //         </div>
+            //     );
+            // }
         }
 
         return (

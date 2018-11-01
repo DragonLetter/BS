@@ -155,8 +155,8 @@ const BillDialog = Form.create()(
 //面函
 const FaceLetterDialog = Form.create()(
     (props) => {
-        const { visible, onCancel, id, lcNo, bno, form } = props;
-        let pdfAcceptancePath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/cd_" + id + "_" + lcNo + "_" + bno + ".pdf";
+        const { visible, onCancel, url, form } = props;
+        let pdfAcceptancePath = CONSTANTS.URL_FILE_SERVER + url;
         
         return (
             <Modal
@@ -281,6 +281,8 @@ class LetterBill extends React.Component {
             billState: {},
             curStep: "",
             bno: "", //面函承兑ID
+            burl: "",//面函承兑文件
+            urlFletter: "", //面函文件
         }
     }
     
@@ -289,6 +291,7 @@ class LetterBill extends React.Component {
         var valBill = {};
         valBill.AFNo = this.props.params.id;
         valBill.No = curBill.No;
+        message.error(JSON.stringify(curBill));
         fetch_post("/api/BillRecord/GetBState", valBill).then((res) => {
             if (res.status >= 200 && res.status < 300) {
                 res.json().then((data) => {
@@ -321,6 +324,7 @@ class LetterBill extends React.Component {
         const curBill = record;        
         this.setState({
             bno: curBill.No,
+            burl: curBill.UrlAccepte,
             faceLetterDialogVisible: true,
         });
     }
@@ -370,6 +374,7 @@ class LetterBill extends React.Component {
         this.setState({
             disCtl: disCtl,
             curStep: data.CurrentStep,
+            urlFletter: data.UrlFletter,
             letters: data.LetterOfCredit,
             bills: data.LCTransDocsReceive,
         });
@@ -824,7 +829,8 @@ class LetterBill extends React.Component {
             );
         }
         let btnDivHtml;
-        let pdfPath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = CONSTANTS.URL_FILE_SERVER + this.state.urlFletter;
+//        let pdfPath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
       
         if (this.state.curStep == "IssuingBankReviewRetireBillsStep" && parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (
@@ -1019,9 +1025,7 @@ class LetterBill extends React.Component {
                     // ref={this.saveBillRef}
                     visible={this.state.faceLetterDialogVisible}
                     onCancel={this.closeFaceLetterDialog}
-                    id={this.props.params.id}
-                    lcNo={this.state.letters.LCNo}
-                    bno={this.state.bno}
+                    url={this.state.burl}
                 />
             </Layout>
         )

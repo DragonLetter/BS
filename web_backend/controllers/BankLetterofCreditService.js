@@ -585,7 +585,7 @@ function writePdf(req, id, resw) {
         var filePath = path.resolve(__dirname, '../pdf/');
         // html2Pdf(htmlStr, filePath + filename);
 
-        createPdfFile(htmlStr, 'zb_' + id + "_" + resultObj.LCNo + '.pdf', resw);
+        createPdfFile(req, htmlStr, 'zb_' + id + "_" + resultObj.LCNo + '.pdf', id, "-1", resw);
 
     });
 }
@@ -967,7 +967,7 @@ function writeBillPdf(req, id, resw) {
         var filePath = path.resolve(__dirname, '../pdf/');
         // html2Pdf(htmlStr, filePath + filename);
 
-        createPdfFile(htmlStr, 'zb_' + id + "_" + resultObj.LCNo + '.pdf', resw);
+        createPdfFile(req, htmlStr, 'zb_' + id + "_" + resultObj.LCNo + '.pdf', id, "-1", resw);
 
     });
 }
@@ -1144,7 +1144,7 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
         var path = require('path');
 
         var filePath = path.resolve(__dirname, '../pdf/');
-        createPdfFile(htmlStr, 'cd_' + id + "_" + resultObj.LCNo + "_" + bno + '.pdf', resw);
+        createPdfFile(req, htmlStr, 'cd_' + id + "_" + resultObj.LCNo + "_" + bno + '.pdf', id, bno, resw);
 
     });
 }
@@ -1183,11 +1183,23 @@ function writeAcceptancePdf(req, id, bno, isAgree, resw) {
 
 // });
 // }
-function createPdfFile(html, pdfName, resw) {
-    // var path = require('path');
-    // var filePath = path.resolve(__dirname, '../node_modules/phantomjs-prebuilt/bin/phantomjs');
-    // console.log(html);
-    // var options = { format: true };
+exports.issuingBankReviseRetire = function (req, res, next) {
+    let args = req.swagger.params,
+        values = args.body.value,
+        no = values.no,
+        suggestion = values.no,
+        isAgreed = values.isAgreed;
+
+    fabric.invoke(req, "reviewRetireBills", [no, suggestion, isAgreed], function (err, resp) {
+        if (!err) {
+            res.end(JSON.stringify("审核通过"));
+        } else {
+            res.end(JSON.stringify("区块链交易执行失败！"));
+        }
+    });
+}
+
+function createPdfFile(req,html, pdfName, no, bno, resw) {
     var options = {
         // phantomPath: filePath,
         filename: pdfName,
@@ -1202,7 +1214,11 @@ function createPdfFile(html, pdfName, resw) {
         // res.setHeader('Content-Type', 'application/json');
         fileServer.uploadFileStream("coverletter", buffer.toJSON().data.toString(), pdfName, function (result) {
             Logger.debug(result);
-            // console.log(result);
+            var valResp = JSON.parse(result);
+            if (valResp.success == 1) {
+                fabric.invoke(req, "updateLetterOfFace", [no, bno, valResp.result], function (err, resp) {
+                });
+            }
         });
         // console.log(buffer.toJSON().data.toString());                   
         // console.log(pdfName);       

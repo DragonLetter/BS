@@ -338,7 +338,8 @@ class LetterCLosing extends React.Component {
             );
         }
         let btnDivHtml;
-        let pdfPath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
+        let pdfPath = CONSTANTS.URL_FILE_SERVER + data.UrlFletter;
+//        let pdfPath = CONSTANTS.URL_FILE_SERVER + "coverletter" + "/zb_" + this.props.params.id + "_" + this.state.letters.LCNo + ".pdf";
             
         if (parseInt(this.state.afstate.state) == sessionStorage.getItem('userType')) {
             btnDivHtml = (

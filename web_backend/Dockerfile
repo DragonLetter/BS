@@ -27,6 +27,7 @@ COPY . /usr/src/node
 #编译运行node项目，使用npm安装程序的所有依赖,利用taobao的npm安装
 RUN npm install -g cnpm --registry=http://registry.npm.taobao.org
 RUN ln -s /usr/local/node-v8.11.4-linux-x64/bin/cnpm /usr/bin/cnpm
+RUN cnpm update
 RUN cnpm install
 #RUN npm install yarn -g
 #RUN yarn

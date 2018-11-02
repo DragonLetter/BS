@@ -14,6 +14,7 @@ COPY . /usr/src/node
 #RUN npm install -g node-pre-gyp --registry=https://registry.npm.taobao.org
 #RUN npm install --registry=https://registry.npm.taobao.org
 RUN npm install -g cnpm --registry=http://registry.npm.taobao.org
+RUN cnpm update
 RUN cnpm install
 RUN npm run build
 #RUN npm install yarn -g

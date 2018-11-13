@@ -20,6 +20,7 @@ fabric.invoke = function (req, functionName, args, callback) {
     var option = options[username];
     if (option == undefined) { option = options["B1Admin"]; }
     var chaincodeid = option.chaincode_id;
+    var peer = null;
     var channel = {};
     var client = null;
     var targets = [];
@@ -45,7 +46,7 @@ fabric.invoke = function (req, functionName, args, callback) {
         channel = client.newChannel(option.channel_id);
         let peertlsCertPath = path.join(__dirname, '..', 'config/crypto', option.peer_tls_cacerts)
         let data = fs.readFileSync(peertlsCertPath);
-        let peer = client.newPeer(option.peer_url,
+        peer = client.newPeer(option.peer_url,
             {
                 pem: Buffer.from(data).toString(),
                 'ssl-target-name-override': option.server_hostname
@@ -59,7 +60,7 @@ fabric.invoke = function (req, functionName, args, callback) {
         let caroots = Buffer.from(odata).toString();
         var orderer = client.newOrderer(option.orderer_url, {
             'pem': caroots,
-            'ssl-target-name-override': "orderer.example.com"
+            'ssl-target-name-override': option.orderer_server
         });
 
         channel.addOrderer(orderer);
@@ -106,37 +107,47 @@ fabric.invoke = function (req, functionName, args, callback) {
             // fail the test 
             var transactionID = tx_id.getTransactionID();
             var eventPromises = [];
-            let eh = client.newEventHub();
+
+            // let eh = client.newEventHub();
+            let eh = channel.newChannelEventHub(peer);
+
             //接下来设置EventHub，用于监听Transaction是否成功写入，这里也是启用了TLS 
-            let tlsCertPath = path.join(__dirname, '..', 'config/crypto', option.peer_tls_cacerts)
-            let data = fs.readFileSync(tlsCertPath);
-            let grpcOpts = {
-                pem: Buffer.from(data).toString(),
-                'ssl-target-name-override': option.server_hostname
-            }
-            eh.setPeerAddr(option.event_url, grpcOpts);
-            eh.connect();
+            // let tlsCertPath = path.join(__dirname, '..', 'config/crypto', option.peer_tls_cacerts)
+            // let data = fs.readFileSync(tlsCertPath);
+            // let grpcOpts = {
+            //     pem: Buffer.from(data).toString(),
+            //     'ssl-target-name-override': option.server_hostname
+            // }
+            // eh.setPeerAddr(option.event_url, grpcOpts);
+            // eh.connect();
 
             let txPromise = new Promise((resolve, reject) => {
                 let handle = setTimeout(() => {
+                    eh.unregisterTxEvent(transactionID);
                     eh.disconnect();
                     reject();
                 }, 30000);
                 //向EventHub注册事件的处理办法 
                 eh.registerTxEvent(transactionID, (tx, code) => {
                     clearTimeout(handle);
-                    eh.unregisterTxEvent(transactionID);
-                    eh.disconnect();
+                    // eh.unregisterTxEvent(transactionID);
+                    // eh.disconnect();
 
                     if (code !== 'VALID') {
                         Logger.debug("The transaction was invalid, code:" + code);
                         reject();
                     } else {
-                        Logger.debug("The transaction has been committed on peer:" + eh._ep._endpoint.addr);
+                        Logger.debug("The transaction has been committed on peer:" + eh.getPeerAddr());
                         //res.end('The transaction has been committed on peer ' + eh._ep._endpoint.addr);
                         resolve();
                     }
-                });
+                }, (err) => {
+                    //this is the callback if something goes wrong with the event registration or processing
+                    reject(new Error('There was a problem with the eventhub ::'+err));
+                },
+                    {disconnect: true} //disconnect when complete
+                );
+                eh.connect();
             });
             eventPromises.push(txPromise);
             var sendPromise = channel.sendTransaction(request);
@@ -175,13 +186,15 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
     if (option == undefined) { option = options["B1Admin"]; }
     //    var chaincodeid = "mylc";
     var chaincodeid = "bcs";
+    var peer = null;
     var channel = {};
     var client = null;
     var targets = [];
     var tx_id = null;
 
     Promise.resolve().then(() => {
-        // console.log("Load privateKey and signedCert"); 
+        Logger.debug("Load privateKey and signedCert");
+
         client = new hfc();
         var createUserOpt = {
             username: option.user_id,
@@ -199,7 +212,7 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
         channel = client.newChannel(option.channel_id);
         let peertlsCertPath = path.join(__dirname, '..', 'config/crypto', option.peer_tls_cacerts)
         let data = fs.readFileSync(peertlsCertPath);
-        let peer = client.newPeer(option.peer_url,
+        peer = client.newPeer(option.peer_url,
             {
                 pem: Buffer.from(data).toString(),
                 'ssl-target-name-override': option.server_hostname
@@ -213,7 +226,7 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
         let caroots = Buffer.from(odata).toString();
         var orderer = client.newOrderer(option.orderer_url, {
             'pem': caroots,
-            'ssl-target-name-override': "orderer.example.com"
+            'ssl-target-name-override': option.orderer_server
         });
 
         channel.addOrderer(orderer);
@@ -221,7 +234,7 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
         return;
     }).then(() => {
         tx_id = client.newTransactionID();
-        // console.log("Assigning transaction_id: ", tx_id._transaction_id); 
+        Logger.debug("Assigning transaction_id:" + tx_id._transaction_id);
 
         var request = {
             targets: targets,
@@ -231,6 +244,7 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
             chainId: option.channel_id,
             txId: tx_id
         };
+        Logger.debug("fabric req:" + JSON.stringify(request));
         return channel.sendTransactionProposal(request);
     }).then((results) => {
         var proposalResponses = results[0];
@@ -240,9 +254,9 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
         if (proposalResponses && proposalResponses[0].response &&
             proposalResponses[0].response.status === 200) {
             isProposalGood = true;
-            // console.log('transaction proposal was good'); 
+            Logger.debug("transaction proposal was good");
         } else {
-            console.error('transaction proposal was bad');
+            Logger.info("transaction proposal was bad");
         }
         if (isProposalGood) {
             // console.log(util.format( 
@@ -259,7 +273,10 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
             // fail the test 
             var transactionID = tx_id.getTransactionID();
             var eventPromises = [];
-            let eh = client.newEventHub();
+
+            // let eh = client.newEventHub();
+            let eh = channel.newChannelEventHub(peer);
+
             //接下来设置EventHub，用于监听Transaction是否成功写入，这里也是启用了TLS 
             let tlsCertPath = path.join(__dirname, '..', 'config/crypto', option.peer_tls_cacerts)
             let data = fs.readFileSync(tlsCertPath);
@@ -272,62 +289,60 @@ fabric.invoke2cc = function (req, functionName, args, callback) {
 
             let txPromise = new Promise((resolve, reject) => {
                 let handle = setTimeout(() => {
+                    eh.unregisterTxEvent(transactionID);
                     eh.disconnect();
                     reject();
                 }, 30000);
                 //向EventHub注册事件的处理办法 
                 eh.registerTxEvent(transactionID, (tx, code) => {
                     clearTimeout(handle);
-                    eh.unregisterTxEvent(transactionID);
-                    eh.disconnect();
+                    // eh.unregisterTxEvent(transactionID);
+                    // eh.disconnect();
 
                     if (code !== 'VALID') {
-                        console.error(
-                            'The transaction was invalid, code = ' + code);
+                        Logger.debug("The transaction was invalid, code:" + code);
                         reject();
                     } else {
-                        // console.log('The transaction has been committed on peer ' + eh._ep._endpoint.addr); 
+                        Logger.debug("The transaction has been committed on peer:" + eh.getPeerAddr());
                         //res.end('The transaction has been committed on peer ' + eh._ep._endpoint.addr);
                         resolve();
                     }
-                });
+                }, (err) => {
+                    //this is the callback if something goes wrong with the event registration or processing
+                    reject(new Error('There was a problem with the eventhub ::'+err));
+                },
+                    {disconnect: true} //disconnect when complete
+                );
+                eh.connect();
             });
             eventPromises.push(txPromise);
             var sendPromise = channel.sendTransaction(request);
             return Promise.all([sendPromise].concat(eventPromises)).then((results) => {
-                // console.log(' event promise all complete and testing complete'); 
+                Logger.debug("event promise all complete and testing complete");
                 return results[0]; // the first returned value is from the 'sendPromise' which is from the 'sendTransaction()' call 
             }).catch((err) => {
-                console.error(
-                    'Failed to send transaction and get notifications within the timeout period.'
-                );
+                Logger.error("Failed to send transaction and get notifications within the timeout period.");
                 return 'Failed to send transaction and get notifications within the timeout period.';
             });
         } else {
-            console.error(
-                'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...'
-            );
+            Logger.error("Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...");
             return 'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...';
         }
     }, (err) => {
-        console.error('Failed to send proposal due to error: ' + err.stack ? err.stack :
-            err);
-        return 'Failed to send proposal due to error: ' + err.stack ? err.stack :
-            err;
+        Logger.error("Failed to send proposal due to error: " + err.stack ? err.stack : err);
+        return 'Failed to send proposal due to error: ' + err.stack ? err.stack : err;
     }).then((response) => {
         if (response.status === 'SUCCESS') {
-            // console.log('Successfully sent transaction to the orderer.'); 
+            Logger.debug("Successfully sent transaction to the orderer.");
             let resp = { "result": "Successfully sent transaction to the orderer.", "txId": tx_id.getTransactionID() }
             callback(null, resp);
         } else {
-            console.error('Failed to order the transaction. Error code: ' + response.status);
+            Logger.error("Failed to order the transaction. Error code:" + response.status);
             return 'Failed to order the transaction. Error code: ' + response.status;
         }
     }, (err) => {
-        console.error('Failed to send transaction due to error: ' + err.stack ? err
-            .stack : err);
-        return 'Failed to send transaction due to error: ' + err.stack ? err.stack :
-            err;
+        Logger.error("Failed to send transaction due to error:" + err.stack ? err.stack : err);
+        return 'Failed to send transaction due to error: ' + err.stack ? err.stack : err;
     });
 }
 
